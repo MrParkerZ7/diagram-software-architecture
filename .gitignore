@@ -1,0 +1,59 @@
+# Default .gitignore for orchestrator-managed workspaces.
+# Written by draft-root / draft-analyze / draft-develop when no .gitignore
+# exists at the nearest .git ancestor (or scaffold target if not in a repo).
+# See shared/PROJECTS.md § Default .gitignore for the rule.
+
+# ── Disposable artifacts (project convention: 🚫 prefix = throwaway) ──────
+🚫*
+
+# ── Generated output: logs, coverage and test reports (PROJECTS.md § Generated output) ──
+_cache/
+
+# ── Python (used by orchestrator-generated helper scripts) ───────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+env/
+
+# ── Local environment / secrets ──────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── OS / editor junk ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Logs ─────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Build outputs (relevant to develop projects) ─────────────────────────
+dist/
+build/
+*.egg
+node_modules/
+target/
+out/
+*.tsbuildinfo
+
+# ── Draw.io backups ──────────────────────────────────────────────────────
+*.drawio.bkp
+*.drawio.tmp
