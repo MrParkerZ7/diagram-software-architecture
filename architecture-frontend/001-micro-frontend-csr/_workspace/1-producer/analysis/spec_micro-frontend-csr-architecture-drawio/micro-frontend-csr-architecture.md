@@ -11,6 +11,10 @@
 > **Revision 2 (2026-11-16):** redrawn as an architecture page in the prompt master's standard, every part an icon with
 > its name as a caption and the numbered arrows carrying the workflow, on the owner's word (*"the diagram workflow should
 > be bease with icon arrow workflow relation"*). Revision 1 drew every node as a text card with a subtitle.
+> **Revision 4 (2026-11-17):** the areas and the arrow format follow the prompt master's standards, on the owner's word
+> (*"diagram areas & and arrow formant wans't correctly"*): the columns take the tier colours, the legend gains its
+> area section, the arrows take the standard's types (§ 5). Revision 3 (the same day) drew the icons from the craft
+> kit. No node, route or label moved.
 
 ## 1. Purpose
 
@@ -113,6 +117,14 @@ for `CSR`. The `.drawio` is written to the slot's root by the builder; its rende
 `2-generated/artifact/micro-frontend-csr-architecture.png` (headless Chrome with the draw.io viewer, cropped to the
 drawing plus 20 px). Nothing on the page is written by hand.
 
+**Areas and arrows (revision 4).** Each column is drawn in the colour of its tier, from `PROMPT_ARROW_STYLE.md` § Component
+Color Standards → Subnet Types: the Browser is *Client / Outside* (gray), the Edge *Public* (green), the Origin
+*Compute / App* (blue), the Backend *Integration* (amber); the build band is outside the request path, drawn dashed in
+gray (`PROMPT_CONTAINER.md` § Frame Colors by Purpose, the Optional row). A group inside a column is white with that
+column's stroke. An HTTP call is a `classic` arrow with `flowAnimation=1`, an in-page call an `open` dotted arrow,
+a build link a `classic` long-dashed arrow. The legend holds the Component Legend (the five area colours and the caption
+colours) and the Arrow Legend, as the standard requires of an architecture page.
+
 ## 6. Inputs
 
 - **The frame contract:** `../../_workspace/1-producer/analysis/micro-frontend-frame.md` (the library's workspace).
@@ -163,5 +175,12 @@ drawing plus 20 px). Nothing on the page is written by hand.
 - **The craft kit is not committed in the prompt master yet (2026-11-17):** the crafted icons come from
   `icons/craft/` of the master's working tree. `KIT_FINGERPRINT` in the frame makes a build refuse to write if the kit's
   output differs, and the frame's `## Frame proof` is re-run when the master commits the kit.
+- **Two tier choices are Claude's reading (2026-11-17), for the owner to change:** the Backend is an *Integration* tier
+  (the team APIs behind the BFF, with the headless CMS), not a data tier; the build band takes the *Optional* row
+  (dashed gray) because build and deploy are outside the request path, and the standard has no build tier. The
+  frame's contract, § Containers, says the same.
+- **The routes were not redrawn:** a few cables still bend in a street (arrow 5 steps once between the edge router
+  and the BFF), because the frame's seven pages share one set of ports; the standard's straight-line default gives way
+  to the frame's reserved streets (`PROMPT_CITY_PLAN_LAYOUT.md`, a ROAD page).
 - **No tooltips:** the icons carry no draw.io tooltip (`SPEC_DRIVEN_GENERATION.md` § *Self-explanation*); each part is
   named by its caption, the arrows say what moves, and the legend explains the classes.

@@ -1,5 +1,10 @@
 # History — 2-generated/artifact
 
+## 2026-11-17 01:20 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** The render of revision 4 of the stored item (tier-coloured areas, the area legend, the standard's arrow types). T-001.
+- micro-frontend-csr-architecture.png
+
 ## 2026-11-17 00:31 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** The render of revision 3 (crafted icons and generic shapes), looked at whole and in two crops.

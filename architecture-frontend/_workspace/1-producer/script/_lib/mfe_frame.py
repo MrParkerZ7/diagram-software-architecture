@@ -49,12 +49,32 @@ CONTAINERS = {
     "G-APIS": ("Team APIs", "C-BACKEND", 2760, 500, 300, 460, "group"),
     "C-BUILD": ("Build time (before any request)", "1", 1240, 1180, 1300, 460, "column"),
     "G-CI": ("Team pipelines", "C-BUILD", 2080, 1220, 440, 160, "group"),
-    "C-LEGEND": ("Legend", "1", 40, 1180, 800, 400, "legend"),
+    "C-LEGEND": ("Legend", "1", 40, 1180, 920, 460, "legend"),
 }
 GROUPS = ("G-REMOTES", "G-SHELL", "G-SERVERS", "G-APIS", "G-CI")
-COLUMN_FILL, COLUMN_STROKE = "#FFFFFF", "#5F6B7A"
-GROUP_FILL, GROUP_STROKE = "#F4F6F9", "#8A97A8"
-TITLE_FONT = "#37474F"
+# Area colours: the master's PROMPT_ARROW_STYLE.md § Component Color Standards -> Subnet Types (the tier frames of an
+# architecture diagram, on any cloud or none) and PROMPT_CONTAINER.md § Frame Colors by Purpose (the Optional row, for
+# the build phase, which is outside the request path). tier: (fill, stroke, font colour, what the legend says)
+TIERS = {
+    "client": ("#F5F5F5", "#666666", "#333333", "Client: the browser, outside the system"),
+    "public": ("#F0F7E6", "#7AA116", "#3D7317", "Public: the internet-facing edge"),
+    "compute": ("#EDF4FA", "#147EBA", "#0D5594", "Compute / app: the origin servers"),
+    "integration": ("#FFF8F0", "#D6B656", "#B8860B", "Integration: the APIs and the content"),
+    "build": ("#FFFFFF", "#999999", "#666666", "Outside the request path: build and deploy"),
+}
+TIER_OF = {"C-BROWSER": "client", "C-EDGE": "public", "C-ORIGIN": "compute", "C-BACKEND": "integration",
+           "C-BUILD": "build"}          # a group takes its column's stroke and font colour, on a white fill
+GROUP_FILL = "#FFFFFF"
+LEGEND_FILL, LEGEND_STROKE, TITLE_FONT = "#F5F5F5", "#666666", "#333333"   # the legend: the standard's grey box
+
+
+def tier_of(cid):
+    """The tier of a column, or of the column that holds a group (None for the legend)."""
+    while cid not in TIER_OF:
+        cid = CONTAINERS[cid][1]
+        if cid == "1":
+            return None
+    return TIER_OF[cid]
 
 # ------------------------------------------------------------------------------------------------------- nodes
 # id: (NAME = the caption, art, parent, absolute x, y, size, team: a | b | c | None = platform)
@@ -123,10 +143,14 @@ CAPTION_FONT = "#1F2937"
 CAP_CHAR_W, CAP_PAD, CAP_H, CAP_GAP = 7.4, 10, 20, 2   # caption estimate: bold 12 (a little wider than drawn)
 
 # ------------------------------------------------------------------------------------------------- edge classes
+# The arrow format of PROMPT_ARROW_STYLE.md: the arrow type by what the call is (an HTTP request: classic; a lightweight
+# call: open; a publish or deploy: classic), strokeWidth 2, shadow=1, the standard's neutral gray (#232F3E) for HTTP and a
+# lighter gray for a build link. flowAnimation=1 is on the solid request arrows only, as the standard's own examples have
+# it: draw.io draws an animated arrow with moving dashes, so on a dashed or dotted class it would blur the three classes.
 EDGE_CLASSES = {
-    "net": "strokeColor=#232F3E;strokeWidth=2;endArrow=block;endFill=1;",
-    "page": "strokeColor=#232F3E;strokeWidth=2;dashed=1;dashPattern=1 3;endArrow=open;endFill=0;",
-    "build": "strokeColor=#616161;strokeWidth=2;dashed=1;dashPattern=6 4;endArrow=block;endFill=1;",
+    "net": "strokeColor=#232F3E;strokeWidth=2;endArrow=classic;endFill=1;flowAnimation=1;shadow=1;",
+    "page": "strokeColor=#232F3E;strokeWidth=2;dashed=1;dashPattern=1 3;endArrow=open;endFill=0;shadow=1;",
+    "build": "strokeColor=#616161;strokeWidth=2;dashed=1;dashPattern=14 8;endArrow=classic;endFill=1;shadow=1;",
 }
 LABEL_STYLE = "fontSize=11;fontColor=#232F3E;labelBackgroundColor=#FFFFFF;"
 CHAR_W, LINE_H = 6.0, 13.2            # label estimate at font 11 (a little wider than drawn, on purpose)
@@ -265,6 +289,10 @@ LEGEND_LINES = (
     "stands outside that order (a build or deploy link, a standing link, or a separate trigger).",
     "BFF and page cache are separate choices from the rendering approach (ISR alone is built on its page cache), "
     "drawn where this example uses them; the headless CMS is a data source, not a BFF.")
+LEGEND_L, LEGEND_R, LEGEND_COL = 20, 480, 420      # the legend's two columns (x, x, width), relative to the legend
+LEGEND_ARROWS_Y = 250                              # the Arrows heading; the samples follow it, 40 px apart
+LEGEND_NOTES = ((300, 80), (390, 50))              # (y, height) of the two note paragraphs, right column
+TIER_ORDER = ("client", "public", "compute", "integration", "build")
 ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;"
        "fontColor=#37474F;kitExempt=1;")
 
@@ -652,12 +680,19 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
         title, parent, x, y, w, h, role = CONTAINERS[cid]
         has_frame_child = any(CONTAINERS[k][1] == cid for k in CONTAINERS)
         sw = 4 if (parent == "1" and has_frame_child) else 3
-        fill, stroke = (GROUP_FILL, GROUP_STROKE) if role == "group" else (COLUMN_FILL, COLUMN_STROKE)
+        tier = tier_of(cid)
+        if tier is None:                                   # the legend: the standard's gray box
+            fill, stroke, font = LEGEND_FILL, LEGEND_STROKE, TITLE_FONT
+        else:
+            tfill, stroke, font = TIERS[tier][:3]
+            fill = GROUP_FILL if role == "group" else tfill
         st = ("swimlane;startSize=0;labelBorderColor=none;textShadow=1;labelBackgroundColor=default;rounded=0;html=1;"
               "fillColor=%s;swimlaneFillColor=%s;strokeColor=%s;strokeWidth=%d;fontColor=%s;fontSize=14;fontStyle=1;"
-              "shadow=1;" % (fill, fill, stroke, sw, TITLE_FONT))
+              "shadow=1;" % (fill, fill, stroke, sw, font))
+        if tier == "build" and role == "column":            # outside the request path: the Optional row, dashed
+            st += "dashed=1;"
         if role == "group" and group_muted.get(cid):
-            st = st.replace("strokeColor=%s;" % stroke, "").replace("fontColor=%s;" % TITLE_FONT, "") + MUTED_GROUP
+            st = st.replace("strokeColor=%s;" % stroke, "").replace("fontColor=%s;" % font, "") + MUTED_GROUP
         if role == "legend":
             st += "kitExempt=1;"
         rx, ry = _rel(cid, x, y)
@@ -688,26 +723,45 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
     for cid in ORDER:
         body.append(container_xml(cid) if cid in CONTAINERS else icon_xml(cid))
 
-    # legend (its rows are its children)
+    # legend (its rows are its children): two columns. Left: the areas (the Component Legend of PROMPT_ARROW_STYLE.md) and
+    # the arrows (the Arrow Legend); right: the caption colours and the notes.
     lx, ly = CONTAINERS["C-LEGEND"][2], CONTAINERS["C-LEGEND"][3]
     body.append(container_xml("C-LEGEND"))
+    HEAD = ROW.replace("fontSize=11;", "fontSize=12;fontStyle=1;")
+    for cid_, text, xx in (("L-HEAD-AREAS", "Areas: a frame's colour says its tier", LEGEND_L),
+                           ("L-HEAD-ARROWS", "Arrows", LEGEND_L),
+                           ("L-HEAD-CAPTIONS", "Captions: a caption's colour says who owns the part", LEGEND_R)):
+        yy = {"L-HEAD-AREAS": 20, "L-HEAD-ARROWS": LEGEND_ARROWS_Y, "L-HEAD-CAPTIONS": 20}[cid_]
+        body.append('<mxCell id="%s" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" y="%d" '
+                    'width="%d" height="20" as="geometry"/></mxCell>' % (cid_, gen_text.X(_esc(text)), HEAD, xx, yy,
+                                                                          LEGEND_COL))
+    for i, tier in enumerate(TIER_ORDER):
+        tfill, tstroke, tfont, text = TIERS[tier]
+        st = ("rounded=0;html=1;whiteSpace=wrap;fillColor=%s;strokeColor=%s;strokeWidth=2;fontColor=%s;fontSize=11;"
+              "fontStyle=1;align=left;spacingLeft=10;verticalAlign=middle;kitExempt=1;%s"
+              % (tfill, tstroke, tfont, "dashed=1;" if tier == "build" else ""))
+        body.append('<mxCell id="L-AREA-%s" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" '
+                    'y="%d" width="%d" height="30" as="geometry"/></mxCell>'
+                    % (tier, gen_text.X(_esc(text)), st, LEGEND_L, 50 + i * 40, LEGEND_COL))
     for i, (cls, text) in enumerate(LEGEND_BADGES):
         fill, _border, kind = CLASSES[cls]
-        bx, by = 20 + (i % 3) * 260, 40 + (i // 3) * 60
-        out = gen_text.text("L-BADGE-%s" % cls, "t4", kind, _esc(text), bx, by, 240, 40, color=fill)
-        for s in out:
-            s = s.replace("shadow=1;", "shadow=0;")
+        out = gen_text.text("L-BADGE-%s" % cls, "t4", kind, _esc(text), LEGEND_R, 50 + i * 40, LEGEND_COL, 30,
+                            color=fill)
+        for s_ in out:
+            s_ = s_.replace("shadow=1;", "shadow=0;")
             if cls == "muted":
-                s = _style_add(s, MUTED_KEYS)
-            body.append(_reparent(_style_add(s, "kitExempt=1;"), "C-LEGEND"))
+                s_ = _style_add(s_, MUTED_KEYS)
+            body.append(_reparent(_style_add(s_, "kitExempt=1;"), "C-LEGEND"))
     for i, (cls, text) in enumerate(LEGEND_SAMPLES):
-        body.append('<mxCell id="L-CAPTION-%s" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="140" '
-                    'y="%d" width="640" height="40" as="geometry"/></mxCell>'
-                    % (cls, gen_text.X(_esc(text)), ROW, 160 + i * 40))
-    for i, (text, (yy, hh)) in enumerate(zip(LEGEND_LINES, ((280, 60), (340, 40)))):
-        body.append('<mxCell id="L-LINE-%d" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="20" '
-                    'y="%d" width="760" height="%d" as="geometry"/></mxCell>'
-                    % (i + 1, gen_text.X(_esc(text)), ROW.replace("verticalAlign=middle", "verticalAlign=top"), yy, hh))
+        body.append('<mxCell id="L-CAPTION-%s" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" '
+                    'y="%d" width="%d" height="40" as="geometry"/></mxCell>'
+                    % (cls, gen_text.X(_esc(text)), ROW, LEGEND_L + 120, LEGEND_ARROWS_Y + 30 + i * 40,
+                       LEGEND_COL - 120))
+    for i, (text, (yy, hh)) in enumerate(zip(LEGEND_LINES, LEGEND_NOTES)):
+        body.append('<mxCell id="L-LINE-%d" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" '
+                    'y="%d" width="%d" height="%d" as="geometry"/></mxCell>'
+                    % (i + 1, gen_text.X(_esc(text)), ROW.replace("verticalAlign=middle", "verticalAlign=top"),
+                       LEGEND_R, yy, LEGEND_COL, hh))
 
     # content cables (parent 1), then the legend's sample cables
     edges = []
@@ -729,11 +783,11 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
                      '<mxGeometry%s relative="1" as="geometry">%s</mxGeometry></mxCell>'
                      % (a, b, gen_text.X(value), st, a, b, pos, arr))
     for i, (cls, _text) in enumerate(LEGEND_SAMPLES):
-        y = ly + 180 + i * 40
+        y = ly + LEGEND_ARROWS_Y + 50 + i * 40
         edges.append('<mxCell id="L-SAMPLE-%s" value="" style="edgeStyle=none;rounded=0;html=1;%skitExempt=1;" '
                      'edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="%d" y="%d" '
                      'as="sourcePoint"/><mxPoint x="%d" y="%d" as="targetPoint"/></mxGeometry></mxCell>'
-                     % (cls, EDGE_CLASSES[cls], lx + 20, y, lx + 120, y))
+                     % (cls, EDGE_CLASSES[cls], lx + LEGEND_L, y, lx + LEGEND_L + 100, y))
 
     # page furniture (top level, front)
     front = []
@@ -779,7 +833,8 @@ def _verify(xml, abbr):
         for k in ("x", "y", "width", "height"):
             v = g.get(k)
             if v is not None and c.get("vertex") == "1":
-                assert float(v) % GRID == 0, "%s %s=%s off the %d-px grid" % (c.get("id"), k, v, GRID)
+                grid = 10 if str(c.get("id", "")).startswith("L-") else GRID      # the legend's rows: the 10-px grid
+                assert float(v) % grid == 0, "%s %s=%s off the %d-px grid" % (c.get("id"), k, v, grid)
         for p in g.iter("mxPoint"):
             for k in ("x", "y"):
                 assert float(p.get(k)) % GRID == 0, "%s point off the grid" % c.get("id")

@@ -13,6 +13,12 @@
 > **Icons (2026-11-17, the owner's word: *"now proceed to update T-001 again"*, after the prompt master's icon-craft
 > rule):** the icons are no longer P3 clay glyphs. A generic shape of `PROMPT_ICON.md` comes first, then a crafted icon
 > of the master's craft kit, its style by category (§ Nodes). Geometry, routes, labels and classes are unchanged.
+> **Areas and arrows (2026-11-17, the owner's word: *"diagram areas & and arrow formant wans't correctly"*):** read
+> against the master's `PROMPT_ARROW_STYLE.md` and `PROMPT_CONTAINER.md`, the frame had broken three standards: its
+> columns were plain white boxes (a tier frame takes the Subnet Types colours), it had no Component Legend (mandatory
+> beside the Arrow Legend), and its arrows were `block` for an HTTP call and had no `flowAnimation`. The areas take
+> the tier colours (§ Containers), the legend gains its area section (§ Legend), and the arrows take the standard's
+> types (§ Edge classes). Node positions, routes and label slides are unchanged.
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -76,12 +82,27 @@ helper).
 ## Containers
 
 All are `swimlane;startSize=0;labelBorderColor=none;textShadow=1;labelBackgroundColor=default;rounded=0;html=1;`
-with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;fontColor=#37474F;shadow=1`
+with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the stroke and font colour of the area's tier
 (`PROMPT_CONTAINER.md` § *Default Group/Container Style*).
 - **Stroke width** (§ *Border Width Hierarchy*, T-232): 4 = a frame on the page holding another frame; 3 = every other
   frame, a frame on its own included. Icons carry no stroke.
-- **Fills and strokes are cool and neutral only:** columns, the band and the legend `#FFFFFF` / `#5F6B7A`; groups
-  `#F4F6F9` / `#8A97A8`.
+- **Area colours are the master's, by tier** (2026-11-17; `PROMPT_ARROW_STYLE.md` § Component Color Standards → Subnet
+  Types, the colours of every tier frame of an architecture diagram, on any cloud or none; `PROMPT_DIAGRAM.md` rule 18):
+  a column takes its tier's fill, stroke and font colour; **a group takes its column's stroke and font colour on a
+  white fill** (`#FFFFFF`), so it stands out of the tinted column; the legend is the standard's gray box
+  (`#F5F5F5` / `#666666`).
+
+  | column | tier (the standard's name) | fill / stroke / font |
+  |---|---|---|
+  | C-BROWSER | Client / Outside | #F5F5F5 / #666666 / #333333 |
+  | C-EDGE | Public Subnet (internet-facing) | #F0F7E6 / #7AA116 / #3D7317 |
+  | C-ORIGIN | Compute/App Subnet | #EDF4FA / #147EBA / #0D5594 |
+  | C-BACKEND | Integration Subnet | #FFF8F0 / #D6B656 / #B8860B |
+  | C-BUILD | *Optional* (`PROMPT_CONTAINER.md` § Frame Colors by Purpose), dashed: build and deploy are outside the request path | #FFFFFF / #999999 / #666666, `dashed=1` |
+
+  The Backend is an *integration* tier (the team APIs behind the BFF), not a data tier, and the build band is no tier of
+  the running system: both are Claude's reading of the standard, for the owner to change. A tier's colour never says a
+  team: the team colours stay on the captions (§ Colour classes).
 - **A muted group** (every member muted) keeps its swimlane and strokeWidth 3, with `strokeColor=#BDBDBD`,
   `fontColor=#9E9E9E`, `opacity=45`. A group never takes a state of its own.
 - **G-SHELL, the App shell group** (new with this form): the shell's two parts, the runtime loader (CSR's pivot) and
@@ -90,17 +111,17 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;fontColor=#3747
 
 | id | title | in | x,y,w,h (absolute) | strokeWidth | fill / stroke |
 |---|---|---|---|---|---|
-| C-BROWSER | Browser (one page at run time) | page | 40,320,920,780 | 4 | #FFFFFF / #5F6B7A |
-| G-REMOTES | Team UIs (micro-frontends) | C-BROWSER | 60,360,240,460 | 3 | #F4F6F9 / #8A97A8 |
-| G-SHELL | App shell | C-BROWSER | 460,360,160,360 | 3 | #F4F6F9 / #8A97A8 |
-| C-EDGE | Edge (CDN and proxy) | page | 1240,320,400,780 | 3 | #FFFFFF / #5F6B7A |
-| C-ORIGIN | Origin (servers) | page | 1840,320,700,780 | 4 | #FFFFFF / #5F6B7A |
-| G-SERVERS | Team servers | C-ORIGIN | 1860,900,660,180 | 3 | #F4F6F9 / #8A97A8 |
-| C-BACKEND | Backend (APIs and content) | page | 2740,320,340,780 | 4 | #FFFFFF / #5F6B7A |
-| G-APIS | Team APIs | C-BACKEND | 2760,500,300,460 | 3 | #F4F6F9 / #8A97A8 |
-| C-BUILD | Build time (before any request) | page | 1240,1180,1300,460 | 4 | #FFFFFF / #5F6B7A |
-| G-CI | Team pipelines | C-BUILD | 2080,1220,440,160 | 3 | #F4F6F9 / #8A97A8 |
-| C-LEGEND | Legend | page | 40,1180,800,400 | 3 | #FFFFFF / #5F6B7A |
+| C-BROWSER | Browser (one page at run time) | page | 40,320,920,780 | 4 | #F5F5F5 / #666666 |
+| G-REMOTES | Team UIs (micro-frontends) | C-BROWSER | 60,360,240,460 | 3 | #FFFFFF / #666666 |
+| G-SHELL | App shell | C-BROWSER | 460,360,160,360 | 3 | #FFFFFF / #666666 |
+| C-EDGE | Edge (CDN and proxy) | page | 1240,320,400,780 | 3 | #F0F7E6 / #7AA116 |
+| C-ORIGIN | Origin (servers) | page | 1840,320,700,780 | 4 | #EDF4FA / #147EBA |
+| G-SERVERS | Team servers | C-ORIGIN | 1860,900,660,180 | 3 | #FFFFFF / #147EBA |
+| C-BACKEND | Backend (APIs and content) | page | 2740,320,340,780 | 4 | #FFF8F0 / #D6B656 |
+| G-APIS | Team APIs | C-BACKEND | 2760,500,300,460 | 3 | #FFFFFF / #D6B656 |
+| C-BUILD | Build time (before any request) | page | 1240,1180,1300,460 | 4 | #FFFFFF / #999999 (dashed) |
+| G-CI | Team pipelines | C-BUILD | 2080,1220,440,160 | 3 | #FFFFFF / #999999 |
+| C-LEGEND | Legend | page | 40,1180,920,460 | 3 | #F5F5F5 / #666666 |
 
 ## Nodes
 
@@ -207,10 +228,18 @@ below, and the label style `fontSize=11;fontColor=#232F3E;labelBackgroundColor=#
 
 | class | style | meaning |
 |---|---|---|
-| net | solid #232F3E, strokeWidth 2, `endArrow=block;endFill=1` | a network request at run time; arrow = request direction, the label says what comes back |
-| page | dotted (`dashed=1;dashPattern=1 3`) #232F3E, strokeWidth 2, `endArrow=open;endFill=0` | a call inside the page (no network) |
-| build | dashed (`dashed=1;dashPattern=6 4`) #616161, strokeWidth 2, `endArrow=block;endFill=1` | build or deploy, before any request |
+| net | solid #232F3E, strokeWidth 2, `endArrow=classic;endFill=1;flowAnimation=1;shadow=1` | a network request at run time; arrow = request direction, the label says what comes back |
+| page | dotted (`dashed=1;dashPattern=1 3`) #232F3E, strokeWidth 2, `endArrow=open;endFill=0;shadow=1` | a call inside the page (no network) |
+| build | dashed (`dashed=1;dashPattern=14 8`) #616161, strokeWidth 2, `endArrow=classic;endFill=1;shadow=1` | build or deploy, before any request |
 
+- **The arrow format is the master's** (2026-11-17; `PROMPT_ARROW_STYLE.md` § Arrow Type Selection Guide and § Arrow Color
+  Standards, `PROMPT_DIAGRAM.md` rules 10 to 14): an HTTP request is `classic` (it was `block`, which the standard keeps
+  for a pull or a fetch), a lightweight call is `open`, a publish or deploy is `classic`; strokeWidth 2; `shadow=1`;
+  the neutral gray `#232F3E` for HTTP; dashed for a link that is not a request. **`flowAnimation=1` is on the `net` class
+  only**, where the standard's own examples put it: draw.io draws an animated arrow with moving dashes, so on the dashed
+  and dotted classes it would make the three classes look alike (a first render with it on all three did). The
+  build dash is longer (`14 8`) so that it stays apart from a running `net` arrow. The legend's samples carry the same
+  style strings, so a sample matches the arrows it explains.
 - **Numbering:** the steps of the flow a page draws are numbered in order, `1 ·`, `2 ·`. Build steps a ticket numbers
   come first (SSG 1 to 4, ISR 0). One cable may carry two step numbers (a request and its later response, or two
   requests to the same place), and one step may show on two cables (CSR's step 3). An unnumbered cable stands outside
@@ -391,18 +420,27 @@ caption or a title.
 
 ## Legend
 
-C-LEGEND, titled `Legend`, at 40,1180,800,400; every row is its child and carries `kitExempt=1`.
-- **Badges:** one **flat** T4 badge per colour class (240 x 40, three to a row), its class's caption fill (the muted
-  badge carries the muted keys too), labelled `Team A · Catalog`, `Team B · Cart and orders`, `Team C · Account`,
-  `Shared or platform-owned`, `Where the micro-frontends are composed (the pivot)`, `Not used in this approach`. A
-  badge has the colour of the captions it decodes.
-- **Sample cables:** one per edge class, the class style verbatim, with free source and target points (so the gate
-  excludes them as UNVERIFIABLE, and they are the only excluded edges), captioned `Network request at run time: the
-  arrow is the request, the label says what comes back`, `Call inside the page (no network)`, `Build or deploy, before
-  any request`.
-- **The two fixed lines:**
-  - `Each part is an icon; its caption names it, and the caption's colour is its class. Numbers = the order of the steps of the flow drawn; numbered dashed steps are build steps and come before any request; an unnumbered cable stands outside that order (a build or deploy link, a standing link, or a separate trigger).`
-  - `BFF and page cache are separate choices from the rendering approach (ISR alone is built on its page cache), drawn where this example uses them; the headless CMS is a data source, not a BFF.`
+C-LEGEND, titled `Legend`, at 40,1180,920,460 (the standard's gray box, `#F5F5F5` / `#666666`); every row is its child and
+carries `kitExempt=1`. It holds the **Component Legend** (the areas, and the caption colours) and the **Arrow Legend**
+that `PROMPT_ARROW_STYLE.md` requires of an architecture page, in two columns. Its rows sit on a 10-px grid (the rest of
+the page keeps 20): they are small rows of text.
+- **Left column (x 20, 420 wide):**
+  - a heading `Areas: a frame's colour says its tier`, then **five swatches** (30 high, 40 apart): a rectangle with the
+    tier's fill, stroke and font colour and its meaning, `Client: the browser, outside the system`, `Public: the
+    internet-facing edge`, `Compute / app: the origin servers`, `Integration: the APIs and the content`, `Outside the
+    request path: build and deploy` (dashed, as the build band is);
+  - a heading `Arrows`, then the **sample cables**, one per edge class, the class style verbatim, with free source and
+    target points (so the gate excludes them as UNVERIFIABLE, and they are the only excluded edges), captioned `Network
+    request at run time: the arrow is the request, the label says what comes back`, `Call inside the page (no network)`,
+    `Build or deploy, before any request`.
+- **Right column (x 480, 420 wide):**
+  - a heading `Captions: a caption's colour says who owns the part`, then one **flat** T4 badge per colour class (30
+    high, 40 apart), its class's caption fill (the muted badge carries the muted keys too), labelled `Team A ·
+    Catalog`, `Team B · Cart and orders`, `Team C · Account`, `Shared or platform-owned`, `Where the micro-frontends are
+    composed (the pivot)`, `Not used in this approach`. A badge has the colour of the captions it decodes;
+  - **the two fixed lines:**
+    - `Each part is an icon; its caption names it, and the caption's colour is its class. Numbers = the order of the steps of the flow drawn; numbered dashed steps are build steps and come before any request; an unnumbered cable stands outside that order (a build or deploy link, a standing link, or a separate trigger).`
+    - `BFF and page cache are separate choices from the rendering approach (ISR alone is built on its page cache), drawn where this example uses them; the headless CMS is a data source, not a BFF.`
 
 ## Frame-static text
 
@@ -420,6 +458,7 @@ everything here is sourced once, in this table (`frame-static` in a slot's table
 | `Browser (one page at run time)`, `Team UIs (micro-frontends)`, `App shell`, `Edge (CDN and proxy)`, `Origin (servers)`, `Team servers`, `Backend (APIs and content)`, `Team APIs`, `Build time (before any request)`, `Team pipelines`, `Legend` | container titles | no claim |
 | `Where the HTML is produced`, `Where and when the micro-frontends are composed`, `Trade-off for micro-frontends` | statement headings | no claim |
 | `Team A · Catalog`, `Team B · Cart and orders`, `Team C · Account`, `Shared or platform-owned`, `Where the micro-frontends are composed (the pivot)`, `Not used in this approach` | legend badge labels | no claim |
+| `Areas: a frame's colour says its tier`, `Arrows`, `Captions: a caption's colour says who owns the part`, `Client: the browser, outside the system`, `Public: the internet-facing edge`, `Compute / app: the origin servers`, `Integration: the APIs and the content`, `Outside the request path: build and deploy` | legend headings and area swatches | no claim (the frame's own conventions; the tier colours are the prompt master's `PROMPT_ARROW_STYLE.md`) |
 | `Network request at run time: the arrow is the request, the label says what comes back`, `Call inside the page (no network)`, `Build or deploy, before any request` | legend sample-cable captions | no claim (the frame's own conventions) |
 | `Each part is an icon; … a standing link, or a separate trigger).` | legend line 1 | no claim (the frame's own conventions) |
 | `BFF and page cache are separate choices from the rendering approach (ISR alone is built on its page cache), drawn where this example uses them; the headless CMS is a data source, not a BFF.` | legend line 2 | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15): rendering, the BFF and caching are three independent concerns, and a CMS is a data source, not a BFF · nextjs.org/docs/app/guides/incremental-static-regeneration (read 2026-11-15 by the plan): ISR serves cached pages and regenerates them |
@@ -519,9 +558,10 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-17 (T-001's third dry run, for the icon source: a throwaway, git-ignored dry-run script in this
-  workspace's script unit). Earlier proofs, superseded: 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay
-  glyphs) and the first one for the card form.
+- **Date:** 2026-11-17 (T-001's fourth dry run, for the areas and the arrow format: a throwaway, git-ignored dry-run
+  script in this workspace's script unit). Earlier proofs, superseded: the third, the same day, for the icon source
+  (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
+  first one for the card form.
 - **Prompt master at the dry run:** the 3-diagram kit as of commit `2a65231f`, the last commit that changed it, **plus
   the craft kit `icons/craft/` and its rule, which were not committed in the master at the dry run** (the master's
   `git status` for the kit folder was not empty, so the clean-tree condition of the first proof was not met: the proof is
@@ -532,7 +572,13 @@ words it searches for.
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
   (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
   full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
-- **Changes the dry run made to the frame:** none to geometry, routes, label slides or wraps: only the icon source
+- **Changes of the fourth dry run (areas and arrows):** none to any node's position, route, label slide or wrap. The
+  columns and groups take the tier colours (§ Containers); the legend is 920 x 460 with its area swatches (§ Legend);
+  the arrows take the standard's types, `flowAnimation=1` on the `net` class, `shadow=1` and the longer build dash
+  (§ Edge classes). `KIT_FINGERPRINT` is unchanged (the kit's output did not change). Looked at: CSR whole and in
+  full-resolution crops of the Browser and Edge columns and of the legend and the build band; the other six in one contact
+  sheet. The tables below were re-run on the new pages and read the same.
+- **Changes of the third dry run (the icon source):** none to geometry, routes, label slides or wraps: only the icon source
   (§ Nodes) and `KIT_FINGERPRINT`. All 25 icons of every page are 19 crafted images and 6 generic shapes (the router,
   the composer, the three team servers and the page cache); every muted icon faded, including a muted generic shape.
 - **Kit gain:** the craft kit gained eleven subjects for this page (set `web-frontend`: browser tab, runtime loader,

@@ -1,5 +1,10 @@
 # History — 1-producer/analysis
 
+## 2026-11-17 01:20 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** The frame contract for the areas and the arrow format, on the owner's word ("diagram areas & and arrow formant wans't correctly"): § Containers (the tier colours and the two tier choices), § Edge classes (the arrow format), § Legend (the area section, 920 x 460), § Frame-static text, and a fourth `## Frame proof`. T-001.
+- micro-frontend-frame.md
+
 ## 2026-11-17 00:31 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** The frame contract for the icon source, on the owner's word ("now proceed to update T-001 again"), under the prompt master's icon-craft rule (a provider or generic shape first, a crafted icon only for a gap, its style by category): § Nodes (the order, the art and style of every node), the muted-keys note, the kit fingerprint, the viewer note (it draws `mxgraph.*` shapes after all), and a third `## Frame proof`.
