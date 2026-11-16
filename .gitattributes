@@ -1,0 +1,3 @@
+# The manifests hash the stored bytes (LF). Keep them as they are on every checkout.
+*.drawio -text
+*.png binary

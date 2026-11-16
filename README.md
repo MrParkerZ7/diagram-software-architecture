@@ -27,6 +27,8 @@ A diagram is written into the library its name says: a frontend diagram into `ar
 
 **To improve the skill,** draw with it here and note what the result gets wrong or lacks; the fix goes into the skill, and the diagram is redrawn with the fixed skill.
 
+**To clone it on Windows,** run `git config --global core.longpaths true` first: some tracked paths are longer than 150 characters, and the files under a slot's `_workspace/` are deep. `.gitattributes` keeps every `.drawio` byte for byte as stored, so its sha256 matches its slot's manifest on any checkout.
+
 ## Children
 
 | Name | Type | Path |

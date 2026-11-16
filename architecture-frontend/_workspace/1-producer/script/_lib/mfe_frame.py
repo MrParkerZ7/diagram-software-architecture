@@ -3,14 +3,17 @@
 
 Contract (current truth, read it first): ../../analysis/micro-frontend-frame.md
 A shared helper under _lib/, never a builder and never run on its own. A slot's builder imports it and calls
-build_page() with data only: title words, statements, node states and subtitles, cables, companions. This module owns
-every coordinate, style, class marker, port, waypoint, label wrap and label slide, and checks its own output before it
-writes (the 20-px grid, the class markers and shadow keys, label clearance, cables clear of container titles).
+build_page() with data only: title words, statements, node states, cables, companions. This module owns every
+coordinate, style, class marker, port, waypoint, label wrap and label slide, and checks its own output before it
+writes (the 20-px grid, the class markers, captions clear of cables and labels, cables clear of container titles).
+
+The page is an architecture page in the prompt master's standard: every part is an icon with its name as a caption,
+and the numbered arrows between the icons carry the workflow. No part is a text card.
 
 Environment (never written into a committed file): DIAGRAM_KIT = the prompt master's shared/prompts/3-diagram folder.
 """
+import hashlib
 import html
-import math
 import os
 import re
 import sys
@@ -24,77 +27,86 @@ KIT = os.environ.get("DIAGRAM_KIT", "")
 if not KIT or not os.path.isfile(os.path.join(KIT, "text", "gen_text.py")):
     raise SystemExit("DIAGRAM_KIT must point to the prompt master's shared/prompts/3-diagram")
 sys.path.insert(0, os.path.join(KIT, "text"))
-import gen_text  # noqa: E402  (loads ../icons/gen_icons itself)
+sys.path.insert(0, os.path.join(KIT, "icons"))
+import gen_text  # noqa: E402
+import gen_icons  # noqa: E402
 
 GRID = 20
-PAGE_W, PAGE_H = 3060, 1680
+PAGE_W, PAGE_H = 3240, 1840
 
 # ----------------------------------------------------------------------------------------------------- containers
 # id: (title, parent, absolute x, y, w, h, role); role: column | group | legend.  All swimlane;startSize=0.
 CONTAINERS = {
-    "C-BROWSER": ("Browser (one page at run time)", "1", 40, 320, 800, 720, "column"),
-    "G-REMOTES": ("Team UIs (micro-frontends)", "C-BROWSER", 60, 680, 760, 160, "group"),
-    "C-EDGE": ("Edge (CDN and proxy)", "1", 1120, 320, 340, 720, "column"),
-    "C-ORIGIN": ("Origin (servers)", "1", 1660, 320, 700, 720, "column"),
-    "G-SERVERS": ("Team servers", "C-ORIGIN", 1680, 680, 660, 160, "group"),
-    "C-BACKEND": ("Backend (APIs and content)", "1", 2560, 320, 340, 720, "column"),
-    "G-APIS": ("Team APIs", "C-BACKEND", 2580, 360, 300, 400, "group"),
-    "C-BUILD": ("Build time (before any request)", "1", 1120, 1140, 1240, 360, "column"),
-    "G-CI": ("Team pipelines", "C-BUILD", 1680, 1180, 660, 160, "group"),
-    "C-LEGEND": ("Legend", "1", 40, 1140, 800, 400, "legend"),
+    "C-BROWSER": ("Browser (one page at run time)", "1", 40, 320, 920, 780, "column"),
+    "G-REMOTES": ("Team UIs (micro-frontends)", "C-BROWSER", 60, 360, 240, 460, "group"),
+    "G-SHELL": ("App shell", "C-BROWSER", 460, 360, 160, 360, "group"),
+    "C-EDGE": ("Edge (CDN and proxy)", "1", 1240, 320, 400, 780, "column"),
+    "C-ORIGIN": ("Origin (servers)", "1", 1840, 320, 700, 780, "column"),
+    "G-SERVERS": ("Team servers", "C-ORIGIN", 1860, 900, 660, 180, "group"),
+    "C-BACKEND": ("Backend (APIs and content)", "1", 2740, 320, 340, 780, "column"),
+    "G-APIS": ("Team APIs", "C-BACKEND", 2760, 500, 300, 460, "group"),
+    "C-BUILD": ("Build time (before any request)", "1", 1240, 1180, 1300, 460, "column"),
+    "G-CI": ("Team pipelines", "C-BUILD", 2080, 1220, 440, 160, "group"),
+    "C-LEGEND": ("Legend", "1", 40, 1180, 800, 400, "legend"),
 }
-GROUPS = ("G-REMOTES", "G-SERVERS", "G-APIS", "G-CI")
+GROUPS = ("G-REMOTES", "G-SHELL", "G-SERVERS", "G-APIS", "G-CI")
 COLUMN_FILL, COLUMN_STROKE = "#FFFFFF", "#5F6B7A"
 GROUP_FILL, GROUP_STROKE = "#F4F6F9", "#8A97A8"
 TITLE_FONT = "#37474F"
 
 # ------------------------------------------------------------------------------------------------------- nodes
-# id: (NAME, CLAY_DEMO icon key, parent, absolute x, y, w, h, team: a | b | c | None = platform)
+# id: (NAME = the caption, CLAY_DEMO glyph key, parent, absolute x, y, size, team: a | b | c | None = platform)
+# Every node is one square icon. The hubs are 160 (or 120) so a cable can leave a face beside the caption.
 NODES = {
-    "B-PAGE": ("Browser tab", "client-browser", "C-BROWSER", 220, 360, 420, 80, None),
-    "B-ROUTER": ("Client router", "page-route", "C-BROWSER", 80, 520, 180, 80, None),
-    "B-SHELL": ("App shell", "webapp", "C-BROWSER", 600, 520, 180, 80, None),
-    "B-UI-A": ("Team A · Catalog UI", "ui-component", "G-REMOTES", 100, 720, 180, 80, "a"),
-    "B-UI-B": ("Team B · Cart UI", "ui-component", "G-REMOTES", 340, 720, 180, 80, "b"),
-    "B-UI-C": ("Team C · Account UI", "ui-component", "G-REMOTES", 580, 720, 180, 80, "c"),
-    "B-BUS": ("Event bus", "event-stream", "C-BROWSER", 80, 920, 400, 80, None),
-    "B-SHARED": ("Shared libraries", "module-package", "C-BROWSER", 520, 920, 280, 80, None),
-    "E-ROUTER": ("Edge router", "load-balancer", "C-EDGE", 1160, 360, 260, 80, None),
-    "E-CACHE": ("Page cache", "cache", "C-EDGE", 1160, 520, 260, 80, None),
-    "E-CDN": ("CDN", "cdn", "C-EDGE", 1160, 920, 260, 80, None),
-    "O-COMPOSER": ("Page composer", "service", "C-ORIGIN", 1700, 360, 340, 80, None),
-    "O-BFF": ("BFF", "api-gateway", "C-ORIGIN", 1920, 520, 400, 80, None),
-    "O-SRV-A": ("Team A server", "service", "G-SERVERS", 1700, 720, 180, 80, "a"),
-    "O-SRV-B": ("Team B server", "service", "G-SERVERS", 1920, 720, 180, 80, "b"),
-    "O-SRV-C": ("Team C server", "service", "G-SERVERS", 2140, 720, 180, 80, "c"),
-    "K-API-A": ("Catalog API (team A)", "microservice", "G-APIS", 2600, 400, 260, 80, "a"),
-    "K-API-B": ("Order API (team B)", "microservice", "G-APIS", 2600, 520, 260, 80, "b"),
-    "K-API-C": ("Account API (team C)", "microservice", "G-APIS", 2600, 640, 260, 80, "c"),
-    "K-CMS": ("Headless CMS", "docs-multi", "C-BACKEND", 2600, 920, 260, 80, None),
-    "D-REGISTRY": ("Registry", "registry", "C-BUILD", 1160, 1220, 220, 80, None),
-    "D-INTEGRATION": ("Integration build", "ci-pipeline", "C-BUILD", 1320, 1380, 260, 80, None),
-    "D-CI-A": ("Team A pipeline", "ci-pipeline", "G-CI", 1700, 1220, 180, 80, "a"),
-    "D-CI-B": ("Team B pipeline", "ci-pipeline", "G-CI", 1920, 1220, 180, 80, "b"),
-    "D-CI-C": ("Team C pipeline", "ci-pipeline", "G-CI", 2140, 1220, 180, 80, "c"),
+    "B-PAGE": ("Browser tab", "client-browser", "C-BROWSER", 780, 640, 160, None),
+    "B-SHELL": ("Runtime loader", "webapp", "G-SHELL", 500, 400, 80, None),
+    "B-ROUTER": ("Client router", "page-route", "G-SHELL", 500, 520, 80, None),
+    "B-UI-A": ("Team A · Catalog UI", "ui-component", "G-REMOTES", 140, 400, 80, "a"),
+    "B-UI-B": ("Team B · Cart UI", "ui-component", "G-REMOTES", 140, 540, 80, "b"),
+    "B-UI-C": ("Team C · Account UI", "ui-component", "G-REMOTES", 140, 680, 80, "c"),
+    "B-BUS": ("Event bus", "event-stream", "C-BROWSER", 140, 920, 80, None),
+    "B-SHARED": ("Shared libraries", "module-package", "C-BROWSER", 500, 920, 80, None),
+    "E-ROUTER": ("Edge router", "load-balancer", "C-EDGE", 1360, 560, 160, None),
+    "E-CACHE": ("Page cache", "cache", "C-EDGE", 1460, 860, 80, None),
+    "E-CDN": ("CDN", "cdn", "C-EDGE", 1260, 900, 160, None),
+    "O-COMPOSER": ("Page composer", "service", "C-ORIGIN", 1920, 520, 160, None),
+    "O-BFF": ("BFF", "api-gateway", "C-ORIGIN", 2260, 600, 160, None),
+    "O-SRV-A": ("Team A server", "service", "G-SERVERS", 1940, 940, 80, "a"),
+    "O-SRV-B": ("Team B server", "service", "G-SERVERS", 2160, 940, 80, "b"),
+    "O-SRV-C": ("Team C server", "service", "G-SERVERS", 2380, 940, 80, "c"),
+    "K-API-A": ("Catalog API (team A)", "microservice", "G-APIS", 2880, 540, 80, "a"),
+    "K-API-B": ("Order API (team B)", "microservice", "G-APIS", 2880, 680, 80, "b"),
+    "K-API-C": ("Account API (team C)", "microservice", "G-APIS", 2880, 820, 80, "c"),
+    "K-CMS": ("Headless CMS", "docs-multi", "C-BACKEND", 2880, 980, 80, None),
+    "D-REGISTRY": ("Registry", "registry", "C-BUILD", 2000, 1480, 120, None),
+    "D-INTEGRATION": ("Integration build", "ci-pipeline", "C-BUILD", 1660, 1500, 80, None),
+    "D-CI-A": ("Team A pipeline", "ci-pipeline", "G-CI", 2120, 1260, 80, "a"),
+    "D-CI-B": ("Team B pipeline", "ci-pipeline", "G-CI", 2260, 1260, 80, "b"),
+    "D-CI-C": ("Team C pipeline", "ci-pipeline", "G-CI", 2400, 1260, 80, "c"),
 }
-# Cell order (z): each container, then its children, depth first; legend last in the container block.
-ORDER = ["C-BROWSER", "B-PAGE", "B-ROUTER", "B-SHELL", "G-REMOTES", "B-UI-A", "B-UI-B", "B-UI-C", "B-BUS", "B-SHARED",
+# Cell order (z): each container, then its children, depth first.
+ORDER = ["C-BROWSER", "G-REMOTES", "B-UI-A", "B-UI-B", "B-UI-C", "G-SHELL", "B-SHELL", "B-ROUTER", "B-PAGE", "B-BUS",
+         "B-SHARED",
          "C-EDGE", "E-ROUTER", "E-CACHE", "E-CDN",
          "C-ORIGIN", "O-COMPOSER", "O-BFF", "G-SERVERS", "O-SRV-A", "O-SRV-B", "O-SRV-C",
          "C-BACKEND", "G-APIS", "K-API-A", "K-API-B", "K-API-C", "K-CMS",
-         "C-BUILD", "D-REGISTRY", "D-INTEGRATION", "G-CI", "D-CI-A", "D-CI-B", "D-CI-C"]
+         "C-BUILD", "D-INTEGRATION", "D-REGISTRY", "G-CI", "D-CI-A", "D-CI-B", "D-CI-C"]
 
 # ------------------------------------------------------------------------------------------------ colour classes
-# class: (kit kind, fill, style keys that replace the kit's shadow=1)
+# The class is said by the caption's tint (the prompt master's rule: the container, the caption's tint or a faded
+# icon say a class, never a card). class: (caption fill, caption border, legend badge kit kind)
 CLASSES = {
-    "team-a": ("info", "#DAE8FC", "shadow=0;"),
-    "team-b": ("success", "#D5E8D4", "shadow=0;"),
-    "team-c": ("accent", "#E1D5E7", "shadow=0;"),
-    "platform": ("neutral", "#CFD8DC", "shadow=0;"),
-    "pivot": ("note", "#FFF2CC", "shadow=1;"),
-    "muted": ("neutral", "#F5F5F5", "shadow=0;opacity=45;textOpacity=60;opacityGroup=1;"),
+    "team-a": ("#DAE8FC", "#6C8EBF", "info"),
+    "team-b": ("#D5E8D4", "#82B366", "success"),
+    "team-c": ("#E1D5E7", "#9673A6", "accent"),
+    "platform": ("#ECEFF1", "#90A4AE", "neutral"),
+    "pivot": ("#FFD54F", "#E69500", "note"),
+    "muted": ("#F5F5F5", "#BDBDBD", "neutral"),
 }
+MUTED_KEYS = "opacity=40;textOpacity=40;opacityGroup=1;"   # opacityGroup: the clay stencil sets its own alpha per part
 MUTED_GROUP = "strokeColor=#BDBDBD;fontColor=#9E9E9E;opacity=45;"
+CAPTION_FONT = "#1F2937"
+CAP_CHAR_W, CAP_PAD, CAP_H, CAP_GAP = 7.4, 10, 20, 2   # caption estimate: bold 12 (a little wider than drawn)
 
 # ------------------------------------------------------------------------------------------------- edge classes
 EDGE_CLASSES = {
@@ -103,115 +115,116 @@ EDGE_CLASSES = {
     "build": "strokeColor=#616161;strokeWidth=2;dashed=1;dashPattern=6 4;endArrow=block;endFill=1;",
 }
 LABEL_STYLE = "fontSize=11;fontColor=#232F3E;labelBackgroundColor=#FFFFFF;"
-DEFAULT_WRAP = 24
 CHAR_W, LINE_H = 6.0, 13.2            # label estimate at font 11 (a little wider than drawn, on purpose)
 
 # --------------------------------------------------------------------------------------------------- routing
 # (from, to): (start point on the source's wall, [waypoints], end point on the target's wall), absolute px.
-# Every segment is axis-aligned; every bend sits in free space (a street, a gutter, the east lane, or the free space
-# west, south and east of the build band). See the contract's Routing table and Paper check.
+# Every segment is axis-aligned; every bend sits in free space (a gutter, a street, the east lane), never inside a
+# rectangle; inside a container a cable is one straight segment. No cable touches a caption: a cable leaves an icon's
+# bottom face only beside its caption. See the contract's Routing table and Paper check.
 ROUTES = {
-    ("B-PAGE", "E-ROUTER"): ((640, 380), [], (1160, 380)),
-    ("B-PAGE", "E-CDN"): ((640, 420), [(980, 420), (980, 940)], (1160, 940)),
-    ("B-PAGE", "B-SHELL"): ((620, 440), [], (620, 520)),
-    ("B-PAGE", "B-ROUTER"): ((240, 440), [], (240, 520)),
-    ("B-PAGE", "G-REMOTES"): ((580, 440), [], (580, 680)),
-    ("B-SHELL", "G-REMOTES"): ((700, 600), [], (700, 680)),
-    ("B-ROUTER", "G-REMOTES"): ((160, 600), [], (160, 680)),
-    ("B-SHELL", "B-ROUTER"): ((600, 560), [], (260, 560)),
-    ("G-REMOTES", "B-BUS"): ((280, 840), [], (280, 920)),
-    ("E-ROUTER", "O-BFF"): ((1420, 420), [(1560, 420), (1560, 560)], (1920, 560)),
-    ("E-ROUTER", "G-SERVERS"): ((1420, 420), [(1560, 420), (1560, 760)], (1680, 760)),
-    ("E-ROUTER", "O-COMPOSER"): ((1420, 400), [], (1700, 400)),
-    ("E-ROUTER", "E-CACHE"): ((1280, 440), [], (1280, 520)),
-    ("E-CACHE", "O-COMPOSER"): ((1420, 540), [(1560, 540), (1560, 380)], (1700, 380)),
-    ("O-BFF", "G-APIS"): ((2320, 560), [], (2580, 560)),
-    ("O-BFF", "K-API-B"): ((2320, 560), [], (2600, 560)),
-    ("O-COMPOSER", "O-BFF"): ((1980, 440), [], (1980, 520)),
-    ("O-COMPOSER", "G-SERVERS"): ((1780, 440), [], (1780, 680)),
-    ("G-SERVERS", "O-BFF"): ((2180, 680), [], (2180, 600)),
-    ("K-CMS", "O-COMPOSER"): ((2860, 960), [(2960, 960), (2960, 260), (1840, 260)], (1840, 360)),
-    ("G-CI", "E-CDN"): ((1680, 1320), [(1080, 1320), (1080, 980)], (1160, 980)),
-    ("G-CI", "D-REGISTRY"): ((1680, 1260), [], (1380, 1260)),
-    ("D-REGISTRY", "E-CDN"): ((1280, 1220), [], (1280, 1000)),
-    ("G-CI", "G-SERVERS"): ((2240, 1180), [], (2240, 840)),
-    ("D-REGISTRY", "D-INTEGRATION"): ((1360, 1300), [], (1360, 1380)),
-    ("D-INTEGRATION", "K-CMS"): ((1580, 1400), [(2720, 1400)], (2720, 1000)),
-    ("D-INTEGRATION", "K-API-A"): ((1580, 1440), [(2960, 1440), (2960, 440)], (2860, 440)),
-    ("D-INTEGRATION", "E-CDN"): ((1320, 1420), [(1080, 1420), (1080, 980)], (1160, 980)),
-    ("D-INTEGRATION", "E-CACHE"): ((1520, 1380), [(1520, 580)], (1420, 580)),
-    ("D-INTEGRATION", "O-COMPOSER"): ((1580, 1420), [(2960, 1420), (2960, 260), (1840, 260)], (1840, 360)),
+    ("B-PAGE", "E-ROUTER"): ((940, 680), [], (1360, 680)),
+    ("B-PAGE", "E-CDN"): ((940, 760), [(1100, 760), (1100, 980)], (1260, 980)),
+    ("B-PAGE", "G-SHELL"): ((780, 680), [], (620, 680)),
+    ("B-PAGE", "G-REMOTES"): ((780, 760), [], (300, 760)),
+    ("B-SHELL", "G-REMOTES"): ((500, 440), [], (300, 440)),
+    ("B-ROUTER", "G-REMOTES"): ((500, 560), [], (300, 560)),
+    ("G-REMOTES", "B-BUS"): ((180, 820), [], (180, 920)),
+    ("E-ROUTER", "O-COMPOSER"): ((1520, 600), [], (1920, 600)),
+    ("E-ROUTER", "O-BFF"): ((1520, 680), [(1780, 680), (1780, 740)], (2260, 740)),
+    ("E-ROUTER", "G-SERVERS"): ((1520, 680), [(1780, 680), (1780, 1000)], (1860, 1000)),
+    ("E-ROUTER", "E-CACHE"): ((1500, 720), [], (1500, 860)),
+    ("E-CACHE", "O-COMPOSER"): ((1540, 880), [(1740, 880), (1740, 640)], (1920, 640)),
+    ("O-COMPOSER", "O-BFF"): ((2080, 660), [], (2260, 660)),
+    ("O-COMPOSER", "G-SERVERS"): ((1940, 680), [], (1940, 900)),
+    ("G-SERVERS", "O-BFF"): ((2300, 900), [], (2300, 760)),
+    ("O-BFF", "G-APIS"): ((2420, 720), [], (2760, 720)),
+    ("O-BFF", "K-API-B"): ((2420, 720), [], (2880, 720)),
+    ("K-CMS", "O-COMPOSER"): ((2960, 1000), [(3120, 1000), (3120, 260), (2020, 260)], (2020, 520)),
+    ("G-CI", "E-CDN"): ((2120, 1220), [(2120, 1140), (1380, 1140)], (1380, 1060)),
+    ("G-CI", "D-REGISTRY"): ((2100, 1380), [], (2100, 1480)),
+    ("D-REGISTRY", "E-CDN"): ((2040, 1480), [(2040, 1160), (1280, 1160)], (1280, 1060)),
+    ("G-CI", "G-SERVERS"): ((2500, 1220), [(2500, 1140), (2240, 1140)], (2240, 1080)),
+    ("D-REGISTRY", "D-INTEGRATION"): ((2000, 1540), [], (1740, 1540)),
+    ("D-INTEGRATION", "K-CMS"): ((1660, 1560), [(1200, 1560), (1200, 1680), (3120, 1680), (3120, 1020)],
+                                 (2960, 1020)),
+    ("D-INTEGRATION", "K-API-A"): ((1660, 1520), [(1160, 1520), (1160, 1700), (3160, 1700), (3160, 580)],
+                                   (2960, 580)),
+    ("D-INTEGRATION", "E-CDN"): ((1700, 1500), [(1700, 1160), (1300, 1160)], (1300, 1060)),
+    ("D-INTEGRATION", "E-CACHE"): ((1700, 1500), [(1700, 920)], (1540, 920)),
+    ("D-INTEGRATION", "O-COMPOSER"): ((1660, 1560), [(1200, 1560), (1200, 1680), (3120, 1680), (3120, 260),
+                                                     (1980, 260)], (1980, 520)),
 }
 
 # (abbr, from, to): (wrap, (label centre x, y)) - the centre lies on the route; the frame turns it into the edge
-# geometry x (the label slide). Found by the dry run (every label clear of cards, walls, titles and cables) and frozen.
+# geometry x (the label slide). Found by the dry run (every label clear of icons, captions, walls, titles and cables)
+# and frozen.
 LABELS = {
     # LABELS-BEGIN (written by the dry run; do not edit by hand)
-    ("CSR", "B-PAGE", "B-SHELL"): (24, (620, 480)),
-    ("CSR", "B-PAGE", "E-CDN"): (30, (980, 680)),
-    ("CSR", "B-PAGE", "E-ROUTER"): (24, (980, 380)),
-    ("CSR", "B-SHELL", "G-REMOTES"): (24, (700, 640)),
-    ("CSR", "D-REGISTRY", "E-CDN"): (24, (1280, 1090)),
-    ("CSR", "E-ROUTER", "O-BFF"): (26, (1800, 560)),
-    ("CSR", "G-CI", "D-REGISTRY"): (26, (1520, 1260)),
-    ("CSR", "G-CI", "E-CDN"): (24, (1530, 1320)),
-    ("CSR", "O-BFF", "G-APIS"): (24, (2460, 560)),
-    ("SPA", "B-PAGE", "B-ROUTER"): (28, (240, 480)),
-    ("SPA", "B-PAGE", "E-CDN"): (24, (980, 680)),
-    ("SPA", "B-PAGE", "E-ROUTER"): (24, (980, 380)),
-    ("SPA", "B-ROUTER", "G-REMOTES"): (24, (160, 640)),
-    ("SPA", "B-SHELL", "B-ROUTER"): (24, (430, 560)),
-    ("SPA", "D-REGISTRY", "E-CDN"): (24, (1280, 1090)),
-    ("SPA", "E-ROUTER", "O-BFF"): (26, (1800, 560)),
-    ("SPA", "G-CI", "D-REGISTRY"): (26, (1520, 1260)),
-    ("SPA", "G-CI", "E-CDN"): (24, (1530, 1320)),
-    ("SPA", "G-REMOTES", "B-BUS"): (24, (280, 880)),
-    ("SPA", "O-BFF", "G-APIS"): (24, (2460, 560)),
-    ("MPA", "B-PAGE", "E-CDN"): (30, (980, 690)),
-    ("MPA", "B-PAGE", "E-ROUTER"): (34, (980, 380)),
-    ("MPA", "E-ROUTER", "G-SERVERS"): (24, (1560, 590)),
-    ("MPA", "G-CI", "E-CDN"): (24, (1530, 1320)),
-    ("MPA", "G-CI", "G-SERVERS"): (24, (2240, 940)),
-    ("MPA", "G-SERVERS", "O-BFF"): (24, (2180, 640)),
-    ("MPA", "O-BFF", "G-APIS"): (24, (2460, 560)),
-    ("SSR", "B-PAGE", "E-CDN"): (26, (980, 680)),
-    ("SSR", "B-PAGE", "E-ROUTER"): (24, (980, 380)),
-    ("SSR", "B-PAGE", "G-REMOTES"): (24, (580, 480)),
-    ("SSR", "E-ROUTER", "O-COMPOSER"): (24, (1560, 400)),
-    ("SSR", "G-CI", "E-CDN"): (26, (1530, 1320)),
-    ("SSR", "G-CI", "G-SERVERS"): (24, (2240, 940)),
-    ("SSR", "G-SERVERS", "O-BFF"): (24, (2180, 640)),
-    ("SSR", "O-BFF", "G-APIS"): (24, (2460, 560)),
-    ("SSR", "O-COMPOSER", "G-SERVERS"): (30, (1780, 560)),
-    ("SSG", "B-PAGE", "E-CDN"): (24, (980, 680)),
-    ("SSG", "B-PAGE", "E-ROUTER"): (28, (980, 380)),
-    ("SSG", "B-PAGE", "G-REMOTES"): (28, (580, 480)),
-    ("SSG", "D-INTEGRATION", "E-CDN"): (24, (1230, 1420)),
-    ("SSG", "D-INTEGRATION", "K-API-A"): (24, (2960, 1250)),
-    ("SSG", "D-INTEGRATION", "K-CMS"): (24, (2720, 1230)),
-    ("SSG", "D-REGISTRY", "D-INTEGRATION"): (24, (1360, 1340)),
-    ("SSG", "E-ROUTER", "O-BFF"): (26, (1800, 560)),
-    ("SSG", "G-CI", "D-REGISTRY"): (24, (1520, 1260)),
-    ("SSG", "O-BFF", "K-API-B"): (24, (2460, 560)),
-    ("ISR", "B-PAGE", "E-CDN"): (26, (980, 680)),
-    ("ISR", "B-PAGE", "E-ROUTER"): (24, (980, 380)),
-    ("ISR", "D-INTEGRATION", "E-CACHE"): (26, (1520, 1280)),
-    ("ISR", "E-CACHE", "O-COMPOSER"): (30, (1560, 460)),
-    ("ISR", "E-ROUTER", "E-CACHE"): (24, (1280, 480)),
-    ("ISR", "G-CI", "G-SERVERS"): (30, (2240, 940)),
-    ("ISR", "G-SERVERS", "O-BFF"): (24, (2180, 630)),
-    ("ISR", "K-CMS", "O-COMPOSER"): (28, (2400, 260)),
-    ("ISR", "O-BFF", "G-APIS"): (24, (2460, 560)),
-    ("ISR", "O-COMPOSER", "G-SERVERS"): (26, (1780, 550)),
-    ("RSC", "B-PAGE", "E-CDN"): (24, (980, 680)),
-    ("RSC", "B-PAGE", "E-ROUTER"): (28, (980, 380)),
-    ("RSC", "B-PAGE", "G-REMOTES"): (32, (580, 480)),
-    ("RSC", "D-INTEGRATION", "O-COMPOSER"): (24, (1960, 1420)),
-    ("RSC", "D-REGISTRY", "D-INTEGRATION"): (24, (1360, 1340)),
-    ("RSC", "E-ROUTER", "O-COMPOSER"): (24, (1560, 400)),
-    ("RSC", "G-CI", "D-REGISTRY"): (24, (1520, 1260)),
-    ("RSC", "O-BFF", "G-APIS"): (24, (2460, 560)),
-    ("RSC", "O-COMPOSER", "O-BFF"): (24, (1980, 480)),
+    ("CSR", "B-PAGE", "E-CDN"): (30, (1100, 870)),
+    ("CSR", "B-PAGE", "E-ROUTER"): (18, (1100, 680)),
+    ("CSR", "B-PAGE", "G-SHELL"): (20, (700, 680)),
+    ("CSR", "B-SHELL", "G-REMOTES"): (16, (380, 440)),
+    ("CSR", "D-REGISTRY", "E-CDN"): (22, (1280, 1130)),
+    ("CSR", "E-ROUTER", "O-BFF"): (26, (2150, 740)),
+    ("CSR", "G-CI", "D-REGISTRY"): (16, (2100, 1430)),
+    ("CSR", "G-CI", "E-CDN"): (32, (1750, 1140)),
+    ("CSR", "O-BFF", "G-APIS"): (18, (2640, 720)),
+    ("SPA", "B-PAGE", "E-CDN"): (20, (1100, 870)),
+    ("SPA", "B-PAGE", "E-ROUTER"): (20, (1100, 680)),
+    ("SPA", "B-PAGE", "G-SHELL"): (18, (700, 680)),
+    ("SPA", "B-ROUTER", "G-REMOTES"): (20, (380, 560)),
+    ("SPA", "D-REGISTRY", "E-CDN"): (22, (1280, 1130)),
+    ("SPA", "E-ROUTER", "O-BFF"): (26, (2150, 740)),
+    ("SPA", "G-CI", "D-REGISTRY"): (16, (2100, 1430)),
+    ("SPA", "G-CI", "E-CDN"): (32, (1750, 1140)),
+    ("SPA", "G-REMOTES", "B-BUS"): (18, (180, 880)),
+    ("SPA", "O-BFF", "G-APIS"): (18, (2640, 720)),
+    ("MPA", "B-PAGE", "E-CDN"): (30, (1100, 870)),
+    ("MPA", "B-PAGE", "E-ROUTER"): (34, (1100, 680)),
+    ("MPA", "E-ROUTER", "G-SERVERS"): (16, (1780, 840)),
+    ("MPA", "G-CI", "E-CDN"): (22, (1570, 1140)),
+    ("MPA", "G-CI", "G-SERVERS"): (18, (2370, 1140)),
+    ("MPA", "G-SERVERS", "O-BFF"): (20, (2300, 840)),
+    ("MPA", "O-BFF", "G-APIS"): (18, (2640, 720)),
+    ("SSR", "B-PAGE", "E-CDN"): (26, (1100, 870)),
+    ("SSR", "B-PAGE", "E-ROUTER"): (20, (1100, 680)),
+    ("SSR", "B-PAGE", "G-REMOTES"): (22, (690, 760)),
+    ("SSR", "E-ROUTER", "O-COMPOSER"): (18, (1740, 600)),
+    ("SSR", "G-CI", "E-CDN"): (26, (1570, 1140)),
+    ("SSR", "G-CI", "G-SERVERS"): (20, (2370, 1140)),
+    ("SSR", "G-SERVERS", "O-BFF"): (18, (2300, 840)),
+    ("SSR", "O-BFF", "G-APIS"): (18, (2640, 720)),
+    ("SSR", "O-COMPOSER", "G-SERVERS"): (30, (1940, 800)),
+    ("SSG", "B-PAGE", "E-CDN"): (24, (1100, 870)),
+    ("SSG", "B-PAGE", "E-ROUTER"): (28, (1100, 680)),
+    ("SSG", "B-PAGE", "G-REMOTES"): (28, (550, 760)),
+    ("SSG", "D-INTEGRATION", "E-CDN"): (18, (1700, 1360)),
+    ("SSG", "D-INTEGRATION", "K-API-A"): (22, (3160, 810)),
+    ("SSG", "D-INTEGRATION", "K-CMS"): (18, (1440, 1560)),
+    ("SSG", "D-REGISTRY", "D-INTEGRATION"): (22, (1890, 1540)),
+    ("SSG", "E-ROUTER", "O-BFF"): (26, (2150, 740)),
+    ("SSG", "G-CI", "D-REGISTRY"): (24, (2100, 1440)),
+    ("SSG", "O-BFF", "K-API-B"): (22, (2640, 720)),
+    ("ISR", "B-PAGE", "E-CDN"): (26, (1100, 870)),
+    ("ISR", "B-PAGE", "E-ROUTER"): (20, (1100, 680)),
+    ("ISR", "D-INTEGRATION", "E-CACHE"): (26, (1700, 1360)),
+    ("ISR", "E-CACHE", "O-COMPOSER"): (30, (1740, 760)),
+    ("ISR", "E-ROUTER", "E-CACHE"): (24, (1500, 810)),
+    ("ISR", "G-CI", "G-SERVERS"): (30, (2370, 1140)),
+    ("ISR", "G-SERVERS", "O-BFF"): (16, (2300, 840)),
+    ("ISR", "K-CMS", "O-COMPOSER"): (28, (2020, 440)),
+    ("ISR", "O-BFF", "G-APIS"): (18, (2640, 720)),
+    ("ISR", "O-COMPOSER", "G-SERVERS"): (26, (1940, 800)),
+    ("RSC", "B-PAGE", "E-CDN"): (18, (1100, 870)),
+    ("RSC", "B-PAGE", "E-ROUTER"): (30, (1100, 680)),
+    ("RSC", "B-PAGE", "G-REMOTES"): (22, (540, 760)),
+    ("RSC", "D-INTEGRATION", "O-COMPOSER"): (22, (3120, 1400)),
+    ("RSC", "D-REGISTRY", "D-INTEGRATION"): (18, (1890, 1540)),
+    ("RSC", "E-ROUTER", "O-COMPOSER"): (20, (1740, 600)),
+    ("RSC", "G-CI", "D-REGISTRY"): (24, (2100, 1440)),
+    ("RSC", "O-BFF", "G-APIS"): (18, (2640, 720)),
+    ("RSC", "O-COMPOSER", "O-BFF"): (18, (2170, 660)),
     # LABELS-END
 }
 
@@ -219,10 +232,12 @@ LABELS = {
 TITLE_PREFIX = "Micro-frontends with"
 STATEMENT_HEADINGS = ("Where the HTML is produced", "Where and when the micro-frontends are composed",
                       "Trade-off for micro-frontends")
-STATEMENT_BOXES = ((40, 100, 940, 120), (1060, 100, 940, 120), (2080, 100, 940, 120))
-STATEMENT_CHARS, STATEMENT_LINES = 130, 5          # capacity: the heading plus 5 lines of about 130 characters
-TITLE_BOX = (40, 20, 2980, 60)
-COMPANIONS_BOX = (40, 1580, 2980, 60)
+STATEMENT_BOXES = ((40, 100, 1000, 120), (1120, 100, 1000, 120), (2200, 100, 1000, 120))
+# Capacity of a statement card, measured on the renders: about 160 characters a line at font 12 in a 1000-px card
+# (counted at 150, so a line never overflows), the heading plus 5 lines.
+STATEMENT_CHARS, STATEMENT_LINES = 150, 5
+TITLE_BOX = (40, 20, 3160, 60)
+COMPANIONS_BOX = (40, 1760, 3160, 60)
 COMPANIONS_HEADING = "Companions (same frame):"
 LEGEND_BADGES = (("team-a", "Team A · Catalog"), ("team-b", "Team B · Cart and orders"), ("team-c", "Team C · Account"),
                  ("platform", "Shared or platform-owned"), ("pivot", "Where the micro-frontends are composed (the pivot)"),
@@ -231,14 +246,31 @@ LEGEND_SAMPLES = (("net", "Network request at run time: the arrow is the request
                   ("page", "Call inside the page (no network)"),
                   ("build", "Build or deploy, before any request"))
 LEGEND_LINES = (
-    "Numbers = the order of the steps of the flow drawn; numbered dashed steps are build steps and come before any "
-    "request; an unnumbered cable stands outside that order (a build or deploy link, a standing link, or a separate "
-    "trigger) · yellow = where the micro-frontends are composed",
+    "Each part is an icon; its caption names it, and the caption's colour is its class. Numbers = the order of the "
+    "steps of the flow drawn; numbered dashed steps are build steps and come before any request; an unnumbered cable "
+    "stands outside that order (a build or deploy link, a standing link, or a separate trigger).",
     "BFF and page cache are separate choices from the rendering approach (ISR alone is built on its page cache), "
     "drawn where this example uses them; the headless CMS is a data source, not a BFF.")
-MUTED_DEFAULT = "not used in %s"
 ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;"
        "fontColor=#37474F;kitExempt=1;")
+
+# ------------------------------------------------------------------------------------------- kit fingerprint
+# The frame calls the prompt master's kit live. This digest is of the kit's OUTPUT for fixed probes (one icon per glyph
+# the frame uses, and one text-kit cell per pattern it uses), taken when the frame was last proved. If the kit changes
+# what it draws, build_page refuses to write until the frame is proved again: re-run the dry run on all seven pages,
+# both gates, look at every render, then set KIT_FINGERPRINT to the new digest (the contract's Frame proof says how).
+KIT_FINGERPRINT = "babc75c06a532248a51ade77da8d5ea9c6ec09600bf8abff9ddddda6116cdcf9"
+
+
+def kit_fingerprint():
+    h = hashlib.sha256()
+    for key in sorted({n[1] for n in NODES.values()}):
+        b64, extra = gen_icons.style_p3("probe_%s" % key, gen_icons.CLAY_DEMO[key], "#FFFFFF")
+        h.update(("%s|%s|%s\n" % (key, b64, extra)).encode("utf-8"))
+    for pat, kind in (("t4", "info"), ("t3", "neutral"), ("t1", "neutral")):
+        for cell in gen_text.text("probe", pat, kind, "probe", 0, 0, 240, 60, color="#FFFFFF"):
+            h.update(cell.encode("utf-8"))
+    return h.hexdigest()
 
 
 # =================================================================================================== helpers
@@ -259,9 +291,16 @@ def _reparent(cell_xml, parent):
 def abs_rect(cid):
     if cid in NODES:
         n = NODES[cid]
-        return (n[3], n[4], n[5], n[6])
+        return (n[3], n[4], n[5], n[5])
     c = CONTAINERS[cid]
     return (c[2], c[3], c[4], c[5])
+
+
+def caption_box(cid):
+    """The caption under an icon (estimate, a little wider than drawn): centred, CAP_GAP below the glyph."""
+    x, y, s, _ = abs_rect(cid)
+    w = len(NODES[cid][0]) * CAP_CHAR_W + CAP_PAD
+    return (x + s / 2.0 - w / 2.0, y + s + CAP_GAP, w, CAP_H)
 
 
 def _parent_of(cid):
@@ -277,17 +316,21 @@ def _rel(cid, x, y):
 
 
 def wrap_label(text, wrap):
-    """`\n` forces a break; each forced line is word-wrapped at `wrap` characters. -> list of lines."""
+    """`\n` forces a break; each forced line is word-wrapped at `wrap` characters. -> list of lines.
+    A step number never parts from its "·", nor from the word after it ("6 · one" stays on one line)."""
     out = []
     for part in str(text).split("\n"):
         words, units, i = part.split(" "), [], 0
-        while i < len(words):                          # a step number never parts from its "·"
+        while i < len(words):
             w = words[i]
-            if i + 1 < len(words) and words[i + 1] == "·":
+            i += 1
+            while i < len(words) and words[i] == "·":       # "1 · 3 · static" is one unit
                 w += " ·"
                 i += 1
+                if i < len(words):
+                    w += " " + words[i]
+                    i += 1
             units.append(w)
-            i += 1
         line = ""
         for word in units:
             if not line:
@@ -345,16 +388,25 @@ def _on_seg(pt, p, q):
     return False
 
 
+def _face(cid, pt):
+    """Which wall of cid the point lies on: left | right | top | bottom (asserted to lie on one, not a corner)."""
+    x, y, w, h = abs_rect(cid)
+    on_x = pt[0] in (x, x + w) and y < pt[1] < y + h
+    on_y = pt[1] in (y, y + h) and x < pt[0] < x + w
+    assert on_x or on_y, "%s is not on a wall of %s (corners excluded)" % (pt, cid)
+    if on_x:
+        return "left" if pt[0] == x else "right"
+    return "top" if pt[1] == y else "bottom"
+
+
 def _ports(pair):
-    """exit/entry fractions of a route's end points on their cells' walls (asserted to lie on the wall)."""
+    """exit/entry fractions of a route's end points on their cells' walls."""
     a, _pts, b = ROUTES[pair]
     out = []
     for cid, pt in ((pair[0], a), (pair[1], b)):
+        _face(cid, pt)
         x, y, w, h = abs_rect(cid)
-        fx, fy = (pt[0] - x) / float(w), (pt[1] - y) / float(h)
-        assert -1e-9 <= fx <= 1 + 1e-9 and -1e-9 <= fy <= 1 + 1e-9, "%s: %s off %s" % (pair, pt, cid)
-        assert fx in (0.0, 1.0) or fy in (0.0, 1.0), "%s: %s not on the wall of %s" % (pair, pt, cid)
-        out.append((round(fx, 6), round(fy, 6)))
+        out.append((round((pt[0] - x) / float(w), 6), round((pt[1] - y) / float(h), 6)))
     return out
 
 
@@ -369,12 +421,12 @@ def _rect_hit(a, b, pad=0.0):
     return (ax - pad < bx + bw and bx < ax + aw + pad and ay - pad < by + bh and by < ay + ah + pad)
 
 
-def _seg_hits_rect(p, q, r):
-    """True when the axis-aligned segment p-q touches the rect r (inclusive of its edges)."""
+def _seg_hits_rect(p, q, r, pad=0.0):
+    """True when the axis-aligned segment p-q comes within `pad` of the rect r (edges included)."""
     x0, x1 = min(p[0], q[0]), max(p[0], q[0])
     y0, y1 = min(p[1], q[1]), max(p[1], q[1])
     rx, ry, rw, rh = r
-    return x0 <= rx + rw and rx <= x1 and y0 <= ry + rh and ry <= y1
+    return x0 <= rx + rw + pad and rx - pad <= x1 and y0 <= ry + rh + pad and ry - pad <= y1
 
 
 def _crosses_border(box, r):
@@ -419,7 +471,9 @@ def label_problems(pair, lines, centre, cables, placed, horizontal_max=3, vertic
         why.append("off page")
     for cid in NODES:
         if _rect_hit(axis_box, abs_rect(cid)):
-            why.append("on card %s" % cid)
+            why.append("on icon %s" % cid)
+        if _rect_hit(axis_box, caption_box(cid)):
+            why.append("on the caption of %s" % cid)
     for cid in CONTAINERS:
         if _crosses_border(axis_box, abs_rect(cid)):
             why.append("on the wall of %s" % cid)
@@ -456,39 +510,59 @@ def _check_titles(cables):
     return bad
 
 
-def _fit_lines(text, chars):
-    n = 0
-    for part in str(text).split("\n"):
-        n += max(1, len(wrap_label(part, chars)))
-    return n
+def _check_captions(cables):
+    """No cable comes within 4 px of a caption, and every caption sits inside its parent container."""
+    bad = []
+    for pair in cables:
+        pts = path_of(pair)
+        for cid in NODES:
+            cb = caption_box(cid)
+            for k in range(len(pts) - 1):
+                if _seg_hits_rect(pts[k], pts[k + 1], cb, pad=4):
+                    bad.append("%s -> %s touches the caption of %s" % (pair[0], pair[1], cid))
+                    break
+    for cid in NODES:
+        cx, cy, cw, ch = caption_box(cid)
+        px, py, pw, ph = abs_rect(_parent_of(cid))
+        if cx < px + 4 or cy < py + 4 or cx + cw > px + pw - 4 or cy + ch > py + ph - 4:
+            bad.append("the caption of %s leaves %s" % (cid, _parent_of(cid)))
+    return bad
 
 
-def _card_fits(cid, label_name, subtitle):
-    """Rough text-fit estimate for a T1 clay + icon card (the render is the real check)."""
-    x, y, w, h = abs_rect(cid)
-    fs = 12 if w >= 220 else 11
-    isz = 28 if not (h < 56 or w < 150) else max(14, min(28, h - 20, int((w - 16) * 0.34)))
-    left = (6 if isz < 24 else 8) + isz + 6
-    top = 10 if isz < 24 else 14
-    usable = w - left - 10
-    name_lines = _fit_lines(label_name, int(usable / (fs * 0.62)))
-    sub_lines = _fit_lines(subtitle, int(usable / (fs * 0.52)))
-    need = top + (name_lines + sub_lines) * fs * 1.2 + 4
-    return need <= h, name_lines + sub_lines
+def _check_ports(cables):
+    """Two cables of one page never share an end point on one face."""
+    seen, bad = {}, []
+    for pair in cables:
+        a, _pts, b = ROUTES[pair]
+        for cid, pt in ((pair[0], a), (pair[1], b)):
+            key = (cid, pt)
+            if key in seen and seen[key] != pair:
+                bad.append("%s -> %s and %s -> %s share the port %s on %s" % (pair + seen[key] + (pt, cid)))
+            seen[key] = pair
+    return bad
+
+
+def _statement_lines(text):
+    return len(wrap_label(text, STATEMENT_CHARS))
 
 
 # =================================================================================================== the page
-def build_page(abbr, full_name, statements, states, subtitles, cables, companions, out_path):
+def build_page(abbr, full_name, statements, states, cables, companions, out_path):
     """Write one micro-frontend page to `out_path` (a .drawio holding exactly one diagram). Data only:
     abbr        'CSR' ... 'RSC' (keys the label slides)
     full_name   the title after '<ABBR>: '
     statements  3 strings: where the HTML is produced; where and when the micro-frontends are composed; the trade-off
     states      {node id: 'active' | 'muted' | 'pivot'} for every node (never a group: a group is muted when all its
                 members are)
-    subtitles   {node id: str}; a muted node with none gets 'not used in <ABBR>'
-    cables      [(n, from id, to id, 'net' | 'page' | 'build', label)]; a label may hold '\\n' (a forced break)
+    cables      [(n, from id, to id, 'net' | 'page' | 'build', label)]: n is the step number as a string, or '-' for a
+                cable outside the numbered order; a numbered label starts with '<n> ·'; a label may hold '\\n'
     companions  6 file names
     Returns a dict of what was written (cells, cables, pivot, muted)."""
+    if KIT_FINGERPRINT and kit_fingerprint() != KIT_FINGERPRINT:
+        raise ValueError("mfe_frame.build_page(%s): the prompt master's 3-diagram kit now draws differently from the "
+                         "kit this frame was proved on (KIT_FINGERPRINT). Prove the frame again: run the dry run on all "
+                         "seven pages, both gates, look at every render, then set KIT_FINGERPRINT to "
+                         "mfe_frame.kit_fingerprint() and record it in the contract's Frame proof." % abbr)
     errors = []
     if len(statements) != 3:
         errors.append("statements: 3 needed, got %d" % len(statements))
@@ -499,15 +573,10 @@ def build_page(abbr, full_name, statements, states, subtitles, cables, companion
             errors.append("%s is a group or a container: it takes no state" % cid)
         elif cid not in NODES:
             errors.append("unknown node %s" % cid)
-    for cid in subtitles:
-        if cid not in NODES:
-            errors.append("subtitle for %s, which is not a node" % cid)
     for cid in NODES:
         st = states.get(cid)
         if st not in ("active", "muted", "pivot"):
             errors.append("%s: state %r (active, muted or pivot needed)" % (cid, st))
-        if st in ("active", "pivot") and not subtitles.get(cid):
-            errors.append("%s: an active node needs a subtitle" % cid)
     pivots = [c for c in NODES if states.get(c) == "pivot"]
     if len(pivots) != 1:
         errors.append("exactly one pivot needed, got %s" % pivots)
@@ -520,6 +589,10 @@ def build_page(abbr, full_name, statements, states, subtitles, cables, companion
             errors.append("%s -> %s: unknown edge class %r" % (a, b, cls))
         if label and (abbr, a, b) not in LABELS:
             errors.append("no label slide for %s %s -> %s" % (abbr, a, b))
+        if n != "-" and not str(label).startswith("%s ·" % n):
+            errors.append("%s -> %s: step %s, but its label does not start with '%s ·'" % (a, b, n, n))
+        if n == "-" and re.match(r"^\d+ ·", str(label)):
+            errors.append("%s -> %s: an unnumbered cable whose label starts with a step number" % (a, b))
         if (a, b) in pairs:
             errors.append("%s -> %s drawn twice" % (a, b))
         pairs.append((a, b))
@@ -527,7 +600,7 @@ def build_page(abbr, full_name, statements, states, subtitles, cables, companion
         raise ValueError("mfe_frame.build_page(%s):\n  " % abbr + "\n  ".join(errors))
 
     # ---------------------------------------------------------------- self-checks before writing
-    problems = _check_titles(pairs)
+    problems = _check_titles(pairs) + _check_captions(pairs) + _check_ports(pairs)
     placed = []
     label_cells = {}
     for n, a, b, cls, label in cables:
@@ -541,16 +614,9 @@ def build_page(abbr, full_name, statements, states, subtitles, cables, companion
         placed.append(label_box(lines, *centre))
         label_cells[(a, b)] = (lines, centre)
     for k, s in enumerate(statements):
-        if len(wrap_label(s, STATEMENT_CHARS)) > STATEMENT_LINES:
+        if _statement_lines(s) > STATEMENT_LINES:
             problems.append("statement S%d needs more than %d lines of %d characters"
                             % (k + 1, STATEMENT_LINES, STATEMENT_CHARS))
-    subs = {}
-    for cid in NODES:
-        sub = subtitles.get(cid) or (MUTED_DEFAULT % abbr)
-        subs[cid] = sub
-        ok, nl = _card_fits(cid, NODES[cid][0], sub)
-        if not ok:
-            problems.append("%s: text may overflow (%d lines)" % (cid, nl))
     if problems:
         raise ValueError("mfe_frame.build_page(%s) refused to write:\n  " % abbr + "\n  ".join(problems))
 
@@ -559,7 +625,7 @@ def build_page(abbr, full_name, statements, states, subtitles, cables, companion
     for cid, n in NODES.items():
         st = states[cid]
         cls_of[cid] = ("pivot" if st == "pivot" else "muted" if st == "muted" else
-                       ("team-" + n[7]) if n[7] else "platform")
+                       ("team-" + n[6]) if n[6] else "platform")
     group_muted = {g: all(states[c] == "muted" for c, n in NODES.items() if n[2] == g) for g in GROUPS}
 
     def container_xml(cid):
@@ -578,34 +644,35 @@ def build_page(abbr, full_name, statements, states, subtitles, cables, companion
         return ('<mxCell id="%s" value="%s" style="%s" vertex="1" parent="%s"><mxGeometry x="%d" y="%d" width="%d" '
                 'height="%d" as="geometry"/></mxCell>' % (cid, gen_text.X(title), st, parent, rx, ry, w, h))
 
-    def card_xml(cid):
-        name, icon, parent, x, y, w, h, _team = NODES[cid]
+    def icon_xml(cid):
+        name, key, parent, x, y, size, _team = NODES[cid]
         cls = cls_of[cid]
-        kind, fill, keys = CLASSES[cls]
-        fs = 12 if w >= 220 else 11
-        label = "<b>%s</b><br>%s" % (_esc(name), _esc(subs[cid]))
+        fill, border, _kind = CLASSES[cls]
+        b64, extra = gen_icons.style_p3("%s_p3" % key, gen_icons.CLAY_DEMO[key], "#FFFFFF")
+        st = ("shape=stencil(%s);html=1;aspect=fixed;%sverticalLabelPosition=bottom;verticalAlign=top;align=center;"
+              "spacingTop=%d;fontSize=12;fontStyle=1;fontColor=%s;labelBackgroundColor=%s;labelBorderColor=%s;"
+              "mfeClass=%s;" % (b64, extra, CAP_GAP, CAPTION_FONT, fill, border, cls))
+        if cls == "muted":
+            st += MUTED_KEYS
         rx, ry = _rel(cid, x, y)
-        out = gen_text.text(cid, "t1", kind, label, rx, ry, w, h, color=fill, style="clay", icon=icon, font_size=fs)
-        assert len(out) == 1, "%s: expected one composite cell, got %d" % (cid, len(out))
-        s = out[0]
-        assert s.count("shadow=1;") == 1, "%s: the kit's shadow key moved" % cid
-        s = s.replace("shadow=1;", keys)
-        s = _style_add(s, "mfeClass=%s;" % cls)
-        return _reparent(s, parent)
+        return ('<mxCell id="%s" value="%s" style="%s" vertex="1" parent="%s"><mxGeometry x="%d" y="%d" width="%d" '
+                'height="%d" as="geometry"/></mxCell>' % (cid, gen_text.X(_esc(name)), st, parent, rx, ry, size, size))
 
     body = []
     for cid in ORDER:
-        body.append(container_xml(cid) if cid in CONTAINERS else card_xml(cid))
+        body.append(container_xml(cid) if cid in CONTAINERS else icon_xml(cid))
 
     # legend (its rows are its children)
     lx, ly = CONTAINERS["C-LEGEND"][2], CONTAINERS["C-LEGEND"][3]
     body.append(container_xml("C-LEGEND"))
     for i, (cls, text) in enumerate(LEGEND_BADGES):
-        kind, fill, keys = CLASSES[cls]
+        fill, _border, kind = CLASSES[cls]
         bx, by = 20 + (i % 3) * 260, 40 + (i // 3) * 60
         out = gen_text.text("L-BADGE-%s" % cls, "t4", kind, _esc(text), bx, by, 240, 40, color=fill)
         for s in out:
-            s = s.replace("shadow=1;", keys)
+            s = s.replace("shadow=1;", "shadow=0;")
+            if cls == "muted":
+                s = _style_add(s, MUTED_KEYS)
             body.append(_reparent(_style_add(s, "kitExempt=1;"), "C-LEGEND"))
     for i, (cls, text) in enumerate(LEGEND_SAMPLES):
         body.append('<mxCell id="L-CAPTION-%s" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="140" '
@@ -670,7 +737,7 @@ def build_page(abbr, full_name, statements, states, subtitles, cables, companion
 
 
 def _verify(xml, abbr):
-    """Checks on the file itself: grid, one diagram, class markers and shadow keys."""
+    """Checks on the file itself: grid, one diagram, class markers, the icon form."""
     import xml.etree.ElementTree as ET
     root = ET.fromstring(xml)
     assert len(root.findall("diagram")) == 1, "exactly one <diagram>"
@@ -690,14 +757,14 @@ def _verify(xml, abbr):
         for p in g.iter("mxPoint"):
             for k in ("x", "y"):
                 assert float(p.get(k)) % GRID == 0, "%s point off the grid" % c.get("id")
-    cards = [c for c in root.iter("mxCell") if "mfeClass=" in (c.get("style") or "")]
-    assert len(cards) == len(NODES), "every content card carries mfeClass (%d of %d)" % (len(cards), len(NODES))
-    pivots = [c for c in cards if "mfeClass=pivot;" in c.get("style")]
+    icons = [c for c in root.iter("mxCell") if "mfeClass=" in (c.get("style") or "")]
+    assert len(icons) == len(NODES), "every content icon carries mfeClass (%d of %d)" % (len(icons), len(NODES))
+    pivots = [c for c in icons if "mfeClass=pivot;" in c.get("style")]
     assert len(pivots) == 1, "exactly one mfeClass=pivot"
-    for c in cards:
+    for c in icons:
         st = c.get("style")
-        assert st.count("shadow=") == 1, "%s: %d shadow keys" % (c.get("id"), st.count("shadow="))
-        assert ("shadow=1;" in st) == ("mfeClass=pivot;" in st), "%s: shadow=1 only on the pivot" % c.get("id")
+        assert "verticalLabelPosition=bottom;" in st, "%s: an icon with its caption under it" % c.get("id")
+        assert "whiteSpace=wrap" not in st, "%s: a caption, never a wrapped card label" % c.get("id")
+        assert "<br>" not in (c.get("value") or ""), "%s: a caption is one line, no subtitle" % c.get("id")
         if "mfeClass=muted;" in st:
-            for k in ("opacity=45;", "textOpacity=60;", "opacityGroup=1;"):
-                assert k in st, "%s: muted card lacks %s" % (c.get("id"), k)
+            assert MUTED_KEYS in st, "%s: a muted icon is faded (%s)" % (c.get("id"), MUTED_KEYS)

@@ -8,13 +8,16 @@
 > `007-micro-frontend-rsc/micro-frontend-rsc-architecture.drawio`.
 > Made by `diagram-architecture-io "micro-frontends under client-side rendering (CSR)" micro-frontend-csr` (prompt master
 > `shared/workflows/diagram-generate.md`, type `architecture`, plan ROAD), in a library slot (T-001).
+> **Revision 2 (2026-11-16):** redrawn as an architecture page in the prompt master's standard, every part an icon with
+> its name as a caption and the numbered arrows carrying the workflow, on the owner's word (*"the diagram workflow should
+> be bease with icon arrow workflow relation"*). Revision 1 drew every node as a text card with a subtitle.
 
 ## 1. Purpose
 
 Show where the HTML is produced and where and when the micro-frontends are composed under CSR on the first load: the
-browser gets a nearly empty `index.html`, and the **app shell** (the pivot) reads the registry's manifest, loads each
-team's remote entry from the CDN and mounts it, at run time. It is one of seven pages drawn on one frame, so a reader can
-compare it node for node with the other six and see the composition point move.
+browser gets a nearly empty `index.html`, and the app shell's **runtime loader** (the pivot) reads the registry's
+manifest, loads each team's remote entry from the CDN and mounts it, at run time. It is one of seven pages drawn on one
+frame, so a reader can compare it part for part with the other six and see the composition point move.
 
 ## 2. Ownership & cadence
 
@@ -27,52 +30,36 @@ compare it node for node with the other six and see the composition point move.
 
 The page is the frame's (`../../_workspace/1-producer/analysis/micro-frontend-frame.md`), in this order: the title
 banner; the three statement cards; the four columns (Browser, Edge, Origin, Backend) with their groups; the build band;
-the cables; the legend; the companions card. This slot gives the frame data only:
+the arrows; the legend; the companions card. Every part is an icon whose caption is its frame-static NAME. This slot
+gives the frame data only:
 
 - **Title:** `Micro-frontends with CSR: client-side rendering (first load)`.
 - **S1 (where the HTML is produced):** `In the browser. The CDN sends a nearly empty index.html; the DOM is built by JavaScript after the shell and the team UIs load.`
 - **S2 (where and when composed):** `In the browser, at run time, on the first load: the app shell reads the registry's manifest (an import map or a Module Federation manifest), loads each team's remote entry from the CDN and mounts it.`
 - **S3 (trade-off):** `Each team deploys its UI on its own, with no rebuild of the shell. But the first paint waits for several bundles, SEO depends on crawlers running JavaScript, and shared libraries (one React) must stay compatible singleton versions.`
-- **Pivot:** B-SHELL. **Muted (9):** B-ROUTER, B-BUS, E-CACHE, O-COMPOSER, O-SRV-A, O-SRV-B, O-SRV-C, K-CMS,
-  D-INTEGRATION; G-SERVERS is drawn muted because all its members are. Everything else is active.
 - **Companions:** the six files in the header.
+
+### Node states
+
+| state | nodes |
+|---|---|
+| pivot | B-SHELL (Runtime loader, in the App shell group) |
+| active | B-PAGE, B-SHARED, B-UI-A, B-UI-B, B-UI-C, E-ROUTER, E-CDN, O-BFF, K-API-A, K-API-B, K-API-C, D-REGISTRY, D-CI-A, D-CI-B, D-CI-C |
+| muted (9) | B-ROUTER, B-BUS, E-CACHE, O-COMPOSER, O-SRV-A, O-SRV-B, O-SRV-C, K-CMS, D-INTEGRATION |
+
+G-SERVERS is drawn muted because all its members are; G-SHELL is not (its runtime loader is the pivot).
 
 ### Page text
 
-Every content-node subtitle and every content-cable label on the page. The node NAMEs, container titles, statement
-headings, legend and companions heading are frame-static (sourced once in the frame contract's § Frame-static text).
-`source` is the Origin of a row of `_origins.md`, or `§ 8` (unverified). A label that states no fact cites the source of
-the flow it belongs to.
+Every arrow label on the page. The captions (the node NAMEs), container titles, statement headings, legend and
+companions heading are frame-static (sourced once in the frame contract's § Frame-static text). `source` is the Origin
+of a row of `_origins.md`, or `§ 8` (unverified). A label that states no fact cites the source of the flow it belongs
+to.
 
 | where | text | source |
 |---|---|---|
-| B-PAGE | gets a near-empty index.html | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| B-ROUTER | not used in this first-load view | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| B-SHELL | loads and mounts team UIs at run time | https://martinfowler.com/articles/micro-frontends.html (read 2026-11-16) |
-| B-UI-A | own bundle, own deploy | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
-| B-UI-B | own bundle, own deploy | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
-| B-UI-C | own bundle, own deploy | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
-| B-BUS | not used in this first-load view | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| B-SHARED | one React, shared as a singleton | https://module-federation.io/configure/shared.html (read 2026-11-16) |
-| E-ROUTER | /api/* to the BFF | § 8 |
-| E-CACHE | no HTML to cache | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| E-CDN | index.html, manifest, shell, team bundles | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
-| O-COMPOSER | no server rendering in CSR | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| O-BFF | one API for the browser | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| O-SRV-A | no server rendering in CSR | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| O-SRV-B | no server rendering in CSR | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| O-SRV-C | no server rendering in CSR | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| K-API-A | team data | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| K-API-B | team data | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| K-API-C | team data | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| K-CMS | not used in CSR | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| D-REGISTRY | remote manifest / import map | https://module-federation.io/configure/remotes.html (read 2026-11-16) · https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
-| D-INTEGRATION | no site build in CSR | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
-| D-CI-A | builds and uploads its UI | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
-| D-CI-B | builds and uploads its UI | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
-| D-CI-C | builds and uploads its UI | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
 | B-PAGE → E-CDN | 1 · 3 · static files: index.html, import map / manifest, shell, team bundles | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) · https://module-federation.io/configure/remotes.html (read 2026-11-16) |
-| B-PAGE → B-SHELL | 2 · the shell boots | https://martinfowler.com/articles/micro-frontends.html (read 2026-11-16) |
+| B-PAGE → G-SHELL | 2 · the shell boots | https://martinfowler.com/articles/micro-frontends.html (read 2026-11-16) |
 | B-SHELL → G-REMOTES | 3 · load each remote entry, mount it | https://module-federation.io/configure/remotes.html (read 2026-11-16) · https://single-spa.js.org/docs/building-applications/ (read 2026-11-16) |
 | B-PAGE → E-ROUTER | 4 · team UIs call the API (JSON) | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
 | E-ROUTER → O-BFF | 5 · /api routed to the BFF | § 8 |
@@ -86,7 +73,7 @@ the flow it belongs to.
 | n | from → to | class |
 |---|---|---|
 | 1 (and 3) | B-PAGE → E-CDN | net |
-| 2 | B-PAGE → B-SHELL | page |
+| 2 | B-PAGE → G-SHELL | page |
 | 3 | B-SHELL → G-REMOTES | page |
 | 4 | B-PAGE → E-ROUTER | net |
 | 5 | E-ROUTER → O-BFF | net |
@@ -98,14 +85,16 @@ the flow it belongs to.
 ## 4. Derivation
 
 - **The flow, first load:** the browser asks the CDN for the static files (step 1: `index.html`, the import map or
-  manifest; step 3: the shell's and each team's bundle, the same cable); the page boots the shell (step 2); the shell
-  loads each team's remote entry and mounts it (step 3, the run-time composition: Fowler's run-time integration via
+  manifest, and the shell's bundle); the page boots the app shell (step 2); the shell's runtime loader fetches each
+  team's remote entry from the CDN and mounts it (step 3, the run-time composition: Fowler's run-time integration via
   JavaScript, Module Federation's remote entry, single-spa's mount); the team UIs call the API through the edge router
-  and the BFF (steps 4 to 6). Each team's pipeline uploads its bundle and publishes the new version to the registry,
-  and the manifest points at it (the import-map deploy of single-spa's recommended setup): the three build cables,
-  unnumbered because they stand outside the request's order.
-- **The pivot** is B-SHELL, the app shell's run-time loader, where the micro-frontends are composed (G-001 D2).
-- **Muted:** the nodes the CSR first load does not use. B-ROUTER and B-BUS belong to the navigation after the first
+  and the BFF (steps 4 to 6). Step 3's fetch of the remote entries travels on the same arrow as step 1 (§ 8). Each
+  team's pipeline uploads its bundle and publishes the new version to the registry, and the manifest points at it (the
+  import-map deploy of single-spa's recommended setup): the three build arrows, unnumbered because they stand outside
+  the request's order.
+- **The pivot** is B-SHELL, the app shell's runtime loader, where the micro-frontends are composed (G-001 D2). Step 2
+  enters the App shell group, and step 3 leaves from the loader.
+- **Muted:** the parts the CSR first load does not use. B-ROUTER and B-BUS belong to the navigation after the first
   load (the SPA page, G-001 D3); the page cache, the page composer and the team servers render no HTML in CSR; the
   integration build makes no site; the headless CMS is not drawn in this example. A group is muted when all its members
   are (G-SERVERS).
@@ -114,11 +103,13 @@ the flow it belongs to.
 
 ## 5. Presentation
 
-The frame's presentation, unchanged (contract § Colour classes, § Edge classes, § Labels): one ROAD page, 3060 x 1680,
-T1 clay + icon cards with the colour class fills, B-SHELL's fill #FFF2CC the only warm one, muted cards faded with
-`opacityGroup=1`, net / page / build cables, labels wrapped and slid by the frame's table for `CSR`. The `.drawio` is
-written to the slot's root by the builder; its render is `2-generated/artifact/micro-frontend-csr-architecture.png`
-(headless Chrome with the draw.io viewer, cropped to the drawing plus 20 px). Nothing on the page is written by hand.
+The frame's presentation, unchanged (contract § Nodes, § Colour classes, § Edge classes, § Labels): one ROAD page,
+3240 x 1840; every part a kit clay glyph (`gen_icons.style_p3`) with its NAME as the caption under it; the caption's
+tint is the class (team, platform), the pivot's caption the one amber pill (#FFD54F), muted icons faded
+(`opacity=40;textOpacity=40;opacityGroup=1`); net / page / build arrows, labels wrapped and slid by the frame's table
+for `CSR`. The `.drawio` is written to the slot's root by the builder; its render is
+`2-generated/artifact/micro-frontend-csr-architecture.png` (headless Chrome with the draw.io viewer, cropped to the
+drawing plus 20 px). Nothing on the page is written by hand.
 
 ## 6. Inputs
 
@@ -136,21 +127,24 @@ written to the slot's root by the builder; its render is `2-generated/artifact/m
 
 - Data only: the builder passes the tables of § 3 to `build_page`; every coordinate, style, port, wrap and slide is the
   frame's.
-- The `.drawio` holds exactly one `<diagram>`; a rebuild reproduces it byte for byte; its sha256 is in the slot's
-  `_config/_manifest.json`.
-- Both gates pass: `kit_coverage_check.py` exit 0; `check_layout.py` (report profile, ROAD, no `--centre`) exit 0 with
-  0 CROSS, 0 COLLINEAR, 0 STRADDLE, 0 OFF-PAGE, 0 DEPTH-STROKE, and the only excluded edges are the three legend samples
-  (the frame's `## Frame proof`, CSR row).
-- Exactly one card carries `mfeClass=pivot` (B-SHELL); each card's style holds one `shadow=` key, `shadow=1` on the pivot
-  only; every muted card carries `opacity=45`, `textOpacity=60` and `opacityGroup=1`.
-- The page text matches § 3 word for word; a subtitle or label no source supports is listed in § 8, never reworded.
+- The `.drawio` holds exactly one `<diagram>`; a rebuild reproduces it byte for byte; its sha256 (of the LF bytes) is in
+  the slot's `_config/_manifest.json`.
+- Both gates pass: `kit_coverage_check.py --architecture` exit 0 (25/25 icons with a caption, no card); `check_layout.py`
+  (report profile, ROAD, no `--centre`) exit 0 with 0 CROSS, 0 COLLINEAR, 0 STRADDLE, 0 OFF-PAGE, 0 DEPTH-STROKE, and
+  the only excluded edges are the three legend samples (the frame's `## Frame proof`, CSR row).
+- Exactly one icon carries `mfeClass=pivot` (B-SHELL); every icon's caption sits under it
+  (`verticalLabelPosition=bottom`), one line, no subtitle; every muted icon carries `opacity=40`, `textOpacity=40` and
+  `opacityGroup=1`.
+- The page text matches § 3 word for word; a label no source supports is listed in § 8, never reworded.
 
 ## 8. Known gaps
 
-- ⚠ **Unverified (no listed source states it), kept as the plan wrote it:** E-ROUTER's subtitle `/api/* to the BFF` and
-  cable 5 `5 · /api routed to the BFF`: an edge router (a reverse proxy) that sends `/api/*` to the BFF is this
-  example's deployment, a common setup, not a fact from the sources. The `JSON` of cable 4 and the three example teams
-  (Catalog, Cart and orders, Account) are the example's too (`_origins.md`, kind `claude`, assumed).
+- ⚠ **Unverified (no listed source states it), kept as the plan wrote it:** arrow 5 `5 · /api routed to the BFF`: an
+  edge router (a reverse proxy) that sends `/api/*` to the BFF is this example's deployment, a common setup, not a fact
+  from the sources. The `JSON` of arrow 4 and the three example teams (Catalog, Cart and orders, Account) are the
+  example's too (`_origins.md`, kind `claude`, assumed).
+- **Step 3 has no arrow of its own to the CDN:** the runtime loader's fetch of each team's remote entry travels on arrow
+  1 (`1 · 3 · …`), which is why that arrow carries both numbers; arrow 3 is the mount inside the page.
 - **The stored item is outside this workspace:** the builder writes `../micro-frontend-csr-architecture.drawio` into the
   slot's root, the one write outside its workspace, because the item is what this workspace exists to make (prompt
   master `LIBRARY.md` § 2a; T-008 records the lesson there). The slot's `_config/_manifest.json` (kind `storage`) lists
@@ -163,5 +157,5 @@ written to the slot's root by the builder; its render is `2-generated/artifact/m
   ran; `sync` would name it.
 - **The owner's chat is private:** `_origins.md` cites it by title and the date read, with no link; the public pages
   were re-read on 2026-11-16 (the plan read them on 2026-11-15).
-- **No tooltips:** the cards carry no draw.io tooltip (`SPEC_DRIVEN_GENERATION.md` § *Self-explanation*); every card's
-  meaning is on its face (NAME and subtitle), and the legend explains the classes.
+- **No tooltips:** the icons carry no draw.io tooltip (`SPEC_DRIVEN_GENERATION.md` § *Self-explanation*); each part is
+  named by its caption, the arrows say what moves, and the legend explains the classes.

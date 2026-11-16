@@ -76,26 +76,20 @@ STATEMENTS = [
     "SEO depends on crawlers running JavaScript, and shared libraries (one React) must stay compatible singleton "
     "versions.",
 ]
-ROWS = [  # (node ids, state, subtitle) - spec section 3, Page text
-    ("B-PAGE", "active", "gets a near-empty index.html"),
-    ("B-SHELL", "pivot", "loads and mounts team UIs at run time"),
-    ("B-SHARED", "active", "one React, shared as a singleton"),
-    ("B-UI-A B-UI-B B-UI-C", "active", "own bundle, own deploy"),
-    ("B-ROUTER B-BUS", "muted", "not used in this first-load view"),
-    ("E-ROUTER", "active", "/api/* to the BFF"),
-    ("E-CACHE", "muted", "no HTML to cache"),
-    ("E-CDN", "active", "index.html, manifest, shell, team bundles"),
-    ("O-COMPOSER O-SRV-A O-SRV-B O-SRV-C", "muted", "no server rendering in CSR"),
-    ("O-BFF", "active", "one API for the browser"),
-    ("K-API-A K-API-B K-API-C", "active", "team data"),
-    ("K-CMS", "muted", "not used in CSR"),
-    ("D-INTEGRATION", "muted", "no site build in CSR"),
-    ("D-REGISTRY", "active", "remote manifest / import map"),
-    ("D-CI-A D-CI-B D-CI-C", "active", "builds and uploads its UI"),
+ROWS = [  # (node ids, state) - spec section 3, Node states; each node's caption is its frame-static NAME
+    ("B-PAGE B-SHARED B-UI-A B-UI-B B-UI-C", "active"),
+    ("B-SHELL", "pivot"),
+    ("B-ROUTER B-BUS", "muted"),
+    ("E-ROUTER E-CDN", "active"),
+    ("E-CACHE", "muted"),
+    ("O-COMPOSER O-SRV-A O-SRV-B O-SRV-C", "muted"),
+    ("O-BFF K-API-A K-API-B K-API-C", "active"),
+    ("K-CMS D-INTEGRATION", "muted"),
+    ("D-REGISTRY D-CI-A D-CI-B D-CI-C", "active"),
 ]
 CABLES = [  # (n, from, to, class, label) - spec section 3, Cables
     ("1", "B-PAGE", "E-CDN", "net", "1 · 3 · static files: index.html, import map / manifest, shell, team bundles"),
-    ("2", "B-PAGE", "B-SHELL", "page", "2 · the shell boots"),
+    ("2", "B-PAGE", "G-SHELL", "page", "2 · the shell boots"),
     ("3", "B-SHELL", "G-REMOTES", "page", "3 · load each remote entry, mount it"),
     ("4", "B-PAGE", "E-ROUTER", "net", "4 · team UIs call the API (JSON)"),
     ("5", "E-ROUTER", "O-BFF", "net", "5 · /api routed to the BFF"),
@@ -109,21 +103,20 @@ COMPANIONS = ["%03d-micro-frontend-%s/micro-frontend-%s-architecture.drawio" % (
 
 
 def main(argv):
-    states, subtitles = {}, {}
-    for ids, state, sub in ROWS:
+    states = {}
+    for ids, state in ROWS:
         for cid in ids.split():
             states[cid] = state
-            subtitles[cid] = sub
     drawio = os.path.join(SLOT, NAME + ".drawio")
-    info = mfe_frame.build_page(ABBR, FULL_NAME, STATEMENTS, states, subtitles, CABLES, COMPANIONS, drawio)
+    info = mfe_frame.build_page(ABBR, FULL_NAME, STATEMENTS, states, CABLES, COMPANIONS, drawio)
     print("[written] %s.drawio in the slot root: %d cells, %d cables, pivot %s" % (NAME, info["cells"], info["cables"],
                                                                                 info["pivot"]))
     rc = 0
     if "--no-gates" not in argv:
-        for gate in ("kit_coverage_check.py", "check_layout.py"):
-            r = subprocess.run([sys.executable, os.path.join(mfe_frame.KIT, gate), drawio], capture_output=True,
-                               text=True, encoding="utf-8", errors="replace")
-            print("$ python %s <drawio>  -> exit %d" % (gate, r.returncode))
+        for gate, flags in (("kit_coverage_check.py", ["--architecture"]), ("check_layout.py", [])):
+            r = subprocess.run([sys.executable, os.path.join(mfe_frame.KIT, gate)] + flags + [drawio],
+                               capture_output=True, text=True, encoding="utf-8", errors="replace")
+            print("$ python %s %s<drawio>  -> exit %d" % (gate, "".join(f + " " for f in flags), r.returncode))
             print("\n".join(l for l in r.stdout.splitlines()[1:] if l.strip()) if gate == "check_layout.py"
                   else r.stdout.strip())
             rc = rc or r.returncode
