@@ -10,6 +10,9 @@
 > workflow arrows*). The first frame drew every node as a T1 clay card with a subtitle; the owner rejected it
 > (*"the diagram workflow should be bease with icon arrow workflow relation, but you just use icon text box which in
 > correct standard for diagrams architect"*), and this contract replaces it.
+> **Icons (2026-11-17, the owner's word: *"now proceed to update T-001 again"*, after the prompt master's icon-craft
+> rule):** the icons are no longer P3 clay glyphs. A generic shape of `PROMPT_ICON.md` comes first, then a crafted icon
+> of the master's craft kit, its style by category (§ Nodes). Geometry, routes, labels and classes are unchanged.
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -101,45 +104,58 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;fontColor=#3747
 
 ## Nodes
 
-- **Form:** every content node is **one icon**: a kit clay glyph, `gen_icons.style_p3(<key>_p3, CLAY_DEMO[<key>],
-  "#FFFFFF")`, in a square cell (`shape=stencil(…);html=1;aspect=fixed;strokeColor=none;shadow=1;`). No node is a text
-  card (`kit_coverage_check.py --architecture` passes 25/25).
+- **Form:** every content node is **one icon** in a square cell, with its NAME as the caption. No node is a text card
+  (`kit_coverage_check.py --architecture` passes 25/25).
+- **Where the icon comes from** (2026-11-17, the owner's rule: a provider icon first, a crafted icon only for a gap, its
+  style by category; prompt master `PROMPT_BEHAVIORAL_FEEDBACK_diagrams.md` § *Icons: the provider's own icon first…*).
+  **This page names no provider**, so no part has a provider's own icon, and a product icon (CloudFront for the CDN)
+  would say the architecture is on that provider. The order here is therefore:
+  1. **A generic shape of `PROMPT_ICON.md`** (`mxgraph.networks.*`, the generic cache): `shape:router` (Edge router),
+     `shape:web_server` (Page composer, the three team servers), `shape:cache` (Page cache, `cylinder3`).
+  2. **A crafted icon** of the prompt master's craft kit (`icons/craft/`, set `web-frontend` and `delivery`): an image
+     cell (`shape=image;image=data:image/svg+xml,…`), drawn by `gen_craft.icon_svg` in the style its category maps to
+     (`web` and anything without a category: F, `integrations`: T, `documents`: A, `releases`: P, `tools`: B).
+  3. The P3 clay glyph (`CLAY_DEMO`) is **not** used: it is for text-kit cards, and an icon-and-arrow page crafts a gap.
+- **Caption:** below.
 - **Caption:** the node's NAME, under the icon: `verticalLabelPosition=bottom;verticalAlign=top;align=center;
   spacingTop=2;fontSize=12;fontStyle=1;fontColor=#1F2937;`, with the class's tint (§ Colour classes). One line, never a
   subtitle. The frame estimates a caption at 7.4 px a character plus 10, 20 high, 2 px under the icon.
 - **Size:** 80, or a hub: 160 for the Browser tab, the edge router, the CDN, the page composer and the BFF, 120 for the
   registry. A hub's size lets a cable leave its bottom face beside the caption.
 - **Marker:** each icon's style also carries `mfeClass=<class>` (draw.io ignores the unknown key; the checks read it).
-- **Glyphs** come only from the 3-diagram kit's `CLAY_DEMO` (G-001 D1), never from `mxgraph.*` libraries, which the
-  headless viewer does not draw.
+- **The headless viewer draws all three kinds** (2026-11-17, a probe through `render_png.render`): an
+  `mxgraph.networks.*` shape, an `mxgraph.aws4.*` shape and an image cell with an SVG data URI. The earlier note here,
+  that it does not draw `mxgraph.*` shapes, was wrong.
+- **Not recolourable:** a crafted icon's colours are baked into its SVG. A change of look is a recipe change in the craft
+  kit and a new `KIT_FINGERPRINT`.
 
-| id | NAME (the caption) | glyph (CLAY_DEMO key) | in | x,y (absolute) | size | class when active |
-|---|---|---|---|---|---|---|
-| B-PAGE | Browser tab | client-browser | C-BROWSER | 780,640 | 160 | platform |
-| B-SHELL | Runtime loader | webapp | G-SHELL | 500,400 | 80 | platform |
-| B-ROUTER | Client router | page-route | G-SHELL | 500,520 | 80 | platform |
-| B-UI-A | Team A · Catalog UI | ui-component | G-REMOTES | 140,400 | 80 | team-a |
-| B-UI-B | Team B · Cart UI | ui-component | G-REMOTES | 140,540 | 80 | team-b |
-| B-UI-C | Team C · Account UI | ui-component | G-REMOTES | 140,680 | 80 | team-c |
-| B-BUS | Event bus | event-stream | C-BROWSER | 140,920 | 80 | platform |
-| B-SHARED | Shared libraries | module-package | C-BROWSER | 500,920 | 80 | platform |
-| E-ROUTER | Edge router | load-balancer | C-EDGE | 1360,560 | 160 | platform |
-| E-CACHE | Page cache | cache | C-EDGE | 1460,860 | 80 | platform |
-| E-CDN | CDN | cdn | C-EDGE | 1260,900 | 160 | platform |
-| O-COMPOSER | Page composer | service | C-ORIGIN | 1920,520 | 160 | platform |
-| O-BFF | BFF | api-gateway | C-ORIGIN | 2260,600 | 160 | platform |
-| O-SRV-A | Team A server | service | G-SERVERS | 1940,940 | 80 | team-a |
-| O-SRV-B | Team B server | service | G-SERVERS | 2160,940 | 80 | team-b |
-| O-SRV-C | Team C server | service | G-SERVERS | 2380,940 | 80 | team-c |
-| K-API-A | Catalog API (team A) | microservice | G-APIS | 2880,540 | 80 | team-a |
-| K-API-B | Order API (team B) | microservice | G-APIS | 2880,680 | 80 | team-b |
-| K-API-C | Account API (team C) | microservice | G-APIS | 2880,820 | 80 | team-c |
-| K-CMS | Headless CMS | docs-multi | C-BACKEND | 2880,980 | 80 | platform |
-| D-REGISTRY | Registry | registry | C-BUILD | 2000,1480 | 120 | platform |
-| D-INTEGRATION | Integration build | ci-pipeline | C-BUILD | 1660,1500 | 80 | platform |
-| D-CI-A | Team A pipeline | ci-pipeline | G-CI | 2120,1260 | 80 | team-a |
-| D-CI-B | Team B pipeline | ci-pipeline | G-CI | 2260,1260 | 80 | team-b |
-| D-CI-C | Team C pipeline | ci-pipeline | G-CI | 2400,1260 | 80 | team-c |
+| id | NAME (the caption) | art (`craft:` subject or `shape:` key) | style | in | x,y (absolute) | size | class when active |
+|---|---|---|---|---|---|---|---|
+| B-PAGE | Browser tab | craft:browser-tab | F | C-BROWSER | 780,640 | 160 | platform |
+| B-SHELL | Runtime loader | craft:runtime-loader | F | G-SHELL | 500,400 | 80 | platform |
+| B-ROUTER | Client router | craft:client-router | F | G-SHELL | 500,520 | 80 | platform |
+| B-UI-A | Team A · Catalog UI | craft:ui-component | F | G-REMOTES | 140,400 | 80 | team-a |
+| B-UI-B | Team B · Cart UI | craft:ui-component | F | G-REMOTES | 140,540 | 80 | team-b |
+| B-UI-C | Team C · Account UI | craft:ui-component | F | G-REMOTES | 140,680 | 80 | team-c |
+| B-BUS | Event bus | craft:event-bus | T | C-BROWSER | 140,920 | 80 | platform |
+| B-SHARED | Shared libraries | craft:shared-library | F | C-BROWSER | 500,920 | 80 | platform |
+| E-ROUTER | Edge router | shape:router (`mxgraph.networks.router`) | generic | C-EDGE | 1360,560 | 160 | platform |
+| E-CACHE | Page cache | shape:cache (`cylinder3`, the generic cache) | generic | C-EDGE | 1460,860 | 80 | platform |
+| E-CDN | CDN | craft:cdn | F | C-EDGE | 1260,900 | 160 | platform |
+| O-COMPOSER | Page composer | shape:web_server (`mxgraph.networks.web_server`) | generic | C-ORIGIN | 1920,520 | 160 | platform |
+| O-BFF | BFF | craft:bff | T | C-ORIGIN | 2260,600 | 160 | platform |
+| O-SRV-A | Team A server | shape:web_server | generic | G-SERVERS | 1940,940 | 80 | team-a |
+| O-SRV-B | Team B server | shape:web_server | generic | G-SERVERS | 2160,940 | 80 | team-b |
+| O-SRV-C | Team C server | shape:web_server | generic | G-SERVERS | 2380,940 | 80 | team-c |
+| K-API-A | Catalog API (team A) | craft:api-service | T | G-APIS | 2880,540 | 80 | team-a |
+| K-API-B | Order API (team B) | craft:api-service | T | G-APIS | 2880,680 | 80 | team-b |
+| K-API-C | Account API (team C) | craft:api-service | T | G-APIS | 2880,820 | 80 | team-c |
+| K-CMS | Headless CMS | craft:headless-cms | A | C-BACKEND | 2880,980 | 80 | platform |
+| D-REGISTRY | Registry | craft:manifest-registry | P | C-BUILD | 2000,1480 | 120 | platform |
+| D-INTEGRATION | Integration build | craft:ci-pipeline | B | C-BUILD | 1660,1500 | 80 | platform |
+| D-CI-A | Team A pipeline | craft:ci-pipeline | B | G-CI | 2120,1260 | 80 | team-a |
+| D-CI-B | Team B pipeline | craft:ci-pipeline | B | G-CI | 2260,1260 | 80 | team-b |
+| D-CI-C | Team C pipeline | craft:ci-pipeline | B | G-CI | 2400,1260 | 80 | team-c |
 
 ## Page furniture
 
@@ -175,11 +191,11 @@ glance.
 | pivot | #FFD54F / #E69500 | none | the one composition point of the page (replaces its class) |
 | muted | #F5F5F5 / #BDBDBD | `opacity=40;textOpacity=40;opacityGroup=1;` | a part this approach does not use |
 
-- **Why `opacityGroup=1` is required:** `gen_icons` writes `<alpha alpha="1"/>` before every stencil primitive, and
-  draw.io's stencil `alpha` replaces the cell's opacity instead of multiplying it, so `opacity` alone fades only the
-  caption. With `opacityGroup=1` the viewer draws the whole glyph in one group at 40 % (`mxShape.isOpacityGroup`).
-  **Proved in the dry-run renders:** without it, the muted page composer and team servers drew at full colour; with it,
-  every muted icon reads faded.
+- **Why `opacityGroup=1`:** it was required by the clay stencil, whose parts each set their own alpha (draw.io's stencil
+  `alpha` replaces the cell's opacity), so `opacity` alone faded only the caption. A crafted image and a generic shape
+  fade as one shape; the key is kept, so every muted icon is drawn in one group at 40 % (`mxShape.isOpacityGroup`).
+  **Proved in the 2026-11-17 renders:** a muted crafted image, a muted `networks.web_server` and the muted `cylinder3`
+  cache all read faded, with their captions.
 - **The same across all seven:** `build_page` applies all of this to whichever node a page names as the pivot.
 
 ## Edge classes and numbering
@@ -426,8 +442,8 @@ build_page(abbr, full_name, statements[3], states{node_id: "active"|"muted"|"piv
   a label that is not clear, a cable through a title or a caption, a caption outside its container, two cables sharing
   a port, a statement over capacity, and a kit whose output no longer matches `KIT_FINGERPRINT`.
 - **The kit fingerprint.** The frame calls the prompt master's kit live. `KIT_FINGERPRINT` is the sha256 of the kit's
-  output for fixed probes (each glyph the frame uses through `gen_icons.style_p3`, and one `gen_text` cell per pattern
-  it uses: T4, T3, T1), taken when the frame was proved. If the kit draws differently, `build_page` refuses to write and
+  output for fixed probes (each crafted icon the frame uses, drawn by `gen_craft.icon_svg` in its category's style; each
+  generic shape's style string; and one `gen_text` cell per pattern it uses: T4, T3, T1), taken when the frame was proved. If the kit draws differently, `build_page` refuses to write and
   says how to prove the frame again: the dry run on all seven pages, both gates, every render looked at, then
   `KIT_FINGERPRINT = mfe_frame.kit_fingerprint()` and a new line in § Frame proof.
 - **Deterministic output:** `<mxfile host="mfe-frame">`, diagram id `mfe-<abbr lowercase>`, one `<diagram>`, cells in a
@@ -503,23 +519,25 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-16 (T-001's second dry run, for the icon form: a throwaway, git-ignored dry-run script in this
-  workspace's script unit).
-- **Prompt master at the dry run:** the 3-diagram kit as of commit `2a65231f`, the last commit that changed it (it added
-  `kit_coverage_check.py --architecture` and the rule this form follows), with no uncommitted edit in the kit folder.
-  `KIT_FINGERPRINT` = `babc75c06a532248a51ade77da8d5ea9c6ec09600bf8abff9ddddda6116cdcf9`.
+- **Date:** 2026-11-17 (T-001's third dry run, for the icon source: a throwaway, git-ignored dry-run script in this
+  workspace's script unit). Earlier proofs, superseded: 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay
+  glyphs) and the first one for the card form.
+- **Prompt master at the dry run:** the 3-diagram kit as of commit `2a65231f`, the last commit that changed it, **plus
+  the craft kit `icons/craft/` and its rule, which were not committed in the master at the dry run** (the master's
+  `git status` for the kit folder was not empty, so the clean-tree condition of the first proof was not met: the proof is
+  tied to the kit's output by the fingerprint, and is re-run when the master commits the craft kit).
+  `KIT_FINGERPRINT` = `c2c37eac1c8669585b2e1cb6ffc8559ec95452af34b6c7cdca134ad2a7e16a50`.
 - **What ran, per page:** the full page data of T-001 to T-007 (title, S1 to S3, every state, every cable with its full
   label, forced breaks included, the companions) through `build_page`; `kit_coverage_check.py --architecture` and
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
-  (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0), looked at whole and in full-resolution
-  crops.
-- **Fixes the dry run made to the frame** (all seven re-run after each): the BFF moved up 40 px (MPA cable 3's label
-  had no room above the Team servers' title); the Browser tab moved down 20 px and then 20 more, with the App shell
-  group raised to 360, so the hydration label fits under the shell and arrow 2 enters the shell below both members;
-  the pipelines' deploy to the Team servers routed through the band street (ISR's 73-character label needs a
-  horizontal run); the Backend icons put on the 20-px grid; `opacityGroup=1` added to the muted keys (the renders
-  showed muted icons at full colour without it); the pivot's caption made a stronger amber (#FFD54F) so it is found at
-  a glance; label slides and per-page wraps found and frozen (§ Label slides and wraps).
+  (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
+  full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
+- **Changes the dry run made to the frame:** none to geometry, routes, label slides or wraps: only the icon source
+  (§ Nodes) and `KIT_FINGERPRINT`. All 25 icons of every page are 19 crafted images and 6 generic shapes (the router,
+  the composer, the three team servers and the page cache); every muted icon faded, including a muted generic shape.
+- **Kit gain:** the craft kit gained eleven subjects for this page (set `web-frontend`: browser tab, runtime loader,
+  client router, UI component, shared library, CDN, event bus, BFF, API service, headless CMS, manifest registry), drawn
+  by the same engine in ten styles each and checked by its selftest (10 styles x 21 subjects).
 
 | page | pivot | kit_coverage_check.py --architecture | check_layout.py | CROSS | COLLINEAR | STRADDLE | OFF-PAGE | DEPTH-STROKE | excluded edges | other soft findings kept |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -531,10 +549,10 @@ words it searches for.
 | ISR | O-COMPOSER | exit 0 (25/25 icons with a caption) | exit 0 | 0 | 0 | 0 | 0 | 0 | L-SAMPLE-net, L-SAMPLE-page, L-SAMPLE-build (the legend samples only) | none |
 | RSC | O-COMPOSER | exit 0 (25/25 icons with a caption) | exit 0 | 0 | 0 | 0 | 0 | 0 | L-SAMPLE-net, L-SAMPLE-page, L-SAMPLE-build (the legend samples only) | none |
 
-- **CSR:** pivot B-SHELL, the one amber caption; 9 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at.
-- **SPA:** pivot B-ROUTER, the one amber caption; 7 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at.
-- **MPA:** pivot E-ROUTER, the one amber caption; 12 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at.
-- **SSR:** pivot O-COMPOSER, the one amber caption; 8 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at.
-- **SSG:** pivot D-INTEGRATION, the one amber caption; 10 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at.
-- **ISR:** pivot O-COMPOSER, the one amber caption; 5 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at.
-- **RSC:** pivot O-COMPOSER, the one amber caption; 9 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at.
+- **CSR:** pivot B-SHELL, the one amber caption; 9 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at whole and in full-resolution crops.
+- **SPA:** pivot B-ROUTER, the one amber caption; 7 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at in the contact sheet.
+- **MPA:** pivot E-ROUTER, the one amber caption; 12 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at in the contact sheet.
+- **SSR:** pivot O-COMPOSER, the one amber caption; 8 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at in the contact sheet.
+- **SSG:** pivot D-INTEGRATION, the one amber caption; 10 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at in the contact sheet.
+- **ISR:** pivot O-COMPOSER, the one amber caption; 5 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at in the contact sheet.
+- **RSC:** pivot O-COMPOSER, the one amber caption; 9 muted icons faded with their captions; every label clear of icons, captions, walls, titles and cables; no cable through a title or a caption; the render looked at in the contact sheet.

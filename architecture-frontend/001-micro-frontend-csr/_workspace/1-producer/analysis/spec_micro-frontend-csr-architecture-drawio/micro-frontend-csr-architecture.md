@@ -104,8 +104,10 @@ to.
 ## 5. Presentation
 
 The frame's presentation, unchanged (contract § Nodes, § Colour classes, § Edge classes, § Labels): one ROAD page,
-3240 x 1840; every part a kit clay glyph (`gen_icons.style_p3`) with its NAME as the caption under it; the caption's
-tint is the class (team, platform), the pivot's caption the one amber pill (#FFD54F), muted icons faded
+3240 x 1840; every part an icon with its NAME as the caption under it: 19 crafted icons (image cells from the craft kit,
+`gen_craft`, in the style their category maps to) and 6 generic shapes of `PROMPT_ICON.md` (the edge router, the page
+composer, the three team servers, the page cache), as the contract's § Nodes lists them (revision 3, 2026-11-17: the
+clay glyphs of revision 2 are gone); the caption's tint is the class (team, platform), the pivot's caption the one amber pill (#FFD54F), muted icons faded
 (`opacity=40;textOpacity=40;opacityGroup=1`); net / page / build arrows, labels wrapped and slid by the frame's table
 for `CSR`. The `.drawio` is written to the slot's root by the builder; its render is
 `2-generated/artifact/micro-frontend-csr-architecture.png` (headless Chrome with the draw.io viewer, cropped to the
@@ -118,7 +120,8 @@ drawing plus 20 px). Nothing on the page is written by hand.
   `../../_workspace/1-producer/script/_lib/render_png.py` (`render`), imported by walking up to the `project: library`
   marker.
 - **The 3-diagram kit** through the environment variable `DIAGRAM_KIT` (the prompt master's `shared/prompts/3-diagram`):
-  `text/gen_text.py`, `icons/gen_icons.py`, and the gates `kit_coverage_check.py` and `check_layout.py`.
+  `text/gen_text.py`, `icons/craft/gen_craft.py` (the crafted icons), and the gates `kit_coverage_check.py` and
+  `check_layout.py`.
 - **The builder:** `1-producer/script/build_micro_frontend_csr.py`.
 - **The stored item (output):** `../micro-frontend-csr-architecture.drawio`; the render `2-generated/artifact/micro-frontend-csr-architecture.png`.
 - **The page's content:** T-001 § Approach step 3 (`../../../_todo/T-001.md`) and the sources in `_origins.md`.
@@ -157,5 +160,8 @@ drawing plus 20 px). Nothing on the page is written by hand.
   ran; `sync` would name it.
 - **The owner's chat is private:** `_origins.md` cites it by title and the date read, with no link; the public pages
   were re-read on 2026-11-16 (the plan read them on 2026-11-15).
+- **The craft kit is not committed in the prompt master yet (2026-11-17):** the crafted icons come from
+  `icons/craft/` of the master's working tree. `KIT_FINGERPRINT` in the frame makes a build refuse to write if the kit's
+  output differs, and the frame's `## Frame proof` is re-run when the master commits the kit.
 - **No tooltips:** the icons carry no draw.io tooltip (`SPEC_DRIVEN_GENERATION.md` § *Self-explanation*); each part is
   named by its caption, the arrows say what moves, and the legend explains the classes.

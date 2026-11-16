@@ -1,5 +1,10 @@
 # History — 001-micro-frontend-csr
 
+## 2026-11-17 00:31 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** Revision 3, regenerated in place by the slot's builder: the icons are 19 crafted images and 6 generic shapes instead of clay glyphs, on the owner's word ("now proceed to update T-001 again"), under the prompt master's icon-craft rule (a provider or generic shape first, a crafted icon only for a gap, its style by category); geometry, routes and labels unchanged. T-001.
+- micro-frontend-csr-architecture.drawio
+
 ## 2026-11-16 19:30 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** Revision 2, regenerated in place by the slot's builder: redrawn as an architecture page in the prompt master's standard (every part an icon with its name as a caption, the numbered arrows carrying the workflow) on the owner's word; the node subtitles are dropped. T-001.

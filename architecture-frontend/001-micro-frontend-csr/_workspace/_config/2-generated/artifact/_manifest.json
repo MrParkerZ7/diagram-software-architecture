@@ -4,10 +4,10 @@
   "stage": "2-generated/artifact",
   "kind": "provenance",
   "policy": "overwrite",
-  "revision": 2,
+  "revision": 3,
   "built_from": {
-    "commit": "c06d9a4",
-    "generated": "2026-11-16"
+    "commit": "912de81",
+    "generated": "2026-11-17"
   },
   "files": {
     "micro-frontend-csr-architecture.png": {

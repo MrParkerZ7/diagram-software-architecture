@@ -12,6 +12,7 @@ and the numbered arrows between the icons carry the workflow. No part is a text 
 
 Environment (never written into a committed file): DIAGRAM_KIT = the prompt master's shared/prompts/3-diagram folder.
 """
+import base64
 import hashlib
 import html
 import os
@@ -28,8 +29,9 @@ if not KIT or not os.path.isfile(os.path.join(KIT, "text", "gen_text.py")):
     raise SystemExit("DIAGRAM_KIT must point to the prompt master's shared/prompts/3-diagram")
 sys.path.insert(0, os.path.join(KIT, "text"))
 sys.path.insert(0, os.path.join(KIT, "icons"))
+sys.path.insert(0, os.path.join(KIT, "icons", "craft"))
 import gen_text  # noqa: E402
-import gen_icons  # noqa: E402
+import gen_craft  # noqa: E402
 
 GRID = 20
 PAGE_W, PAGE_H = 3240, 1840
@@ -55,34 +57,37 @@ GROUP_FILL, GROUP_STROKE = "#F4F6F9", "#8A97A8"
 TITLE_FONT = "#37474F"
 
 # ------------------------------------------------------------------------------------------------------- nodes
-# id: (NAME = the caption, CLAY_DEMO glyph key, parent, absolute x, y, size, team: a | b | c | None = platform)
+# id: (NAME = the caption, art, parent, absolute x, y, size, team: a | b | c | None = platform)
+# art = "craft:<subject>" (a crafted icon of the prompt master's craft kit, an image cell) or "shape:<key>" (a generic
+# shape of PROMPT_ICON.md, SHAPES below). The page names no provider, so no provider's product icon stands in for a
+# generic part; a generic shape comes first, then a crafted icon (the contract, § Nodes).
 # Every node is one square icon. The hubs are 160 (or 120) so a cable can leave a face beside the caption.
 NODES = {
-    "B-PAGE": ("Browser tab", "client-browser", "C-BROWSER", 780, 640, 160, None),
-    "B-SHELL": ("Runtime loader", "webapp", "G-SHELL", 500, 400, 80, None),
-    "B-ROUTER": ("Client router", "page-route", "G-SHELL", 500, 520, 80, None),
-    "B-UI-A": ("Team A · Catalog UI", "ui-component", "G-REMOTES", 140, 400, 80, "a"),
-    "B-UI-B": ("Team B · Cart UI", "ui-component", "G-REMOTES", 140, 540, 80, "b"),
-    "B-UI-C": ("Team C · Account UI", "ui-component", "G-REMOTES", 140, 680, 80, "c"),
-    "B-BUS": ("Event bus", "event-stream", "C-BROWSER", 140, 920, 80, None),
-    "B-SHARED": ("Shared libraries", "module-package", "C-BROWSER", 500, 920, 80, None),
-    "E-ROUTER": ("Edge router", "load-balancer", "C-EDGE", 1360, 560, 160, None),
-    "E-CACHE": ("Page cache", "cache", "C-EDGE", 1460, 860, 80, None),
-    "E-CDN": ("CDN", "cdn", "C-EDGE", 1260, 900, 160, None),
-    "O-COMPOSER": ("Page composer", "service", "C-ORIGIN", 1920, 520, 160, None),
-    "O-BFF": ("BFF", "api-gateway", "C-ORIGIN", 2260, 600, 160, None),
-    "O-SRV-A": ("Team A server", "service", "G-SERVERS", 1940, 940, 80, "a"),
-    "O-SRV-B": ("Team B server", "service", "G-SERVERS", 2160, 940, 80, "b"),
-    "O-SRV-C": ("Team C server", "service", "G-SERVERS", 2380, 940, 80, "c"),
-    "K-API-A": ("Catalog API (team A)", "microservice", "G-APIS", 2880, 540, 80, "a"),
-    "K-API-B": ("Order API (team B)", "microservice", "G-APIS", 2880, 680, 80, "b"),
-    "K-API-C": ("Account API (team C)", "microservice", "G-APIS", 2880, 820, 80, "c"),
-    "K-CMS": ("Headless CMS", "docs-multi", "C-BACKEND", 2880, 980, 80, None),
-    "D-REGISTRY": ("Registry", "registry", "C-BUILD", 2000, 1480, 120, None),
-    "D-INTEGRATION": ("Integration build", "ci-pipeline", "C-BUILD", 1660, 1500, 80, None),
-    "D-CI-A": ("Team A pipeline", "ci-pipeline", "G-CI", 2120, 1260, 80, "a"),
-    "D-CI-B": ("Team B pipeline", "ci-pipeline", "G-CI", 2260, 1260, 80, "b"),
-    "D-CI-C": ("Team C pipeline", "ci-pipeline", "G-CI", 2400, 1260, 80, "c"),
+    "B-PAGE": ("Browser tab", "craft:browser-tab", "C-BROWSER", 780, 640, 160, None),
+    "B-SHELL": ("Runtime loader", "craft:runtime-loader", "G-SHELL", 500, 400, 80, None),
+    "B-ROUTER": ("Client router", "craft:client-router", "G-SHELL", 500, 520, 80, None),
+    "B-UI-A": ("Team A · Catalog UI", "craft:ui-component", "G-REMOTES", 140, 400, 80, "a"),
+    "B-UI-B": ("Team B · Cart UI", "craft:ui-component", "G-REMOTES", 140, 540, 80, "b"),
+    "B-UI-C": ("Team C · Account UI", "craft:ui-component", "G-REMOTES", 140, 680, 80, "c"),
+    "B-BUS": ("Event bus", "craft:event-bus", "C-BROWSER", 140, 920, 80, None),
+    "B-SHARED": ("Shared libraries", "craft:shared-library", "C-BROWSER", 500, 920, 80, None),
+    "E-ROUTER": ("Edge router", "shape:router", "C-EDGE", 1360, 560, 160, None),
+    "E-CACHE": ("Page cache", "shape:cache", "C-EDGE", 1460, 860, 80, None),
+    "E-CDN": ("CDN", "craft:cdn", "C-EDGE", 1260, 900, 160, None),
+    "O-COMPOSER": ("Page composer", "shape:web_server", "C-ORIGIN", 1920, 520, 160, None),
+    "O-BFF": ("BFF", "craft:bff", "C-ORIGIN", 2260, 600, 160, None),
+    "O-SRV-A": ("Team A server", "shape:web_server", "G-SERVERS", 1940, 940, 80, "a"),
+    "O-SRV-B": ("Team B server", "shape:web_server", "G-SERVERS", 2160, 940, 80, "b"),
+    "O-SRV-C": ("Team C server", "shape:web_server", "G-SERVERS", 2380, 940, 80, "c"),
+    "K-API-A": ("Catalog API (team A)", "craft:api-service", "G-APIS", 2880, 540, 80, "a"),
+    "K-API-B": ("Order API (team B)", "craft:api-service", "G-APIS", 2880, 680, 80, "b"),
+    "K-API-C": ("Account API (team C)", "craft:api-service", "G-APIS", 2880, 820, 80, "c"),
+    "K-CMS": ("Headless CMS", "craft:headless-cms", "C-BACKEND", 2880, 980, 80, None),
+    "D-REGISTRY": ("Registry", "craft:manifest-registry", "C-BUILD", 2000, 1480, 120, None),
+    "D-INTEGRATION": ("Integration build", "craft:ci-pipeline", "C-BUILD", 1660, 1500, 80, None),
+    "D-CI-A": ("Team A pipeline", "craft:ci-pipeline", "G-CI", 2120, 1260, 80, "a"),
+    "D-CI-B": ("Team B pipeline", "craft:ci-pipeline", "G-CI", 2260, 1260, 80, "b"),
+    "D-CI-C": ("Team C pipeline", "craft:ci-pipeline", "G-CI", 2400, 1260, 80, "c"),
 }
 # Cell order (z): each container, then its children, depth first.
 ORDER = ["C-BROWSER", "G-REMOTES", "B-UI-A", "B-UI-B", "B-UI-C", "G-SHELL", "B-SHELL", "B-ROUTER", "B-PAGE", "B-BUS",
@@ -103,7 +108,16 @@ CLASSES = {
     "pivot": ("#FFD54F", "#E69500", "note"),
     "muted": ("#F5F5F5", "#BDBDBD", "neutral"),
 }
-MUTED_KEYS = "opacity=40;textOpacity=40;opacityGroup=1;"   # opacityGroup: the clay stencil sets its own alpha per part
+# The generic shapes of PROMPT_ICON.md the page uses (General Network Shapes; the generic cache of Database Types).
+_NET = ("html=1;aspect=fixed;sketch=0;outlineConnect=0;gradientColor=none;fillColor=#036897;strokeColor=#ffffff;"
+        "dashed=0;pointerEvents=1;shadow=1;")
+SHAPES = {
+    "router": "shape=mxgraph.networks.router;" + _NET,
+    "web_server": "shape=mxgraph.networks.web_server;" + _NET,
+    "cache": "shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15;html=1;aspect=fixed;strokeColor=#d79b00;"
+             "fillColor=#ffe6cc;strokeWidth=2;shadow=1;",
+}
+MUTED_KEYS = "opacity=40;textOpacity=40;opacityGroup=1;"   # opacityGroup: a stencil or a group of parts fades as one
 MUTED_GROUP = "strokeColor=#BDBDBD;fontColor=#9E9E9E;opacity=45;"
 CAPTION_FONT = "#1F2937"
 CAP_CHAR_W, CAP_PAD, CAP_H, CAP_GAP = 7.4, 10, 20, 2   # caption estimate: bold 12 (a little wider than drawn)
@@ -259,14 +273,20 @@ ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=mid
 # the frame uses, and one text-kit cell per pattern it uses), taken when the frame was last proved. If the kit changes
 # what it draws, build_page refuses to write until the frame is proved again: re-run the dry run on all seven pages,
 # both gates, look at every render, then set KIT_FINGERPRINT to the new digest (the contract's Frame proof says how).
-KIT_FINGERPRINT = "babc75c06a532248a51ade77da8d5ea9c6ec09600bf8abff9ddddda6116cdcf9"
+KIT_FINGERPRINT = "c2c37eac1c8669585b2e1cb6ffc8559ec95452af34b6c7cdca134ad2a7e16a50"
+
+
+def craft_svg(subject, uid):
+    """The crafted icon of a subject, in the style its category maps to (the craft kit's style map)."""
+    return gen_craft.icon_svg(gen_craft.style_for(subject), subject, uid)
 
 
 def kit_fingerprint():
     h = hashlib.sha256()
-    for key in sorted({n[1] for n in NODES.values()}):
-        b64, extra = gen_icons.style_p3("probe_%s" % key, gen_icons.CLAY_DEMO[key], "#FFFFFF")
-        h.update(("%s|%s|%s\n" % (key, b64, extra)).encode("utf-8"))
+    for art in sorted({n[1] for n in NODES.values()}):
+        kind, _, ref = art.partition(":")
+        body = craft_svg(ref, "probe_") if kind == "craft" else SHAPES[ref]
+        h.update(("%s|%s\n" % (art, body)).encode("utf-8"))
     for pat, kind in (("t4", "info"), ("t3", "neutral"), ("t1", "neutral")):
         for cell in gen_text.text("probe", pat, kind, "probe", 0, 0, 240, 60, color="#FFFFFF"):
             h.update(cell.encode("utf-8"))
@@ -645,13 +665,19 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
                 'height="%d" as="geometry"/></mxCell>' % (cid, gen_text.X(title), st, parent, rx, ry, w, h))
 
     def icon_xml(cid):
-        name, key, parent, x, y, size, _team = NODES[cid]
+        name, art, parent, x, y, size, _team = NODES[cid]
         cls = cls_of[cid]
         fill, border, _kind = CLASSES[cls]
-        b64, extra = gen_icons.style_p3("%s_p3" % key, gen_icons.CLAY_DEMO[key], "#FFFFFF")
-        st = ("shape=stencil(%s);html=1;aspect=fixed;%sverticalLabelPosition=bottom;verticalAlign=top;align=center;"
+        kind, _, ref = art.partition(":")
+        if kind == "craft":      # a crafted icon: one standalone SVG, an image cell (the craft kit's cell form)
+            svg = craft_svg(ref, "i%s_" % re.sub(r"\W", "", cid))
+            head = ("shape=image;html=1;aspect=fixed;imageAspect=0;image=data:image/svg+xml,%s;"
+                    % base64.b64encode(svg.encode("utf-8")).decode("ascii"))
+        else:                    # a generic shape of PROMPT_ICON.md
+            head = SHAPES[ref]
+        st = ("%sverticalLabelPosition=bottom;verticalAlign=top;align=center;"
               "spacingTop=%d;fontSize=12;fontStyle=1;fontColor=%s;labelBackgroundColor=%s;labelBorderColor=%s;"
-              "mfeClass=%s;" % (b64, extra, CAP_GAP, CAPTION_FONT, fill, border, cls))
+              "mfeClass=%s;" % (head, CAP_GAP, CAPTION_FONT, fill, border, cls))
         if cls == "muted":
             st += MUTED_KEYS
         rx, ry = _rel(cid, x, y)
