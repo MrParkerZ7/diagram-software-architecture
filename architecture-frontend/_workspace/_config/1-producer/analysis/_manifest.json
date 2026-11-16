@@ -1,0 +1,32 @@
+{
+  "_description": "Upstream provenance for files in 1-producer/analysis. Claude maintains it; do not edit by hand.",
+  "version": 1,
+  "stage": "1-producer/analysis",
+  "kind": "provenance",
+  "policy": "overwrite",
+  "revision": 1,
+  "built_from": {
+    "commit": "dfb35b4",
+    "generated": "2026-11-16"
+  },
+  "files": {
+    "micro-frontend-frame.md": {
+      "kind": "generated",
+      "agent": "diagram-engineer",
+      "prompt": "shared/workflows/diagram-generate.md",
+      "sources": [
+        "../../_todo/T-001.md",
+        "../../_todo/T-002.md",
+        "../../_todo/T-003.md",
+        "../../_todo/T-004.md",
+        "../../_todo/T-005.md",
+        "../../_todo/T-006.md",
+        "../../_todo/T-007.md",
+        "1-producer/script/_lib/mfe_frame.py"
+      ]
+    },
+    "_README.md": {
+      "kind": "auxiliary"
+    }
+  }
+}

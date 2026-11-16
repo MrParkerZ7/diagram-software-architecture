@@ -1,0 +1,28 @@
+{
+  "_description": "Upstream provenance for files in 2-generated/artifact. Claude maintains it; do not edit by hand.",
+  "version": 2,
+  "stage": "2-generated/artifact",
+  "kind": "provenance",
+  "policy": "overwrite",
+  "revision": 1,
+  "built_from": {
+    "commit": "dfb35b4",
+    "generated": "2026-11-16"
+  },
+  "files": {
+    "micro-frontend-csr-architecture.png": {
+      "kind": "generated",
+      "agent": "diagram-engineer",
+      "prompt": "shared/workflows/diagram-generate.md",
+      "constructor": "diagram-engineer",
+      "spec": "1-producer/analysis/spec_micro-frontend-csr-architecture-drawio/",
+      "builder": "1-producer/script/build_micro_frontend_csr.py",
+      "edit_mode": "regenerate",
+      "sources": [
+        "../micro-frontend-csr-architecture.drawio",
+        "../../_workspace/1-producer/script/_lib/render_png.py"
+      ],
+      "note": "the render of the stored item ../micro-frontend-csr-architecture.drawio, which the builder writes into the slot's root"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "_description": "Upstream provenance for files in 1-producer/analysis. Claude maintains it; do not edit by hand.",
+  "version": 1,
+  "stage": "1-producer/analysis",
+  "kind": "provenance",
+  "policy": "overwrite",
+  "revision": 1,
+  "built_from": {
+    "commit": "dfb35b4",
+    "generated": "2026-11-16"
+  },
+  "files": {
+    "spec_micro-frontend-csr-architecture-drawio/micro-frontend-csr-architecture.md": {
+      "kind": "generated",
+      "agent": "diagram-engineer",
+      "prompt": "shared/SPEC_DRIVEN_GENERATION.md",
+      "sources": [
+        "../../../_todo/T-001.md",
+        "../../_workspace/1-producer/analysis/micro-frontend-frame.md"
+      ]
+    },
+    "spec_micro-frontend-csr-architecture-drawio/_origins.md": {
+      "kind": "auxiliary"
+    },
+    "spec_micro-frontend-csr-architecture-drawio/_README.md": {
+      "kind": "auxiliary"
+    },
+    "_README.md": {
+      "kind": "auxiliary"
+    }
+  }
+}

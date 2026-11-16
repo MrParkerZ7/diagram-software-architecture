@@ -35,6 +35,7 @@ A diagram is written into the library its name says: a frontend diagram into `ar
 | architecture-backend | library | ./architecture-backend |
 | architecture-cloud | library | ./architecture-cloud |
 | architecture-overall | library | ./architecture-overall |
+| architecture-frontend-workspace | analyze | ./architecture-frontend/_workspace |
 
 ## Topic Routing
 
@@ -48,3 +49,4 @@ A diagram is written into the library its name says: a frontend diagram into `ar
 | architecture-backend | ./architecture-backend | backend · back end · server side · microservices |
 | architecture-cloud | ./architecture-cloud | cloud · aws · azure · gcp · vpc |
 | architecture-overall | ./architecture-overall | overall · whole system · end to end · system context |
+| architecture-frontend-workspace | ./architecture-frontend/_workspace | frontend workspace · micro-frontend frame |

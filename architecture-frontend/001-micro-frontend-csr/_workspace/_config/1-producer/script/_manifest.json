@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "stage": "1-producer/script",
+  "kind": "infra",
+  "policy": "keep",
+  "revision": 1,
+  "files": {}
+}
