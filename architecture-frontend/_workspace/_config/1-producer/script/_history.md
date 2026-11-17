@@ -1,5 +1,10 @@
 # History — 1-producer/script
 
+## 2026-11-17 20:36 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** `mfe_frame.py`: the build block's coordinates (the Team pipelines group, the registry, the integration build), ten build routes and the label slides of the build cables; `KIT_FINGERPRINT` unchanged. T-001.
+- _lib/mfe_frame.py
+
 ## 2026-11-17 20:23 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** `mfe_frame.py`: the route `G-SHELL → B-SHARED` and its two label slides (CSR, SPA), and `KIT_FINGERPRINT` set to the digest of the craft kit with the pipeline glyph redrawn. T-001.

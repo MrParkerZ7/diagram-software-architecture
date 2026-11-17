@@ -19,6 +19,7 @@
 > **Revision 6 (2026-11-17):** the craft kit made S, Sticker, its default style on the owner's word (*"Good use S as default and update skill"*, then *"now update"* this file); all 19 crafted icons are redrawn in S (§ 5). No node, route, label, area or arrow moved.
 > **Revision 7 (2026-11-17):** the craft kit made L, Gel, its default on the owner's word (*"I like L more than G, let mark L as default"*), and said a framed style is for a highlight only (*"I think there's fine we could use L/S by default and F/G sytle for only specific parente or hub or something important as hightlit let update diagram about this"*); the 15 ordinary crafted icons are redrawn in L, the four crafted hubs in G, and the legend gains an Icons section (§ 5). No node, route, label, area or arrow moved.
 > **Revision 8 (2026-11-17):** an improvement pass on the owner's open word (*"now let try to improve …/micro-frontend-csr-architecture.drawio"*): the shared libraries, the one active part with no arrow, get a standing link from the App shell group (§ 3, § 4, § 8), and the craft kit draws the pipeline icons as a staircase (§ 5). No node moved and no other cable changed.
+> **Revision 9 (2026-11-17):** the owner repeated the open word (*"let improve this one …/micro-frontend-csr-architecture.drawio"*): the build band is re-placed, its block 380 px further west under the CDN, so the build cables to the CDN are half as long (§ 5). No node outside the band moved and no cable was added.
 
 ## 1. Purpose
 
@@ -137,6 +138,12 @@ drawing plus 20 px). Nothing on the page is written by hand.
 shared libraries get one arrow (above), and the craft kit draws the CI pipeline glyph (the four pipeline icons) as a staircase of three
 stages joined by arrows, the last one checked, where it was a flat row of three circles that read small beside the other icons. No
 node moved and no other cable changed; the page now holds 10 cables.
+
+**Build band re-placed (revision 9).** The owner repeated the open request and named no part. Claude's reading, for the owner to change: the build band was the
+weakest part of the page, because the registry's and the pipelines' cables to the CDN ran 760 px along the street above the band, close to its dashed border,
+and the band's west half was empty. The band's block (the Team pipelines group, the registry and the integration build) is 380 px further west, under the CDN,
+so those cables run 380 px and the page's own build cables are shorter; the registry still sits under the pipelines. Nothing else moved: no run-time cable,
+no label outside the build cables, no area, no icon outside the band; the cables, the labels and the text are the same.
 
 **Areas and arrows (revision 4).** Each column is drawn in the colour of its tier, from `PROMPT_ARROW_STYLE.md` § Component
 Color Standards → Subnet Types: the Browser is *Client / Outside* (gray), the Edge *Public* (green), the Origin

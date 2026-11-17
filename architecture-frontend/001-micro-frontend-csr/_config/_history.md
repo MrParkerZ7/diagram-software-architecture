@@ -1,5 +1,10 @@
 # History — 001-micro-frontend-csr
 
+## 2026-11-17 20:36 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** Revision 9, regenerated in place by the slot's builder: the build band is re-placed on the owner's repeated open word; its block (the Team pipelines group, the registry, the integration build) is 380 px further west under the CDN, so the build cables to the CDN are half as long; no other node, cable or label moved. T-001.
+- micro-frontend-csr-architecture.drawio
+
 ## 2026-11-17 20:23 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** Revision 8, regenerated in place by the slot's builder: an improvement pass on the owner's open word; the shared libraries get a standing link from the App shell group, and the pipeline icons are the craft kit's new staircase glyph; no node moved and no other cable changed. T-001.

@@ -1,5 +1,10 @@
 # History — 1-producer/analysis
 
+## 2026-11-17 20:36 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** The frame contract for the re-placed build band: the header note, the placement note, § Containers and § Nodes (the block's new coordinates), ten rows of § Routes, § Label slides (regenerated from `mfe_frame`), the paper check and a ninth `## Frame proof`. T-001.
+- micro-frontend-frame.md
+
 ## 2026-11-17 20:23 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** The frame contract for the improvement pass: the header note, the placement note, the new route and its two label slides, the paper check, the new `KIT_FINGERPRINT` and an eighth `## Frame proof`. T-001.

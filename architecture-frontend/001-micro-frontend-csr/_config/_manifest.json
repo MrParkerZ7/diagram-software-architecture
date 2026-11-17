@@ -3,11 +3,11 @@
   "stage": "001-micro-frontend-csr",
   "kind": "storage",
   "policy": "keep-old-add-new",
-  "revision": 8,
+  "revision": 9,
   "files": {
     "micro-frontend-csr-architecture.drawio": {
       "kind": "generated",
-      "sha256": "a019c2fbb28839642568e3c8994e9e49fa73eed2a70d4999b5adb5c47e9ca1d1",
+      "sha256": "72d2e6d22c5ac2868909a1719957626afa3de016e5f8d143d2532a6f798390bc",
       "date": "2026-11-17",
       "generator": "_workspace/1-producer/script/build_micro_frontend_csr.py"
     }

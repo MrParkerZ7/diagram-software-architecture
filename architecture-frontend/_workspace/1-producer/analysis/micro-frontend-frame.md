@@ -39,6 +39,11 @@
 > other five pages the libraries are muted, as before). The CI pipeline glyph is redrawn by the craft kit as a staircase
 > that fills its square (the kit's `ci-pipeline` subject), where it was a flat row of three circles. Nothing else moved;
 > `KIT_FINGERPRINT` is new.
+> **Build band re-placed (2026-11-17, the owner's repeated open word: *"let improve this one …/micro-frontend-csr-architecture.drawio"*):** the build block (the Team pipelines group, the
+> registry and the integration build) slides 380 px west, under the CDN, so the registry's and the pipelines' cables to the CDN run 380 px
+> along the band street instead of 760, the integration build's rise to the CDN is one straight vertical, and the band's empty left half
+> is used. The nodes, the pipelines group, ten routes and their label slides change (§ Containers, § Nodes, § Routes, § Label slides);
+> the other routes, the areas, the arrows and `KIT_FINGERPRINT` are unchanged.
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -97,9 +102,12 @@ helper).
   - **The Origin:** the page composer (160) faces the edge router across the gutter, reaches the BFF (160) sideways and
     drops into the Team servers group from the left side of its bottom face; the Team servers group rises into the
     BFF's bottom face beside its caption; the BFF reaches the Team APIs sideways.
-  - **The build band:** the Team pipelines group sits above the registry (120), which takes it through its top face
-    and passes to the integration build sideways; the registry's other top port and the pipelines' top wall rise to the
-    band street, and the integration build's top face rises to the CDN, the page cache or the east lane.
+  - **The build band** (re-placed 2026-11-17): its block sits at the band's west end, under the CDN. The Team pipelines group
+    (x 1700) sits above the registry (120), which takes it through its top face and passes to the integration build
+    sideways, to its west; the registry's other top port and the pipelines' top wall rise to the band street and run west
+    to the CDN's bottom face (380 px); the integration build's top face rises straight to the CDN (SSG) or, for ISR, to the
+    band street, east to the Edge–Origin gutter and up to the page cache; its two east routes leave its west face for the
+    street below the band and the east lane.
 
 ## Containers
 
@@ -142,7 +150,7 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
 | C-BACKEND | Backend (APIs and content) | page | 2740,320,340,780 | 4 | #FFF8F0 / #D6B656 |
 | G-APIS | Team APIs | C-BACKEND | 2760,500,300,460 | 3 | #FFFFFF / #D6B656 |
 | C-BUILD | Build time (before any request) | page | 1240,1180,1300,460 | 4 | #FFFFFF / #999999 (dashed) |
-| G-CI | Team pipelines | C-BUILD | 2080,1220,440,160 | 3 | #FFFFFF / #999999 |
+| G-CI | Team pipelines | C-BUILD | 1700,1220,440,160 | 3 | #FFFFFF / #999999 |
 | C-LEGEND | Legend | page | 40,1180,920,520 | 3 | #F5F5F5 / #666666 |
 
 ## Nodes
@@ -207,11 +215,11 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
 | K-API-B | Order API (team B) | craft:api-service | L | G-APIS | 2880,680 | 80 | team-b |
 | K-API-C | Account API (team C) | craft:api-service | L | G-APIS | 2880,820 | 80 | team-c |
 | K-CMS | Headless CMS | craft:headless-cms | L | C-BACKEND | 2880,980 | 80 | platform |
-| D-REGISTRY | Registry | craft:manifest-registry | G (highlight) | C-BUILD | 2000,1480 | 120 | platform |
-| D-INTEGRATION | Integration build | craft:ci-pipeline | L | C-BUILD | 1660,1500 | 80 | platform |
-| D-CI-A | Team A pipeline | craft:ci-pipeline | L | G-CI | 2120,1260 | 80 | team-a |
-| D-CI-B | Team B pipeline | craft:ci-pipeline | L | G-CI | 2260,1260 | 80 | team-b |
-| D-CI-C | Team C pipeline | craft:ci-pipeline | L | G-CI | 2400,1260 | 80 | team-c |
+| D-REGISTRY | Registry | craft:manifest-registry | G (highlight) | C-BUILD | 1620,1480 | 120 | platform |
+| D-INTEGRATION | Integration build | craft:ci-pipeline | L | C-BUILD | 1280,1500 | 80 | platform |
+| D-CI-A | Team A pipeline | craft:ci-pipeline | L | G-CI | 1740,1260 | 80 | team-a |
+| D-CI-B | Team B pipeline | craft:ci-pipeline | L | G-CI | 1880,1260 | 80 | team-b |
+| D-CI-C | Team C pipeline | craft:ci-pipeline | L | G-CI | 2020,1260 | 80 | team-c |
 
 ## Page furniture
 
@@ -352,16 +360,16 @@ Absolute points; the exit point lies on the source's wall and the entry point on
 | O-BFF → G-APIS | 2420,720 | none (straight) | 2760,720 | 1,0.75 → 0,0.478261 | CSR, SPA, MPA, SSR, ISR, RSC |
 | O-BFF → K-API-B | 2420,720 | none (straight) | 2880,720 | 1,0.75 → 0,0.5 | SSG |
 | K-CMS → O-COMPOSER | 2960,1000 | 3120,1000 · 3120,260 · 2020,260 | 2020,520 | 1,0.25 → 0.625,0 | ISR |
-| G-CI → E-CDN | 2120,1220 | 2120,1140 · 1380,1140 | 1380,1060 | 0.090909,0 → 0.75,1 | CSR, SPA, MPA, SSR |
-| G-CI → D-REGISTRY | 2100,1380 | none (straight) | 2100,1480 | 0.045455,1 → 0.833333,0 | CSR, SPA, SSG, RSC |
-| D-REGISTRY → E-CDN | 2040,1480 | 2040,1160 · 1280,1160 | 1280,1060 | 0.333333,0 → 0.125,1 | CSR, SPA |
-| G-CI → G-SERVERS | 2500,1220 | 2500,1140 · 2240,1140 | 2240,1080 | 0.954545,0 → 0.575758,1 | MPA, SSR, ISR |
-| D-REGISTRY → D-INTEGRATION | 2000,1540 | none (straight) | 1740,1540 | 0,0.5 → 1,0.5 | SSG, RSC |
-| D-INTEGRATION → K-CMS | 1660,1560 | 1200,1560 · 1200,1680 · 3120,1680 · 3120,1020 | 2960,1020 | 0,0.75 → 1,0.5 | SSG |
-| D-INTEGRATION → K-API-A | 1660,1520 | 1160,1520 · 1160,1700 · 3160,1700 · 3160,580 | 2960,580 | 0,0.25 → 1,0.5 | SSG |
-| D-INTEGRATION → E-CDN | 1700,1500 | 1700,1160 · 1300,1160 | 1300,1060 | 0.5,0 → 0.25,1 | SSG |
-| D-INTEGRATION → E-CACHE | 1700,1500 | 1700,920 | 1540,920 | 0.5,0 → 1,0.75 | ISR |
-| D-INTEGRATION → O-COMPOSER | 1660,1560 | 1200,1560 · 1200,1680 · 3120,1680 · 3120,260 · 1980,260 | 1980,520 | 0,0.75 → 0.375,0 | RSC |
+| G-CI → E-CDN | 1740,1220 | 1740,1140 · 1380,1140 | 1380,1060 | 0.090909,0 → 0.75,1 | CSR, SPA, MPA, SSR |
+| G-CI → D-REGISTRY | 1720,1380 | none (straight) | 1720,1480 | 0.045455,1 → 0.833333,0 | CSR, SPA, SSG, RSC |
+| D-REGISTRY → E-CDN | 1660,1480 | 1660,1160 · 1280,1160 | 1280,1060 | 0.333333,0 → 0.125,1 | CSR, SPA |
+| G-CI → G-SERVERS | 2120,1220 | 2120,1140 · 2400,1140 | 2400,1080 | 0.954545,0 → 0.818182,1 | MPA, SSR, ISR |
+| D-REGISTRY → D-INTEGRATION | 1620,1540 | none (straight) | 1360,1540 | 0,0.5 → 1,0.5 | SSG, RSC |
+| D-INTEGRATION → K-CMS | 1280,1560 | 1200,1560 · 1200,1680 · 3120,1680 · 3120,1020 | 2960,1020 | 0,0.75 → 1,0.5 | SSG |
+| D-INTEGRATION → K-API-A | 1280,1520 | 1160,1520 · 1160,1700 · 3160,1700 · 3160,580 | 2960,580 | 0,0.25 → 1,0.5 | SSG |
+| D-INTEGRATION → E-CDN | 1300,1500 | none (straight) | 1300,1060 | 0.25,0 → 0.25,1 | SSG |
+| D-INTEGRATION → E-CACHE | 1340,1500 | 1340,1160 · 1700,1160 · 1700,920 | 1540,920 | 0.75,0 → 1,0.75 | ISR |
+| D-INTEGRATION → O-COMPOSER | 1280,1560 | 1200,1560 · 1200,1680 · 3120,1680 · 3120,260 · 1980,260 | 1980,520 | 0,0.75 → 0.375,0 | RSC |
 
 ### Label slides and wraps
 
@@ -376,10 +384,10 @@ line count at that wrap. Found by the dry run's clearance-first placer and froze
 | CSR | B-PAGE → E-ROUTER | 18 | 1100,680 | -0.2381 | 2 |
 | CSR | E-ROUTER → O-BFF | 26 | 2150,740 | 0.725 | 1 |
 | CSR | O-BFF → G-APIS | 18 | 2640,720 | 0.2941 | 2 |
-| CSR | G-CI → E-CDN | 32 | 1750,1140 | 0 | 1 |
-| CSR | G-CI → D-REGISTRY | 16 | 2100,1430 | 0 | 2 |
-| CSR | D-REGISTRY → E-CDN | 22 | 1280,1130 | 0.8814 | 1 |
 | CSR | G-SHELL → B-SHARED | 18 | 540,830 | 0.1 | 2 |
+| CSR | G-CI → E-CDN | 32 | 1560,1140 | 0 | 1 |
+| CSR | G-CI → D-REGISTRY | 16 | 1720,1430 | 0 | 2 |
+| CSR | D-REGISTRY → E-CDN | 22 | 1280,1130 | 0.825 | 1 |
 | SPA | B-PAGE → G-SHELL | 18 | 700,680 | 0 | 3 |
 | SPA | B-PAGE → E-CDN | 20 | 1100,870 | 0 | 2 |
 | SPA | B-ROUTER → G-REMOTES | 20 | 380,560 | 0.2 | 2 |
@@ -387,17 +395,17 @@ line count at that wrap. Found by the dry run's clearance-first placer and froze
 | SPA | E-ROUTER → O-BFF | 26 | 2150,740 | 0.725 | 1 |
 | SPA | O-BFF → G-APIS | 18 | 2640,720 | 0.2941 | 2 |
 | SPA | G-REMOTES → B-BUS | 18 | 180,880 | 0.2 | 2 |
-| SPA | G-CI → E-CDN | 32 | 1750,1140 | 0 | 1 |
-| SPA | G-CI → D-REGISTRY | 16 | 2100,1430 | 0 | 2 |
-| SPA | D-REGISTRY → E-CDN | 22 | 1280,1130 | 0.8814 | 1 |
 | SPA | G-SHELL → B-SHARED | 18 | 540,830 | 0.1 | 2 |
+| SPA | G-CI → E-CDN | 32 | 1560,1140 | 0 | 1 |
+| SPA | G-CI → D-REGISTRY | 16 | 1720,1430 | 0 | 2 |
+| SPA | D-REGISTRY → E-CDN | 22 | 1280,1130 | 0.825 | 1 |
 | MPA | B-PAGE → E-ROUTER | 34 | 1100,680 | -0.2381 | 3 |
 | MPA | E-ROUTER → G-SERVERS | 16 | 1780,840 | 0.2727 | 3 |
 | MPA | G-SERVERS → O-BFF | 20 | 2300,840 | -0.1429 | 2 |
 | MPA | O-BFF → G-APIS | 18 | 2640,720 | 0.2941 | 2 |
 | MPA | B-PAGE → E-CDN | 30 | 1100,870 | 0 | 1 |
-| MPA | G-CI → G-SERVERS | 18 | 2370,1140 | 0.05 | 2 |
-| MPA | G-CI → E-CDN | 22 | 1570,1140 | 0.4 | 1 |
+| MPA | G-CI → G-SERVERS | 18 | 2260,1140 | 0.0476 | 2 |
+| MPA | G-CI → E-CDN | 22 | 1560,1140 | 0 | 1 |
 | SSR | B-PAGE → E-ROUTER | 20 | 1100,680 | -0.2381 | 1 |
 | SSR | E-ROUTER → O-COMPOSER | 18 | 1740,600 | 0.1 | 3 |
 | SSR | O-COMPOSER → G-SERVERS | 30 | 1940,800 | 0.0909 | 2 |
@@ -405,19 +413,19 @@ line count at that wrap. Found by the dry run's clearance-first placer and froze
 | SSR | O-BFF → G-APIS | 18 | 2640,720 | 0.2941 | 2 |
 | SSR | B-PAGE → E-CDN | 26 | 1100,870 | 0 | 1 |
 | SSR | B-PAGE → G-REMOTES | 22 | 690,760 | -0.625 | 2 |
-| SSR | G-CI → G-SERVERS | 20 | 2370,1140 | 0.05 | 2 |
-| SSR | G-CI → E-CDN | 26 | 1570,1140 | 0.4 | 1 |
-| SSG | G-CI → D-REGISTRY | 24 | 2100,1440 | 0.2 | 2 |
-| SSG | D-REGISTRY → D-INTEGRATION | 22 | 1890,1540 | -0.1538 | 2 |
-| SSG | D-INTEGRATION → K-CMS | 18 | 1440,1560 | -0.8675 | 2 |
-| SSG | D-INTEGRATION → K-API-A | 22 | 3160,810 | 0.785 | 2 |
-| SSG | D-INTEGRATION → E-CDN | 18 | 1700,1360 | -0.6667 | 2 |
+| SSR | G-CI → G-SERVERS | 20 | 2260,1140 | 0.0476 | 2 |
+| SSR | G-CI → E-CDN | 26 | 1560,1140 | 0 | 1 |
+| SSG | G-CI → D-REGISTRY | 24 | 1720,1440 | 0.2 | 2 |
+| SSG | D-REGISTRY → D-INTEGRATION | 22 | 1510,1540 | -0.1538 | 2 |
+| SSG | D-INTEGRATION → K-CMS | 32 | 2160,1680 | -0.2109 | 1 |
+| SSG | D-INTEGRATION → K-API-A | 22 | 3160,810 | 0.7624 | 2 |
+| SSG | D-INTEGRATION → E-CDN | 18 | 1300,1140 | 0.6364 | 2 |
 | SSG | B-PAGE → E-CDN | 24 | 1100,870 | 0 | 2 |
 | SSG | B-PAGE → G-REMOTES | 28 | 550,760 | -0.0417 | 2 |
 | SSG | B-PAGE → E-ROUTER | 28 | 1100,680 | -0.2381 | 2 |
 | SSG | E-ROUTER → O-BFF | 26 | 2150,740 | 0.725 | 1 |
 | SSG | O-BFF → K-API-B | 22 | 2640,720 | -0.0435 | 2 |
-| ISR | D-INTEGRATION → E-CACHE | 26 | 1700,1360 | -0.6216 | 2 |
+| ISR | D-INTEGRATION → E-CACHE | 26 | 1340,1340 | -0.7091 | 2 |
 | ISR | B-PAGE → E-ROUTER | 20 | 1100,680 | -0.2381 | 1 |
 | ISR | E-ROUTER → E-CACHE | 24 | 1500,810 | 0.2857 | 2 |
 | ISR | E-CACHE → O-COMPOSER | 30 | 1740,760 | 0.0323 | 4 |
@@ -426,10 +434,10 @@ line count at that wrap. Found by the dry run's clearance-first placer and froze
 | ISR | O-BFF → G-APIS | 18 | 2640,720 | 0.2941 | 2 |
 | ISR | K-CMS → O-COMPOSER | 28 | 2020,440 | 0.9292 | 3 |
 | ISR | B-PAGE → E-CDN | 26 | 1100,870 | 0 | 2 |
-| ISR | G-CI → G-SERVERS | 30 | 2370,1140 | 0.05 | 3 |
-| RSC | G-CI → D-REGISTRY | 24 | 2100,1440 | 0.2 | 2 |
-| RSC | D-REGISTRY → D-INTEGRATION | 18 | 1890,1540 | -0.1538 | 2 |
-| RSC | D-INTEGRATION → O-COMPOSER | 22 | 3120,1400 | 0.0451 | 1 |
+| ISR | G-CI → G-SERVERS | 30 | 2260,1140 | 0.0476 | 3 |
+| RSC | G-CI → D-REGISTRY | 24 | 1720,1440 | 0.2 | 2 |
+| RSC | D-REGISTRY → D-INTEGRATION | 18 | 1510,1540 | -0.1538 | 2 |
+| RSC | D-INTEGRATION → O-COMPOSER | 22 | 3120,1400 | -0.0283 | 1 |
 | RSC | B-PAGE → E-ROUTER | 30 | 1100,680 | -0.2381 | 2 |
 | RSC | E-ROUTER → O-COMPOSER | 20 | 1740,600 | 0.1 | 2 |
 | RSC | O-COMPOSER → O-BFF | 18 | 2170,660 | 0 | 3 |
@@ -448,11 +456,11 @@ caption or a title.
   is gone: the App shell group holds the router.
 - **MPA:** 1 to 5, and G-CI → G-SERVERS (through the band street) and G-CI → E-CDN.
 - **SSR:** 1 to 8 (step 6 rides on cable 2), and the two build cables.
-- **SSG:** 1 to 9 and the product-data cable: D-INTEGRATION rises to E-CDN through the band street, and its two east
+- **SSG:** 1 to 9 and the product-data cable: D-INTEGRATION rises to E-CDN in one straight vertical at x 1300, and its two east
   routes leave its west face, drop to the street below the band and rise in the east lane (K-CMS by the inner lane at
   x 3120, K-API-A by the outer at x 3160, so the two never cross).
 - **ISR:** 0 to 7, the CDN cable, the K-CMS trigger by the east lane and the top street, and G-CI → G-SERVERS. Cable 0
-  rises at x 1700 and enters E-CACHE's east face at y 920, below cable 3's exit at y 880.
+  rises at x 1340 to the band street, runs east to the gutter at x 1700 and up, and enters E-CACHE's east face at y 920, below cable 3's exit at y 880.
 - **RSC:** 1 to 7 and the three build cables, with D-INTEGRATION → O-COMPOSER by the street below the band, the east
   lane and the top street.
 
@@ -603,9 +611,9 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-17 (T-001's eighth dry run, for the improvement pass: the shared libraries' arrow and the pipeline
-  glyph's redraw; a throwaway, git-ignored dry-run script in this workspace's script unit). Earlier proofs, superseded: the
-  seventh, the same day, for L as the default icon style and G as the highlight of the crafted hubs; the sixth, the same
+- **Date:** 2026-11-17 (T-001's ninth dry run, for the re-placed build band: a throwaway, git-ignored dry-run script in this
+  workspace's script unit). Earlier proofs, superseded: the eighth, the same day, for the shared libraries' arrow and the
+  pipeline glyph's redraw; the seventh, the same day, for L as the default icon style and G as the highlight of the crafted hubs; the sixth, the same
   day, for S as the default; the fifth, the same day, for the four kept icon styles; the
   fourth, the same day, for the areas and the arrow format; the third, for the icon source (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
   first one for the card form.
@@ -618,12 +626,24 @@ words it searches for.
   and a tone added (the sixth), then L, Gel, added and made the default and a highlight style (G, or F) added for a hub or a
   parent, as `style_for(subject, highlight=True)` (the seventh), then the `ci-pipeline` subject redrawn as a staircase (the
   eighth). It is still uncommitted. `KIT_FINGERPRINT` = `c25be24ee48fa96378e5e77ac71fda54acb33482804e8acce2c1f67ef3214349`
-  (the seventh proof's was `2279de85…`, the sixth's `e3442f07…`, the fifth's `31a9b78a…`, the fourth's `c2c37eac…`).
+  (the ninth proof's is the eighth's, the kit's output did not change; the seventh proof's was `2279de85…`, the sixth's `e3442f07…`, the fifth's `31a9b78a…`, the fourth's `c2c37eac…`).
 - **What ran, per page:** the full page data of T-001 to T-007 (title, S1 to S3, every state, every cable with its full
   label, forced breaks included, the companions) through `build_page`; `kit_coverage_check.py --architecture` and
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
   (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
   full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
+- **Changes of the ninth dry run (the build band re-placed):** none to the kit, the areas, the arrows, any run-time route or any
+  label outside the build cables. The build block (the Team pipelines group with its three pipelines, the registry and the
+  integration build) is 380 px further west, so the registry's and the pipelines' cables to the CDN run 380 px along the band
+  street instead of 760, the integration build's rise to the CDN (SSG) is one straight vertical at x 1300, and the rise of
+  ISR's cable 0 starts at x 1340. Ten routes change (§ Routes: the three CDN-bound ones, the pipelines to the registry, the
+  pipelines to the team servers, the registry to the integration build, and the integration build's four) and 20 label rows
+  (§ Label slides, regenerated from `mfe_frame` with every unchanged row reproduced). The pipelines to the team servers (MPA,
+  SSR, ISR) now leave from x 2120 and run east to x 2400: a first try as one straight vertical left no room for ISR's three-line
+  label and was given a street run. The guard passed on the unchanged fingerprint. Looked at: CSR whole, and the build band of
+  all seven pages in three contact sheets. Both gates passed on all seven pages with the counts below. **Seen and left:** the
+  band's right part (x 2140 to 2540) is now the empty one (a narrower band would put its title over the two risers at x 1660
+  and 1740), and the generic edge router, a solid blue shape, is as strong as a framed hub.
 - **Changes of the eighth dry run (the improvement pass):** one cable added and one glyph redrawn; no node moved, no other
   route, label slide or wrap changed (the placer's only new `LABELS` entries are the two of the new cable), and the areas
   and the other arrows are unchanged. **Added:** `G-SHELL → B-SHARED`, a standing link (class `page`, unnumbered, label
