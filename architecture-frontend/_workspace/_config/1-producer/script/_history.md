@@ -1,5 +1,10 @@
 # History — 1-producer/script
 
+## 2026-11-17 15:01 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** `KIT_FINGERPRINT` set to the digest of the craft kit with S as the default; nothing else in the library changed. T-001.
+- _lib/mfe_frame.py
+
 ## 2026-11-17 10:51 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** `KIT_FINGERPRINT` set to the digest of the craft kit cut to four styles; nothing else in the library changed. T-001.

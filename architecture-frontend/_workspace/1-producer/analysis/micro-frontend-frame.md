@@ -23,6 +23,11 @@
 > craft kit keeps four styles, F, G, I and P. The nodes that were drawn in a removed style are redrawn in the style their
 > category now maps to (§ Nodes): the event bus, the BFF and the team APIs from T to P, the headless CMS from A to F, the
 > pipelines from B to G. Positions, routes, labels and areas are unchanged; `KIT_FINGERPRINT` is new.
+> **Default style (2026-11-17, the owner's word: *"Good use S as default and update skill"*, then *"now update"* the
+> slot's `micro-frontend-csr-architecture.drawio`):** the craft kit made S, Sticker, its default and keeps three styles,
+> S, F and G; I and P are gone and every category maps to S. All 19 crafted icons are redrawn in S (a die-cut sticker, no
+> tile, in the kit's own colour for the subject). Positions, routes, labels, areas and arrows are unchanged;
+> `KIT_FINGERPRINT` is new.
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -139,8 +144,8 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
      `shape:web_server` (Page composer, the three team servers), `shape:cache` (Page cache, `cylinder3`).
   2. **A crafted icon** of the prompt master's craft kit (`icons/craft/`, set `web-frontend` and `delivery`): an image
      cell (`shape=image;image=data:image/svg+xml,…`), drawn by `gen_craft.icon_svg` in the style its category maps to
-     (`web`, `documents` and anything without a category: F; `integrations` and `releases`: P; `tools`: G; the four
-     styles the kit keeps are F, G, I and P, since 2026-11-17).
+     (every category maps to S, Sticker, the kit's default since 2026-11-17; the kit keeps three styles, S, F and G.
+     Before that: `web`, `documents` and anything without a category: F; `integrations` and `releases`: P; `tools`: G).
   3. The P3 clay glyph (`CLAY_DEMO`) is **not** used: it is for text-kit cards, and an icon-and-arrow page crafts a gap.
 - **Caption:** below.
 - **Caption:** the node's NAME, under the icon: `verticalLabelPosition=bottom;verticalAlign=top;align=center;
@@ -153,35 +158,36 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
   `mxgraph.networks.*` shape, an `mxgraph.aws4.*` shape and an image cell with an SVG data URI. The earlier note here,
   that it does not draw `mxgraph.*` shapes, was wrong.
 - **Not recolourable:** a crafted icon's colours are baked into its SVG. A change of look is a recipe change in the craft
-  kit and a new `KIT_FINGERPRINT`.
+  kit and a new `KIT_FINGERPRINT`. The frame passes no `tint` or `tone` to the kit, so each icon keeps the kit's own
+  colour for its subject: none of the 12 subjects used here has an iconic colour, so all are indigo, multicolour.
 
 | id | NAME (the caption) | art (`craft:` subject or `shape:` key) | style | in | x,y (absolute) | size | class when active |
 |---|---|---|---|---|---|---|---|
-| B-PAGE | Browser tab | craft:browser-tab | F | C-BROWSER | 780,640 | 160 | platform |
-| B-SHELL | Runtime loader | craft:runtime-loader | F | G-SHELL | 500,400 | 80 | platform |
-| B-ROUTER | Client router | craft:client-router | F | G-SHELL | 500,520 | 80 | platform |
-| B-UI-A | Team A · Catalog UI | craft:ui-component | F | G-REMOTES | 140,400 | 80 | team-a |
-| B-UI-B | Team B · Cart UI | craft:ui-component | F | G-REMOTES | 140,540 | 80 | team-b |
-| B-UI-C | Team C · Account UI | craft:ui-component | F | G-REMOTES | 140,680 | 80 | team-c |
-| B-BUS | Event bus | craft:event-bus | P | C-BROWSER | 140,920 | 80 | platform |
-| B-SHARED | Shared libraries | craft:shared-library | F | C-BROWSER | 500,920 | 80 | platform |
+| B-PAGE | Browser tab | craft:browser-tab | S | C-BROWSER | 780,640 | 160 | platform |
+| B-SHELL | Runtime loader | craft:runtime-loader | S | G-SHELL | 500,400 | 80 | platform |
+| B-ROUTER | Client router | craft:client-router | S | G-SHELL | 500,520 | 80 | platform |
+| B-UI-A | Team A · Catalog UI | craft:ui-component | S | G-REMOTES | 140,400 | 80 | team-a |
+| B-UI-B | Team B · Cart UI | craft:ui-component | S | G-REMOTES | 140,540 | 80 | team-b |
+| B-UI-C | Team C · Account UI | craft:ui-component | S | G-REMOTES | 140,680 | 80 | team-c |
+| B-BUS | Event bus | craft:event-bus | S | C-BROWSER | 140,920 | 80 | platform |
+| B-SHARED | Shared libraries | craft:shared-library | S | C-BROWSER | 500,920 | 80 | platform |
 | E-ROUTER | Edge router | shape:router (`mxgraph.networks.router`) | generic | C-EDGE | 1360,560 | 160 | platform |
 | E-CACHE | Page cache | shape:cache (`cylinder3`, the generic cache) | generic | C-EDGE | 1460,860 | 80 | platform |
-| E-CDN | CDN | craft:cdn | F | C-EDGE | 1260,900 | 160 | platform |
+| E-CDN | CDN | craft:cdn | S | C-EDGE | 1260,900 | 160 | platform |
 | O-COMPOSER | Page composer | shape:web_server (`mxgraph.networks.web_server`) | generic | C-ORIGIN | 1920,520 | 160 | platform |
-| O-BFF | BFF | craft:bff | P | C-ORIGIN | 2260,600 | 160 | platform |
+| O-BFF | BFF | craft:bff | S | C-ORIGIN | 2260,600 | 160 | platform |
 | O-SRV-A | Team A server | shape:web_server | generic | G-SERVERS | 1940,940 | 80 | team-a |
 | O-SRV-B | Team B server | shape:web_server | generic | G-SERVERS | 2160,940 | 80 | team-b |
 | O-SRV-C | Team C server | shape:web_server | generic | G-SERVERS | 2380,940 | 80 | team-c |
-| K-API-A | Catalog API (team A) | craft:api-service | P | G-APIS | 2880,540 | 80 | team-a |
-| K-API-B | Order API (team B) | craft:api-service | P | G-APIS | 2880,680 | 80 | team-b |
-| K-API-C | Account API (team C) | craft:api-service | P | G-APIS | 2880,820 | 80 | team-c |
-| K-CMS | Headless CMS | craft:headless-cms | F | C-BACKEND | 2880,980 | 80 | platform |
-| D-REGISTRY | Registry | craft:manifest-registry | P | C-BUILD | 2000,1480 | 120 | platform |
-| D-INTEGRATION | Integration build | craft:ci-pipeline | G | C-BUILD | 1660,1500 | 80 | platform |
-| D-CI-A | Team A pipeline | craft:ci-pipeline | G | G-CI | 2120,1260 | 80 | team-a |
-| D-CI-B | Team B pipeline | craft:ci-pipeline | G | G-CI | 2260,1260 | 80 | team-b |
-| D-CI-C | Team C pipeline | craft:ci-pipeline | G | G-CI | 2400,1260 | 80 | team-c |
+| K-API-A | Catalog API (team A) | craft:api-service | S | G-APIS | 2880,540 | 80 | team-a |
+| K-API-B | Order API (team B) | craft:api-service | S | G-APIS | 2880,680 | 80 | team-b |
+| K-API-C | Account API (team C) | craft:api-service | S | G-APIS | 2880,820 | 80 | team-c |
+| K-CMS | Headless CMS | craft:headless-cms | S | C-BACKEND | 2880,980 | 80 | platform |
+| D-REGISTRY | Registry | craft:manifest-registry | S | C-BUILD | 2000,1480 | 120 | platform |
+| D-INTEGRATION | Integration build | craft:ci-pipeline | S | C-BUILD | 1660,1500 | 80 | platform |
+| D-CI-A | Team A pipeline | craft:ci-pipeline | S | G-CI | 2120,1260 | 80 | team-a |
+| D-CI-B | Team B pipeline | craft:ci-pipeline | S | G-CI | 2260,1260 | 80 | team-b |
+| D-CI-C | Team C pipeline | craft:ci-pipeline | S | G-CI | 2400,1260 | 80 | team-c |
 
 ## Page furniture
 
@@ -563,22 +569,29 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-17 (T-001's fifth dry run, for the four kept icon styles: a throwaway, git-ignored dry-run script in
-  this workspace's script unit). Earlier proofs, superseded: the fourth, the same day, for the areas and the arrow
-  format; the third, for the icon source (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
+- **Date:** 2026-11-17 (T-001's sixth dry run, for S as the default icon style: a throwaway, git-ignored dry-run script in
+  this workspace's script unit). Earlier proofs, superseded: the fifth, the same day, for the four kept icon styles; the
+  fourth, the same day, for the areas and the arrow format; the third, for the icon source (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
   first one for the card form.
 - **Prompt master at the dry run:** the 3-diagram kit as of commit `2a65231f`, the last commit that changed it, **plus
   the craft kit `icons/craft/` and its rule, which were not committed in the master at the dry run** (the master's
   `git status` for the kit folder was not empty, so the clean-tree condition of the first proof was not met: the proof is
   tied to the kit's output by the fingerprint, and is re-run when the master commits the craft kit).
-  **The kit changed again on the same day** (six styles removed, six categories reassigned, `svg/` and the showcases
-  regenerated), and is still uncommitted. `KIT_FINGERPRINT` = `31a9b78a5449730fbe87dcc611702e70949d73112d74d37b65c054b4358f81f3`
-  (the fourth proof's was `c2c37eac…`).
+  **The kit changed again on the same day**, twice: six styles removed and six categories reassigned (the fifth proof), then
+  S, Sticker, added and made the default, I and P removed, every category mapped to S, and twenty-one subjects, a colour
+  and a tone added (the sixth). It is still uncommitted. `KIT_FINGERPRINT` = `e3442f07430aa39b8146ca56ae8e4d6bd09da1213789204ac0a79caebcadf1b2`
+  (the fifth proof's was `31a9b78a…`, the fourth's `c2c37eac…`).
 - **What ran, per page:** the full page data of T-001 to T-007 (title, S1 to S3, every state, every cable with its full
   label, forced breaks included, the companions) through `build_page`; `kit_coverage_check.py --architecture` and
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
   (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
   full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
+- **Changes of the sixth dry run (S as the default):** none to any node's position, route, label slide or wrap, and none to
+  the areas or the arrows. All 19 crafted icons are drawn in S (§ Nodes); the six generic shapes are unchanged. The guard
+  refused the first build (the kit's output differed from the frozen digest), the digest was set after the renders were
+  looked at. Looked at: CSR whole and in full-resolution crops of the Browser column, the Edge and Origin columns and the
+  build band; the other six in one contact sheet. Both gates passed on all seven pages with the counts below. One weakness
+  seen: the pipeline icon (a flat row of three circles) is small beside the others in S.
 - **Changes of the fifth dry run (the four kept styles):** none to any node's position, route, label slide or wrap, and
   none to the areas or the arrows. Ten icons are drawn in another style (§ Nodes): the event bus, the BFF and the three
   team APIs in P, the headless CMS in F, the four pipelines and the integration build in G. The guard refused the first
@@ -595,8 +608,8 @@ words it searches for.
   the composer, the three team servers and the page cache); every muted icon faded, including a muted generic shape.
 - **Kit gain:** the craft kit gained eleven subjects for this page (set `web-frontend`: browser tab, runtime loader,
   client router, UI component, shared library, CDN, event bus, BFF, API service, headless CMS, manifest registry), drawn
-  by the same engine and checked by its selftest. On 2026-11-17 the kit was cut to four styles: its selftest reads
-  4 styles x 21 subjects.
+  by the same engine and checked by its selftest. On 2026-11-17 the kit was cut to four styles, then to three with S the
+  default: its selftest reads 3 styles x 42 subjects, 12 colours.
 
 | page | pivot | kit_coverage_check.py --architecture | check_layout.py | CROSS | COLLINEAR | STRADDLE | OFF-PAGE | DEPTH-STROKE | excluded edges | other soft findings kept |
 |---|---|---|---|---|---|---|---|---|---|---|

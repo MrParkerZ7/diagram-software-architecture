@@ -16,6 +16,7 @@
 > area section, the arrows take the standard's types (§ 5). Revision 3 (the same day) drew the icons from the craft
 > kit. No node, route or label moved.
 > **Revision 5 (2026-11-17):** the craft kit keeps four icon styles (F, G, I, P), on the owner's word (*"I'm still not satisfy with icon style, remove style T Q U D B A off"*); ten icons are drawn in another style (§ 5). No node, route, label, area or arrow moved.
+> **Revision 6 (2026-11-17):** the craft kit made S, Sticker, its default style on the owner's word (*"Good use S as default and update skill"*, then *"now update"* this file); all 19 crafted icons are redrawn in S (§ 5). No node, route, label, area or arrow moved.
 
 ## 1. Purpose
 
@@ -120,6 +121,8 @@ drawing plus 20 px). Nothing on the page is written by hand.
 
 **Icon styles (revision 5).** The craft kit keeps four styles. On this page: F for the browser tab, runtime loader, client router, the three team UIs, the shared libraries, the CDN and the headless CMS; P for the event bus, the BFF, the three team APIs and the registry; G for the four pipelines and the integration build. The event bus, the BFF and the APIs were string art (T), the CMS paper-cut (A) and the pipelines embroidery (B) in revision 3.
 
+**Icon style (revision 6).** The craft kit's default is S, Sticker: no tile, a die-cut glyph with a white border and a soft shadow, in the kit's own colour for the subject. It keeps three styles (S, F, G), I and P are gone, and every category maps to S, so all 19 crafted icons on this page are S. This supersedes the per-category styles of revision 5. The six generic shapes (the edge router, the page composer, the three team servers, the page cache) are unchanged.
+
 **Areas and arrows (revision 4).** Each column is drawn in the colour of its tier, from `PROMPT_ARROW_STYLE.md` § Component
 Color Standards → Subnet Types: the Browser is *Client / Outside* (gray), the Edge *Public* (green), the Origin
 *Compute / App* (blue), the Backend *Integration* (amber); the build band is outside the request path, drawn dashed in
@@ -178,7 +181,7 @@ colours) and the Arrow Legend, as the standard requires of an architecture page.
 - **The craft kit is not committed in the prompt master yet (2026-11-17):** the crafted icons come from
   `icons/craft/` of the master's working tree. `KIT_FINGERPRINT` in the frame makes a build refuse to write if the kit's
   output differs, and the frame's `## Frame proof` is re-run when the master commits the kit.
-- **The style of each category is Claude's reading (2026-11-17), for the owner to change:** the owner named only F (users, projects) and G (file types) and removed T, Q, U, D, B and A; the six categories that used them were reassigned to the four that stay (the kit's `README.md`, § The style map). The four remaining styles may still not satisfy the owner.
+- **S for every category is Claude's reading (2026-11-17), for the owner to change:** the owner said *"Good use S as default"* and named no category for F or G, so the kit maps every category to S and F and G stay as alternatives (the kit's `README.md`, § The style map). The pipeline icon, a flat row of three circles, is small beside the others in S; the owner may want it redrawn taller. The owner may still not be satisfied with the style.
 - **Two tier choices are Claude's reading (2026-11-17), for the owner to change:** the Backend is an *Integration* tier
   (the team APIs behind the BFF, with the headless CMS), not a data tier; the build band takes the *Optional* row
   (dashed gray) because build and deploy are outside the request path, and the standard has no build tier. The

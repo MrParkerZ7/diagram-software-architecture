@@ -301,7 +301,7 @@ ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=mid
 # the frame uses, and one text-kit cell per pattern it uses), taken when the frame was last proved. If the kit changes
 # what it draws, build_page refuses to write until the frame is proved again: re-run the dry run on all seven pages,
 # both gates, look at every render, then set KIT_FINGERPRINT to the new digest (the contract's Frame proof says how).
-KIT_FINGERPRINT = "31a9b78a5449730fbe87dcc611702e70949d73112d74d37b65c054b4358f81f3"
+KIT_FINGERPRINT = "e3442f07430aa39b8146ca56ae8e4d6bd09da1213789204ac0a79caebcadf1b2"
 
 
 def craft_svg(subject, uid):

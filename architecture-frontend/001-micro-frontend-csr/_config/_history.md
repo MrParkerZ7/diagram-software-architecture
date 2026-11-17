@@ -1,5 +1,10 @@
 # History — 001-micro-frontend-csr
 
+## 2026-11-17 15:01 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** Revision 6, regenerated in place by the slot's builder: the craft kit made S, Sticker, its default style, on the owner's word ("Good use S as default and update skill", then "now update" this file); all 19 crafted icons are redrawn in S; positions, routes, labels, areas and arrows unchanged. T-001.
+- micro-frontend-csr-architecture.drawio
+
 ## 2026-11-17 10:51 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** Revision 5, regenerated in place by the slot's builder: the craft kit keeps four icon styles (F, G, I, P), on the owner's word ("I'm still not satisfy with icon style, remove style T Q U D B A off"); the event bus, the BFF, the three team APIs, the headless CMS, the four pipelines and the integration build are redrawn in the style their category now maps to; positions, routes, labels, areas and arrows unchanged. T-001.

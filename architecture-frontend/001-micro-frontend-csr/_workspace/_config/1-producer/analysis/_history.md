@@ -1,5 +1,11 @@
 # History — 1-producer/analysis
 
+## 2026-11-17 15:01 — diagram-architecture-io
+**Action:** Updated (2 files)
+**Notes:** The unit spec for revision 6 (the header note, the icon-style paragraph of § 5, the style gap of § 8) and four rows in the origins log, three of them for revisions 3 to 5 that had been left out. T-001.
+- spec_micro-frontend-csr-architecture-drawio/micro-frontend-csr-architecture.md
+- spec_micro-frontend-csr-architecture-drawio/_origins.md
+
 ## 2026-11-17 10:51 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** The unit spec for revision 5: the header note, the icon-styles paragraph of § 5 and a known gap in § 8 (the category-to-style pairs are Claude's reading). T-001.
