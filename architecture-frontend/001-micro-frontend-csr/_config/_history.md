@@ -1,5 +1,10 @@
 # History — 001-micro-frontend-csr
 
+## 2026-11-17 10:51 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** Revision 5, regenerated in place by the slot's builder: the craft kit keeps four icon styles (F, G, I, P), on the owner's word ("I'm still not satisfy with icon style, remove style T Q U D B A off"); the event bus, the BFF, the three team APIs, the headless CMS, the four pipelines and the integration build are redrawn in the style their category now maps to; positions, routes, labels, areas and arrows unchanged. T-001.
+- micro-frontend-csr-architecture.drawio
+
 ## 2026-11-17 01:20 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** Revision 4, regenerated in place by the slot's builder: the areas take the prompt master's tier colours (client, public, compute, integration; the build band dashed), the legend gains its area section, and the arrows take the standard's types (`classic` for a request, `flowAnimation` on the request arrows), on the owner's word ("diagram areas & and arrow formant wans't correctly"); positions, routes and labels unchanged. T-001.

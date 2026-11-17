@@ -19,6 +19,10 @@
 > beside the Arrow Legend), and its arrows were `block` for an HTTP call and had no `flowAnimation`. The areas take
 > the tier colours (§ Containers), the legend gains its area section (§ Legend), and the arrows take the standard's
 > types (§ Edge classes). Node positions, routes and label slides are unchanged.
+> **Styles (2026-11-17, the owner's word: *"I'm still not satisfy with icon style, remove style T Q U D B A off"*):** the
+> craft kit keeps four styles, F, G, I and P. The nodes that were drawn in a removed style are redrawn in the style their
+> category now maps to (§ Nodes): the event bus, the BFF and the team APIs from T to P, the headless CMS from A to F, the
+> pipelines from B to G. Positions, routes, labels and areas are unchanged; `KIT_FINGERPRINT` is new.
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -135,7 +139,8 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
      `shape:web_server` (Page composer, the three team servers), `shape:cache` (Page cache, `cylinder3`).
   2. **A crafted icon** of the prompt master's craft kit (`icons/craft/`, set `web-frontend` and `delivery`): an image
      cell (`shape=image;image=data:image/svg+xml,…`), drawn by `gen_craft.icon_svg` in the style its category maps to
-     (`web` and anything without a category: F, `integrations`: T, `documents`: A, `releases`: P, `tools`: B).
+     (`web`, `documents` and anything without a category: F; `integrations` and `releases`: P; `tools`: G; the four
+     styles the kit keeps are F, G, I and P, since 2026-11-17).
   3. The P3 clay glyph (`CLAY_DEMO`) is **not** used: it is for text-kit cards, and an icon-and-arrow page crafts a gap.
 - **Caption:** below.
 - **Caption:** the node's NAME, under the icon: `verticalLabelPosition=bottom;verticalAlign=top;align=center;
@@ -158,25 +163,25 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
 | B-UI-A | Team A · Catalog UI | craft:ui-component | F | G-REMOTES | 140,400 | 80 | team-a |
 | B-UI-B | Team B · Cart UI | craft:ui-component | F | G-REMOTES | 140,540 | 80 | team-b |
 | B-UI-C | Team C · Account UI | craft:ui-component | F | G-REMOTES | 140,680 | 80 | team-c |
-| B-BUS | Event bus | craft:event-bus | T | C-BROWSER | 140,920 | 80 | platform |
+| B-BUS | Event bus | craft:event-bus | P | C-BROWSER | 140,920 | 80 | platform |
 | B-SHARED | Shared libraries | craft:shared-library | F | C-BROWSER | 500,920 | 80 | platform |
 | E-ROUTER | Edge router | shape:router (`mxgraph.networks.router`) | generic | C-EDGE | 1360,560 | 160 | platform |
 | E-CACHE | Page cache | shape:cache (`cylinder3`, the generic cache) | generic | C-EDGE | 1460,860 | 80 | platform |
 | E-CDN | CDN | craft:cdn | F | C-EDGE | 1260,900 | 160 | platform |
 | O-COMPOSER | Page composer | shape:web_server (`mxgraph.networks.web_server`) | generic | C-ORIGIN | 1920,520 | 160 | platform |
-| O-BFF | BFF | craft:bff | T | C-ORIGIN | 2260,600 | 160 | platform |
+| O-BFF | BFF | craft:bff | P | C-ORIGIN | 2260,600 | 160 | platform |
 | O-SRV-A | Team A server | shape:web_server | generic | G-SERVERS | 1940,940 | 80 | team-a |
 | O-SRV-B | Team B server | shape:web_server | generic | G-SERVERS | 2160,940 | 80 | team-b |
 | O-SRV-C | Team C server | shape:web_server | generic | G-SERVERS | 2380,940 | 80 | team-c |
-| K-API-A | Catalog API (team A) | craft:api-service | T | G-APIS | 2880,540 | 80 | team-a |
-| K-API-B | Order API (team B) | craft:api-service | T | G-APIS | 2880,680 | 80 | team-b |
-| K-API-C | Account API (team C) | craft:api-service | T | G-APIS | 2880,820 | 80 | team-c |
-| K-CMS | Headless CMS | craft:headless-cms | A | C-BACKEND | 2880,980 | 80 | platform |
+| K-API-A | Catalog API (team A) | craft:api-service | P | G-APIS | 2880,540 | 80 | team-a |
+| K-API-B | Order API (team B) | craft:api-service | P | G-APIS | 2880,680 | 80 | team-b |
+| K-API-C | Account API (team C) | craft:api-service | P | G-APIS | 2880,820 | 80 | team-c |
+| K-CMS | Headless CMS | craft:headless-cms | F | C-BACKEND | 2880,980 | 80 | platform |
 | D-REGISTRY | Registry | craft:manifest-registry | P | C-BUILD | 2000,1480 | 120 | platform |
-| D-INTEGRATION | Integration build | craft:ci-pipeline | B | C-BUILD | 1660,1500 | 80 | platform |
-| D-CI-A | Team A pipeline | craft:ci-pipeline | B | G-CI | 2120,1260 | 80 | team-a |
-| D-CI-B | Team B pipeline | craft:ci-pipeline | B | G-CI | 2260,1260 | 80 | team-b |
-| D-CI-C | Team C pipeline | craft:ci-pipeline | B | G-CI | 2400,1260 | 80 | team-c |
+| D-INTEGRATION | Integration build | craft:ci-pipeline | G | C-BUILD | 1660,1500 | 80 | platform |
+| D-CI-A | Team A pipeline | craft:ci-pipeline | G | G-CI | 2120,1260 | 80 | team-a |
+| D-CI-B | Team B pipeline | craft:ci-pipeline | G | G-CI | 2260,1260 | 80 | team-b |
+| D-CI-C | Team C pipeline | craft:ci-pipeline | G | G-CI | 2400,1260 | 80 | team-c |
 
 ## Page furniture
 
@@ -558,20 +563,27 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-17 (T-001's fourth dry run, for the areas and the arrow format: a throwaway, git-ignored dry-run
-  script in this workspace's script unit). Earlier proofs, superseded: the third, the same day, for the icon source
-  (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
+- **Date:** 2026-11-17 (T-001's fifth dry run, for the four kept icon styles: a throwaway, git-ignored dry-run script in
+  this workspace's script unit). Earlier proofs, superseded: the fourth, the same day, for the areas and the arrow
+  format; the third, for the icon source (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
   first one for the card form.
 - **Prompt master at the dry run:** the 3-diagram kit as of commit `2a65231f`, the last commit that changed it, **plus
   the craft kit `icons/craft/` and its rule, which were not committed in the master at the dry run** (the master's
   `git status` for the kit folder was not empty, so the clean-tree condition of the first proof was not met: the proof is
   tied to the kit's output by the fingerprint, and is re-run when the master commits the craft kit).
-  `KIT_FINGERPRINT` = `c2c37eac1c8669585b2e1cb6ffc8559ec95452af34b6c7cdca134ad2a7e16a50`.
+  **The kit changed again on the same day** (six styles removed, six categories reassigned, `svg/` and the showcases
+  regenerated), and is still uncommitted. `KIT_FINGERPRINT` = `31a9b78a5449730fbe87dcc611702e70949d73112d74d37b65c054b4358f81f3`
+  (the fourth proof's was `c2c37eac…`).
 - **What ran, per page:** the full page data of T-001 to T-007 (title, S1 to S3, every state, every cable with its full
   label, forced breaks included, the companions) through `build_page`; `kit_coverage_check.py --architecture` and
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
   (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
   full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
+- **Changes of the fifth dry run (the four kept styles):** none to any node's position, route, label slide or wrap, and
+  none to the areas or the arrows. Ten icons are drawn in another style (§ Nodes): the event bus, the BFF and the three
+  team APIs in P, the headless CMS in F, the four pipelines and the integration build in G. The guard refused the first
+  build (the kit's output differed from the frozen digest), the digest was set after the renders were looked at. Looked
+  at: CSR whole; the other six in one contact sheet. Both gates passed on all seven pages with the counts below.
 - **Changes of the fourth dry run (areas and arrows):** none to any node's position, route, label slide or wrap. The
   columns and groups take the tier colours (§ Containers); the legend is 920 x 460 with its area swatches (§ Legend);
   the arrows take the standard's types, `flowAnimation=1` on the `net` class, `shadow=1` and the longer build dash
@@ -583,7 +595,8 @@ words it searches for.
   the composer, the three team servers and the page cache); every muted icon faded, including a muted generic shape.
 - **Kit gain:** the craft kit gained eleven subjects for this page (set `web-frontend`: browser tab, runtime loader,
   client router, UI component, shared library, CDN, event bus, BFF, API service, headless CMS, manifest registry), drawn
-  by the same engine in ten styles each and checked by its selftest (10 styles x 21 subjects).
+  by the same engine and checked by its selftest. On 2026-11-17 the kit was cut to four styles: its selftest reads
+  4 styles x 21 subjects.
 
 | page | pivot | kit_coverage_check.py --architecture | check_layout.py | CROSS | COLLINEAR | STRADDLE | OFF-PAGE | DEPTH-STROKE | excluded edges | other soft findings kept |
 |---|---|---|---|---|---|---|---|---|---|---|

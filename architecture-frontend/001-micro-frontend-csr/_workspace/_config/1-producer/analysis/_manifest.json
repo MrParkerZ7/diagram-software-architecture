@@ -4,9 +4,9 @@
   "stage": "1-producer/analysis",
   "kind": "provenance",
   "policy": "overwrite",
-  "revision": 4,
+  "revision": 5,
   "built_from": {
-    "commit": "f78edd9",
+    "commit": "61bd1af",
     "generated": "2026-11-17"
   },
   "files": {

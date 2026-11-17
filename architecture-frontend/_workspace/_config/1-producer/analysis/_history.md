@@ -1,5 +1,10 @@
 # History — 1-producer/analysis
 
+## 2026-11-17 10:51 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** The frame contract for the four kept icon styles, on the owner's word: the header note, § Nodes (the styles per category and the new style of ten icons), the new `KIT_FINGERPRINT` and a fifth `## Frame proof`. T-001.
+- micro-frontend-frame.md
+
 ## 2026-11-17 01:20 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** The frame contract for the areas and the arrow format, on the owner's word ("diagram areas & and arrow formant wans't correctly"): § Containers (the tier colours and the two tier choices), § Edge classes (the arrow format), § Legend (the area section, 920 x 460), § Frame-static text, and a fourth `## Frame proof`. T-001.
