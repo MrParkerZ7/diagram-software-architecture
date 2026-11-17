@@ -1,5 +1,10 @@
 # History — 001-micro-frontend-csr
 
+## 2026-11-17 20:23 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** Revision 8, regenerated in place by the slot's builder: an improvement pass on the owner's open word; the shared libraries get a standing link from the App shell group, and the pipeline icons are the craft kit's new staircase glyph; no node moved and no other cable changed. T-001.
+- micro-frontend-csr-architecture.drawio
+
 ## 2026-11-17 19:53 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** Revision 7, regenerated in place by the slot's builder: the craft kit made L, Gel, its default style and a framed style a highlight, on the owner's word; the 15 ordinary crafted icons are redrawn in L, the four crafted hubs in G, and the legend gains an Icons section; positions, routes, labels, areas and arrows unchanged. T-001.

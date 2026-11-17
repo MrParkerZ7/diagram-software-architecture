@@ -33,6 +33,12 @@
 > browser tab, the CDN, the BFF, the registry) are drawn in G, the kit's highlight style, on all seven pages; the legend
 > gains an Icons section (a sample and a line) and grows from 460 to 520 high. Positions, routes, labels, areas and arrows
 > are unchanged; `KIT_FINGERPRINT` is new.
+> **Improvement pass (2026-11-17, the owner's word: *"now let try to improve …/micro-frontend-csr-architecture.drawio"*, no part named):** read against the prompt master's rules,
+> the render had an active part with no arrow: Shared libraries is active on the CSR and SPA pages and no cable touched it.
+> It gets one standing link from the App shell group, `G-SHELL → B-SHARED` (§ Routes), drawn on CSR and SPA only (on the
+> other five pages the libraries are muted, as before). The CI pipeline glyph is redrawn by the craft kit as a staircase
+> that fills its square (the kit's `ci-pipeline` subject), where it was a flat row of three circles. Nothing else moved;
+> `KIT_FINGERPRINT` is new.
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -82,7 +88,9 @@ helper).
   - **The Browser reads right to left:** the Browser tab (a 160 hub) sends `2` and `1` into the App shell group's
     right wall below both of its members (so the arrow enters the shell, not one member), and the hydration arrow under
     the shell into the Team UIs group; the runtime loader and the client router, stacked in the shell, each reach the
-    Team UIs group's right wall by a straight line; the Team UIs group's bottom wall drops into the event bus.
+    Team UIs group's right wall by a straight line; the Team UIs group's bottom wall drops into the event bus. On CSR and SPA the App shell group's bottom wall also drops into
+    the shared libraries, one straight segment (a standing link); the hydration arrow under the shell exists only on SSR, SSG
+    and RSC, where the libraries are muted and carry no cable, so nothing crosses it.
   - **The Edge:** the edge router (160) faces the Browser tab across the gutter (`B-PAGE → E-ROUTER` is straight) and
     drops into the page cache from the right side of its bottom face; the CDN (160, a 3-letter caption) takes three
     build arrows into its bottom face.
@@ -332,6 +340,7 @@ Absolute points; the exit point lies on the source's wall and the entry point on
 | B-SHELL → G-REMOTES | 500,440 | none (straight) | 300,440 | 0,0.5 → 1,0.173913 | CSR |
 | B-ROUTER → G-REMOTES | 500,560 | none (straight) | 300,560 | 0,0.5 → 1,0.434783 | SPA |
 | G-REMOTES → B-BUS | 180,820 | none (straight) | 180,920 | 0.5,1 → 0.5,0 | SPA |
+| G-SHELL → B-SHARED | 540,720 | none (straight) | 540,920 | 0.5,1 → 0.5,0 | CSR, SPA |
 | E-ROUTER → O-COMPOSER | 1520,600 | none (straight) | 1920,600 | 1,0.25 → 0,0.5 | SSR, RSC |
 | E-ROUTER → O-BFF | 1520,680 | 1780,680 · 1780,740 | 2260,740 | 1,0.75 → 0,0.875 | CSR, SPA, SSG |
 | E-ROUTER → G-SERVERS | 1520,680 | 1780,680 · 1780,1000 | 1860,1000 | 1,0.75 → 0,0.555556 | MPA |
@@ -370,6 +379,7 @@ line count at that wrap. Found by the dry run's clearance-first placer and froze
 | CSR | G-CI → E-CDN | 32 | 1750,1140 | 0 | 1 |
 | CSR | G-CI → D-REGISTRY | 16 | 2100,1430 | 0 | 2 |
 | CSR | D-REGISTRY → E-CDN | 22 | 1280,1130 | 0.8814 | 1 |
+| CSR | G-SHELL → B-SHARED | 18 | 540,830 | 0.1 | 2 |
 | SPA | B-PAGE → G-SHELL | 18 | 700,680 | 0 | 3 |
 | SPA | B-PAGE → E-CDN | 20 | 1100,870 | 0 | 2 |
 | SPA | B-ROUTER → G-REMOTES | 20 | 380,560 | 0.2 | 2 |
@@ -380,6 +390,7 @@ line count at that wrap. Found by the dry run's clearance-first placer and froze
 | SPA | G-CI → E-CDN | 32 | 1750,1140 | 0 | 1 |
 | SPA | G-CI → D-REGISTRY | 16 | 2100,1430 | 0 | 2 |
 | SPA | D-REGISTRY → E-CDN | 22 | 1280,1130 | 0.8814 | 1 |
+| SPA | G-SHELL → B-SHARED | 18 | 540,830 | 0.1 | 2 |
 | MPA | B-PAGE → E-ROUTER | 34 | 1100,680 | -0.2381 | 3 |
 | MPA | E-ROUTER → G-SERVERS | 16 | 1780,840 | 0.2727 | 3 |
 | MPA | G-SERVERS → O-BFF | 20 | 2300,840 | -0.1429 | 2 |
@@ -431,9 +442,9 @@ line count at that wrap. Found by the dry run's clearance-first placer and froze
 Each page's cables, checked by the frame's own checks before writing and then by the gate in the dry run: 0 WAYPOINT-IN,
 0 RE-ENTRY, 0 WALL-CUT, 0 CUTS-NODE, 0 CROSS and 0 COLLINEAR on each of the seven pages, and no cable within 4 px of a
 caption or a title.
-- **CSR:** 1 · 2 · 3 · 4 · 5 · 6 and the three build cables (G-CI → E-CDN and D-REGISTRY → E-CDN through the band
+- **CSR:** 1 · 2 · 3 · 4 · 5 · 6, the standing link G-SHELL → B-SHARED and the three build cables (G-CI → E-CDN and D-REGISTRY → E-CDN through the band
   street, G-CI → D-REGISTRY).
-- **SPA:** 1 to 7 and the three build cables. The first frame's unnumbered `owns the router` cable (B-SHELL → B-ROUTER)
+- **SPA:** 1 to 7, the standing link G-SHELL → B-SHARED and the three build cables. The first frame's unnumbered `owns the router` cable (B-SHELL → B-ROUTER)
   is gone: the App shell group holds the router.
 - **MPA:** 1 to 5, and G-CI → G-SERVERS (through the band street) and G-CI → E-CDN.
 - **SSR:** 1 to 8 (step 6 rides on cable 2), and the two build cables.
@@ -592,8 +603,9 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-17 (T-001's seventh dry run, for L as the default icon style and G as the highlight of the crafted hubs: a
-  throwaway, git-ignored dry-run script in this workspace's script unit). Earlier proofs, superseded: the sixth, the same
+- **Date:** 2026-11-17 (T-001's eighth dry run, for the improvement pass: the shared libraries' arrow and the pipeline
+  glyph's redraw; a throwaway, git-ignored dry-run script in this workspace's script unit). Earlier proofs, superseded: the
+  seventh, the same day, for L as the default icon style and G as the highlight of the crafted hubs; the sixth, the same
   day, for S as the default; the fifth, the same day, for the four kept icon styles; the
   fourth, the same day, for the areas and the arrow format; the third, for the icon source (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
   first one for the card form.
@@ -601,16 +613,28 @@ words it searches for.
   the craft kit `icons/craft/` and its rule, which were not committed in the master at the dry run** (the master's
   `git status` for the kit folder was not empty, so the clean-tree condition of the first proof was not met: the proof is
   tied to the kit's output by the fingerprint, and is re-run when the master commits the craft kit).
-  **The kit changed again on the same day**, three times: six styles removed and six categories reassigned (the fifth proof),
+  **The kit changed again on the same day**, four times: six styles removed and six categories reassigned (the fifth proof),
   then S, Sticker, added and made the default, I and P removed, every category mapped to S, and twenty-one subjects, a colour
   and a tone added (the sixth), then L, Gel, added and made the default and a highlight style (G, or F) added for a hub or a
-  parent, as `style_for(subject, highlight=True)` (the seventh). It is still uncommitted. `KIT_FINGERPRINT` = `2279de857c79b6222678b6d13b36110a19f296e3f86f7b2d229375bce594e68d`
-  (the sixth proof's was `e3442f07…`, the fifth's `31a9b78a…`, the fourth's `c2c37eac…`).
+  parent, as `style_for(subject, highlight=True)` (the seventh), then the `ci-pipeline` subject redrawn as a staircase (the
+  eighth). It is still uncommitted. `KIT_FINGERPRINT` = `c25be24ee48fa96378e5e77ac71fda54acb33482804e8acce2c1f67ef3214349`
+  (the seventh proof's was `2279de85…`, the sixth's `e3442f07…`, the fifth's `31a9b78a…`, the fourth's `c2c37eac…`).
 - **What ran, per page:** the full page data of T-001 to T-007 (title, S1 to S3, every state, every cable with its full
   label, forced breaks included, the companions) through `build_page`; `kit_coverage_check.py --architecture` and
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
   (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
   full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
+- **Changes of the eighth dry run (the improvement pass):** one cable added and one glyph redrawn; no node moved, no other
+  route, label slide or wrap changed (the placer's only new `LABELS` entries are the two of the new cable), and the areas
+  and the other arrows are unchanged. **Added:** `G-SHELL → B-SHARED`, a standing link (class `page`, unnumbered, label
+  `loads one shared React (singleton)`, wrap 18, centre 540,830) on CSR and SPA, the two pages where the libraries are
+  active; it was the one active part with no arrow. **Redrawn:** the pipeline glyph (`ci-pipeline`, four icons per page) as
+  a staircase of three stages joined by arrows, the last one checked, in all four styles of the kit. The guard refused the
+  first build, the digest was set after the renders were looked at. Looked at: CSR whole and in full-resolution crops of the
+  Browser column and the build band; SPA in a crop of the Browser column; the other five in one contact sheet. Both gates
+  passed on all seven pages with the counts below. **Seen and left, for the owner to say:** the registry's and the pipelines'
+  cables to the CDN run long along the band street and read close to the dashed border of the build band; the build band's
+  left half is empty; the generic edge router, a solid blue shape, is as strong as a framed hub.
 - **Changes of the seventh dry run (L as the default, G as the highlight):** none to any node's position, route, label slide
   or wrap, and none to the areas or the arrows. The 15 ordinary crafted icons are drawn in L and the four crafted hubs in G
   (§ Nodes, the Highlight bullet); the six generic shapes are unchanged. The legend gained its Icons section and grew from 460 to

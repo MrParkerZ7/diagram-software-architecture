@@ -94,6 +94,7 @@ CABLES = [  # (n, from, to, class, label) - spec section 3, Cables
     ("4", "B-PAGE", "E-ROUTER", "net", "4 · team UIs call the API (JSON)"),
     ("5", "E-ROUTER", "O-BFF", "net", "5 · /api routed to the BFF"),
     ("6", "O-BFF", "G-APIS", "net", "6 · the BFF calls the team APIs"),
+    ("-", "G-SHELL", "B-SHARED", "page", "loads one shared React (singleton)"),
     ("-", "G-CI", "E-CDN", "build", "each team uploads its own bundle"),
     ("-", "G-CI", "D-REGISTRY", "build", "publishes the new version"),
     ("-", "D-REGISTRY", "E-CDN", "build", "manifest points at it"),

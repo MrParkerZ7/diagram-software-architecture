@@ -4,9 +4,9 @@
   "stage": "2-generated/artifact",
   "kind": "provenance",
   "policy": "overwrite",
-  "revision": 7,
+  "revision": 8,
   "built_from": {
-    "commit": "8f87f97",
+    "commit": "cdd99c3",
     "generated": "2026-11-17"
   },
   "files": {

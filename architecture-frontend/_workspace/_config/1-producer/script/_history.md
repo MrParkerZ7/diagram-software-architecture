@@ -1,5 +1,10 @@
 # History — 1-producer/script
 
+## 2026-11-17 20:23 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** `mfe_frame.py`: the route `G-SHELL → B-SHARED` and its two label slides (CSR, SPA), and `KIT_FINGERPRINT` set to the digest of the craft kit with the pipeline glyph redrawn. T-001.
+- _lib/mfe_frame.py
+
 ## 2026-11-17 19:53 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** `mfe_frame.py`: `HIGHLIGHT` (the crafted hubs), `craft_svg(highlight)`, the `mfeHub=1` marker with two checks on the written text, the legend's Icons section (the legend grows to 520 high), and `KIT_FINGERPRINT` set to the digest of the craft kit with L as the default and the highlight style. T-001.

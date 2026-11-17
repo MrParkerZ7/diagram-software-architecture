@@ -18,6 +18,7 @@
 > **Revision 5 (2026-11-17):** the craft kit keeps four icon styles (F, G, I, P), on the owner's word (*"I'm still not satisfy with icon style, remove style T Q U D B A off"*); ten icons are drawn in another style (§ 5). No node, route, label, area or arrow moved.
 > **Revision 6 (2026-11-17):** the craft kit made S, Sticker, its default style on the owner's word (*"Good use S as default and update skill"*, then *"now update"* this file); all 19 crafted icons are redrawn in S (§ 5). No node, route, label, area or arrow moved.
 > **Revision 7 (2026-11-17):** the craft kit made L, Gel, its default on the owner's word (*"I like L more than G, let mark L as default"*), and said a framed style is for a highlight only (*"I think there's fine we could use L/S by default and F/G sytle for only specific parente or hub or something important as hightlit let update diagram about this"*); the 15 ordinary crafted icons are redrawn in L, the four crafted hubs in G, and the legend gains an Icons section (§ 5). No node, route, label, area or arrow moved.
+> **Revision 8 (2026-11-17):** an improvement pass on the owner's open word (*"now let try to improve …/micro-frontend-csr-architecture.drawio"*): the shared libraries, the one active part with no arrow, get a standing link from the App shell group (§ 3, § 4, § 8), and the craft kit draws the pipeline icons as a staircase (§ 5). No node moved and no other cable changed.
 
 ## 1. Purpose
 
@@ -71,6 +72,7 @@ to.
 | B-PAGE → E-ROUTER | 4 · team UIs call the API (JSON) | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
 | E-ROUTER → O-BFF | 5 · /api routed to the BFF | § 8 |
 | O-BFF → G-APIS | 6 · the BFF calls the team APIs | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15) |
+| G-SHELL → B-SHARED | loads one shared React (singleton) | https://module-federation.io/configure/shared.html (read 2026-11-16) · § 8 (the shell as the one that loads it) |
 | G-CI → E-CDN | each team uploads its own bundle | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
 | G-CI → D-REGISTRY | publishes the new version | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
 | D-REGISTRY → E-CDN | manifest points at it | https://single-spa.js.org/docs/recommended-setup/ (read 2026-11-16) |
@@ -85,6 +87,7 @@ to.
 | 4 | B-PAGE → E-ROUTER | net |
 | 5 | E-ROUTER → O-BFF | net |
 | 6 | O-BFF → G-APIS | net |
+| – | G-SHELL → B-SHARED | page |
 | – | G-CI → E-CDN | build |
 | – | G-CI → D-REGISTRY | build |
 | – | D-REGISTRY → E-CDN | build |
@@ -99,6 +102,10 @@ to.
   team's pipeline uploads its bundle and publishes the new version to the registry, and the manifest points at it (the
   import-map deploy of single-spa's recommended setup): the three build arrows, unnumbered because they stand outside
   the request's order.
+- **The shared libraries** (B-SHARED) are active in CSR and, until revision 8, were the one active part with no arrow. One
+  standing link joins the App shell group to them (a call inside the page, unnumbered because it stands outside the
+  request's order): the shell loads one shared copy of React, which the shell and every team UI reuse (Module Federation's
+  `shared` singleton, `_origins.md`; the arrow's direction is § 8).
 - **The pivot** is B-SHELL, the app shell's runtime loader, where the micro-frontends are composed (G-001 D2). Step 2
   enters the App shell group, and step 3 leaves from the loader.
 - **Muted:** the parts the CSR first load does not use. B-ROUTER and B-BUS belong to the navigation after the first
@@ -125,6 +132,11 @@ drawing plus 20 px). Nothing on the page is written by hand.
 **Icon style (revision 6).** The craft kit's default is S, Sticker: no tile, a die-cut glyph with a white border and a soft shadow, in the kit's own colour for the subject. It keeps three styles (S, F, G), I and P are gone, and every category maps to S, so all 19 crafted icons on this page are S. This supersedes the per-category styles of revision 5. The six generic shapes (the edge router, the page composer, the three team servers, the page cache) are unchanged.
 
 **Icon style and highlight (revision 7).** The craft kit's default is L, Gel: no tile, a glossy jelly sticker with a white border, in the kit's own colour for the subject; S stays as the flat alternative. A framed style (G, or F) is only for a highlight, so this page draws its four crafted hubs (the browser tab, the CDN, the BFF and the registry) in G, a navy tile with a gold rim, and its other 15 crafted icons in L; the legend's Icons section says what a framed icon is, with a sample. This supersedes the S of revision 6. The six generic shapes (the edge router, the page composer, the three team servers, the page cache) are unchanged.
+
+**Improvement pass (revision 8).** The owner asked to improve the diagram and named no part. Claude's reading, for the owner to change: the
+shared libraries get one arrow (above), and the craft kit draws the CI pipeline glyph (the four pipeline icons) as a staircase of three
+stages joined by arrows, the last one checked, where it was a flat row of three circles that read small beside the other icons. No
+node moved and no other cable changed; the page now holds 10 cables.
 
 **Areas and arrows (revision 4).** Each column is drawn in the colour of its tier, from `PROMPT_ARROW_STYLE.md` § Component
 Color Standards → Subnet Types: the Browser is *Client / Outside* (gray), the Edge *Public* (green), the Origin
@@ -159,10 +171,15 @@ colours) and the Arrow Legend, as the standard requires of an architecture page.
 - Exactly one icon carries `mfeClass=pivot` (B-SHELL); every icon's caption sits under it
   (`verticalLabelPosition=bottom`), one line, no subtitle; every muted icon carries `opacity=40`, `textOpacity=40` and
   `opacityGroup=1`.
+- The page draws 10 cables: 6 numbered, the standing link to the shared libraries and 3 build cables.
 - The page text matches § 3 word for word; a label no source supports is listed in § 8, never reworded.
 
 ## 8. Known gaps
 
+- ⚠ **The shared-libraries arrow's direction is Claude's reading (revision 8):** the cited Module Federation page says `shared` shares
+  dependencies between consumers and producers and that singleton mode loads one version in the shared scope; it does not say that the
+  app shell is the one that loads it. The arrow reads *the shell loads one shared React*, the usual host-and-remote setup, kept as drawn
+  (a host's share scope serves its remotes) and listed here rather than reworded.
 - ⚠ **Unverified (no listed source states it), kept as the plan wrote it:** arrow 5 `5 · /api routed to the BFF`: an
   edge router (a reverse proxy) that sends `/api/*` to the BFF is this example's deployment, a common setup, not a fact
   from the sources. The `JSON` of arrow 4 and the three example teams (Catalog, Cart and orders, Account) are the
@@ -184,7 +201,7 @@ colours) and the Arrow Legend, as the standard requires of an architecture page.
 - **The craft kit is not committed in the prompt master yet (2026-11-17):** the crafted icons come from
   `icons/craft/` of the master's working tree. `KIT_FINGERPRINT` in the frame makes a build refuse to write if the kit's
   output differs, and the frame's `## Frame proof` is re-run when the master commits the kit.
-- **L for the ordinary icons and G for the hubs is Claude's reading (2026-11-17), for the owner to change:** the owner said *"I like L more than G, let mark L as default"*, then that L or S is the default and F or G is for *"specific parente or hub or something important"*. He named no part, so Claude took the page's crafted hubs (the parts its arrows meet at: the 160 and 120 icons) as the highlight, chose G over F because a navy tile with a gold rim stands out of the L icons on a light and a dark ground, and left the pivot to its amber caption. The pipeline icon, a flat row of three circles, is small beside the others in L; the owner may want it redrawn taller. The owner may still not be satisfied with the style.
+- **L for the ordinary icons and G for the hubs is Claude's reading (2026-11-17), for the owner to change:** the owner said *"I like L more than G, let mark L as default"*, then that L or S is the default and F or G is for *"specific parente or hub or something important"*. He named no part, so Claude took the page's crafted hubs (the parts its arrows meet at: the 160 and 120 icons) as the highlight, chose G over F because a navy tile with a gold rim stands out of the L icons on a light and a dark ground, and left the pivot to its amber caption. The pipeline icon, a flat row of three circles, was small beside the others in L; revision 8 redraws it as a staircase. The owner may still not be satisfied with the style.
 - **Two tier choices are Claude's reading (2026-11-17), for the owner to change:** the Backend is an *Integration* tier
   (the team APIs behind the BFF, with the headless CMS), not a data tier; the build band takes the *Optional* row
   (dashed gray) because build and deploy are outside the request path, and the standard has no build tier. The

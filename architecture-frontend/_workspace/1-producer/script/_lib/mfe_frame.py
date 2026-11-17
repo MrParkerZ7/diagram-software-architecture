@@ -177,6 +177,7 @@ ROUTES = {
     ("B-SHELL", "G-REMOTES"): ((500, 440), [], (300, 440)),
     ("B-ROUTER", "G-REMOTES"): ((500, 560), [], (300, 560)),
     ("G-REMOTES", "B-BUS"): ((180, 820), [], (180, 920)),
+    ("G-SHELL", "B-SHARED"): ((540, 720), [], (540, 920)),
     ("E-ROUTER", "O-COMPOSER"): ((1520, 600), [], (1920, 600)),
     ("E-ROUTER", "O-BFF"): ((1520, 680), [(1780, 680), (1780, 740)], (2260, 740)),
     ("E-ROUTER", "G-SERVERS"): ((1520, 680), [(1780, 680), (1780, 1000)], (1860, 1000)),
@@ -216,6 +217,7 @@ LABELS = {
     ("CSR", "E-ROUTER", "O-BFF"): (26, (2150, 740)),
     ("CSR", "G-CI", "D-REGISTRY"): (16, (2100, 1430)),
     ("CSR", "G-CI", "E-CDN"): (32, (1750, 1140)),
+    ("CSR", "G-SHELL", "B-SHARED"): (18, (540, 830)),
     ("CSR", "O-BFF", "G-APIS"): (18, (2640, 720)),
     ("SPA", "B-PAGE", "E-CDN"): (20, (1100, 870)),
     ("SPA", "B-PAGE", "E-ROUTER"): (20, (1100, 680)),
@@ -226,6 +228,7 @@ LABELS = {
     ("SPA", "G-CI", "D-REGISTRY"): (16, (2100, 1430)),
     ("SPA", "G-CI", "E-CDN"): (32, (1750, 1140)),
     ("SPA", "G-REMOTES", "B-BUS"): (18, (180, 880)),
+    ("SPA", "G-SHELL", "B-SHARED"): (18, (540, 830)),
     ("SPA", "O-BFF", "G-APIS"): (18, (2640, 720)),
     ("MPA", "B-PAGE", "E-CDN"): (30, (1100, 870)),
     ("MPA", "B-PAGE", "E-ROUTER"): (34, (1100, 680)),
@@ -314,7 +317,7 @@ ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=mid
 # the frame uses, and one text-kit cell per pattern it uses), taken when the frame was last proved. If the kit changes
 # what it draws, build_page refuses to write until the frame is proved again: re-run the dry run on all seven pages,
 # both gates, look at every render, then set KIT_FINGERPRINT to the new digest (the contract's Frame proof says how).
-KIT_FINGERPRINT = "2279de857c79b6222678b6d13b36110a19f296e3f86f7b2d229375bce594e68d"
+KIT_FINGERPRINT = "c25be24ee48fa96378e5e77ac71fda54acb33482804e8acce2c1f67ef3214349"
 
 
 def craft_svg(subject, uid, highlight=False):

@@ -1,5 +1,10 @@
 # History — 1-producer/script
 
+## 2026-11-17 20:23 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** The CSR builder: one cable added to its data, `G-SHELL → B-SHARED`, a standing link to the shared libraries. T-001.
+- build_micro_frontend_csr.py
+
 ## 2026-11-16 19:30 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** The CSR builder on the frame's new API (node states only, no subtitles; arrow 2 into G-SHELL; the coverage gate run with --architecture).
