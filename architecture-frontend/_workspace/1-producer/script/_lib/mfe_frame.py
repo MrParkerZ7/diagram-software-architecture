@@ -49,7 +49,7 @@ CONTAINERS = {
     "G-APIS": ("Team APIs", "C-BACKEND", 2760, 500, 300, 460, "group"),
     "C-BUILD": ("Build time (before any request)", "1", 1240, 1180, 1300, 460, "column"),
     "G-CI": ("Team pipelines", "C-BUILD", 2080, 1220, 440, 160, "group"),
-    "C-LEGEND": ("Legend", "1", 40, 1180, 920, 460, "legend"),
+    "C-LEGEND": ("Legend", "1", 40, 1180, 920, 520, "legend"),
 }
 GROUPS = ("G-REMOTES", "G-SHELL", "G-SERVERS", "G-APIS", "G-CI")
 # Area colours: the master's PROMPT_ARROW_STYLE.md § Component Color Standards -> Subnet Types (the tier frames of an
@@ -109,6 +109,15 @@ NODES = {
     "D-CI-B": ("Team B pipeline", "craft:ci-pipeline", "G-CI", 2260, 1260, 80, "b"),
     "D-CI-C": ("Team C pipeline", "craft:ci-pipeline", "G-CI", 2400, 1260, 80, "c"),
 }
+# The highlight (owner, 2026-11-17: L or S by default, a framed F or G only for a parent, a hub or something important):
+# the crafted hubs, the parts the page's arrows meet at, are drawn in the craft kit's highlight style (G, a navy tile with a
+# gold rim) and every other crafted icon in the kit's default (L). The set is the same on all seven pages, so they still
+# compare part for part; the pivot keeps its amber caption, which is the one thing that moves. The generic hubs (the edge
+# router, the page composer) are shapes of PROMPT_ICON.md, not crafted icons, and take no highlight.
+HIGHLIGHT = ("B-PAGE", "E-CDN", "O-BFF", "D-REGISTRY")
+assert set(HIGHLIGHT) == {c for c, n in NODES.items() if n[1].startswith("craft:") and n[5] >= 120}, \
+    "HIGHLIGHT is the crafted hubs: every crafted icon of size 120 or 160, and no other"
+
 # Cell order (z): each container, then its children, depth first.
 ORDER = ["C-BROWSER", "G-REMOTES", "B-UI-A", "B-UI-B", "B-UI-C", "G-SHELL", "B-SHELL", "B-ROUTER", "B-PAGE", "B-BUS",
          "B-SHARED",
@@ -292,6 +301,10 @@ LEGEND_LINES = (
 LEGEND_L, LEGEND_R, LEGEND_COL = 20, 480, 420      # the legend's two columns (x, x, width), relative to the legend
 LEGEND_ARROWS_Y = 250                              # the Arrows heading; the samples follow it, 40 px apart
 LEGEND_NOTES = ((300, 80), (390, 50))              # (y, height) of the two note paragraphs, right column
+LEGEND_ICONS_Y = 410                             # the Icons heading; its sample row follows 30 px below
+LEGEND_HUB_ART = "cdn"                           # the crafted subject the legend draws its highlight sample from
+LEGEND_HUB_TEXT = ("Navy tile with a gold rim: a hub, where several arrows meet (the generic router and the servers keep "
+                   "their own shape)")
 TIER_ORDER = ("client", "public", "compute", "integration", "build")
 ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;"
        "fontColor=#37474F;kitExempt=1;")
@@ -301,20 +314,21 @@ ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=mid
 # the frame uses, and one text-kit cell per pattern it uses), taken when the frame was last proved. If the kit changes
 # what it draws, build_page refuses to write until the frame is proved again: re-run the dry run on all seven pages,
 # both gates, look at every render, then set KIT_FINGERPRINT to the new digest (the contract's Frame proof says how).
-KIT_FINGERPRINT = "e3442f07430aa39b8146ca56ae8e4d6bd09da1213789204ac0a79caebcadf1b2"
+KIT_FINGERPRINT = "2279de857c79b6222678b6d13b36110a19f296e3f86f7b2d229375bce594e68d"
 
 
-def craft_svg(subject, uid):
-    """The crafted icon of a subject, in the style its category maps to (the craft kit's style map)."""
-    return gen_craft.icon_svg(gen_craft.style_for(subject), subject, uid)
+def craft_svg(subject, uid, highlight=False):
+    """The crafted icon of a subject: in the style its category maps to (the craft kit's style map, L), or in the kit's
+    highlight style when `highlight` (a hub of HIGHLIGHT)."""
+    return gen_craft.icon_svg(gen_craft.style_for(subject, highlight=highlight), subject, uid)
 
 
 def kit_fingerprint():
     h = hashlib.sha256()
-    for art in sorted({n[1] for n in NODES.values()}):
+    for art, hl in sorted({(n[1], cid in HIGHLIGHT) for cid, n in NODES.items()}):
         kind, _, ref = art.partition(":")
-        body = craft_svg(ref, "probe_") if kind == "craft" else SHAPES[ref]
-        h.update(("%s|%s\n" % (art, body)).encode("utf-8"))
+        body = craft_svg(ref, "probe_", hl) if kind == "craft" else SHAPES[ref]
+        h.update(("%s|%s|%s\n" % (art, "highlight" if hl else "default", body)).encode("utf-8"))
     for pat, kind in (("t4", "info"), ("t3", "neutral"), ("t1", "neutral")):
         for cell in gen_text.text("probe", pat, kind, "probe", 0, 0, 240, 60, color="#FFFFFF"):
             h.update(cell.encode("utf-8"))
@@ -705,7 +719,7 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
         fill, border, _kind = CLASSES[cls]
         kind, _, ref = art.partition(":")
         if kind == "craft":      # a crafted icon: one standalone SVG, an image cell (the craft kit's cell form)
-            svg = craft_svg(ref, "i%s_" % re.sub(r"\W", "", cid))
+            svg = craft_svg(ref, "i%s_" % re.sub(r"\W", "", cid), cid in HIGHLIGHT)
             head = ("shape=image;html=1;aspect=fixed;imageAspect=0;image=data:image/svg+xml,%s;"
                     % base64.b64encode(svg.encode("utf-8")).decode("ascii"))
         else:                    # a generic shape of PROMPT_ICON.md
@@ -713,6 +727,8 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
         st = ("%sverticalLabelPosition=bottom;verticalAlign=top;align=center;"
               "spacingTop=%d;fontSize=12;fontStyle=1;fontColor=%s;labelBackgroundColor=%s;labelBorderColor=%s;"
               "mfeClass=%s;" % (head, CAP_GAP, CAPTION_FONT, fill, border, cls))
+        if cid in HIGHLIGHT:
+            st += "mfeHub=1;"                              # the highlight marker (draw.io ignores the key; the checks read it)
         if cls == "muted":
             st += MUTED_KEYS
         rx, ry = _rel(cid, x, y)
@@ -730,8 +746,9 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
     HEAD = ROW.replace("fontSize=11;", "fontSize=12;fontStyle=1;")
     for cid_, text, xx in (("L-HEAD-AREAS", "Areas: a frame's colour says its tier", LEGEND_L),
                            ("L-HEAD-ARROWS", "Arrows", LEGEND_L),
-                           ("L-HEAD-CAPTIONS", "Captions: a caption's colour says who owns the part", LEGEND_R)):
-        yy = {"L-HEAD-AREAS": 20, "L-HEAD-ARROWS": LEGEND_ARROWS_Y, "L-HEAD-CAPTIONS": 20}[cid_]
+                           ("L-HEAD-CAPTIONS", "Captions: a caption's colour says who owns the part", LEGEND_R),
+                           ("L-HEAD-ICONS", "Icons: a framed icon is a highlight", LEGEND_L)):
+        yy = {"L-HEAD-AREAS": 20, "L-HEAD-ARROWS": LEGEND_ARROWS_Y, "L-HEAD-CAPTIONS": 20, "L-HEAD-ICONS": LEGEND_ICONS_Y}[cid_]
         body.append('<mxCell id="%s" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" y="%d" '
                     'width="%d" height="20" as="geometry"/></mxCell>' % (cid_, gen_text.X(_esc(text)), HEAD, xx, yy,
                                                                           LEGEND_COL))
@@ -757,6 +774,13 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
                     'y="%d" width="%d" height="40" as="geometry"/></mxCell>'
                     % (cls, gen_text.X(_esc(text)), ROW, LEGEND_L + 120, LEGEND_ARROWS_Y + 30 + i * 40,
                        LEGEND_COL - 120))
+    hub_svg = craft_svg(LEGEND_HUB_ART, "ilegendhub_", True)      # the sample: the highlight style, as the hubs are drawn
+    body.append('<mxCell id="L-HUB-SAMPLE" value="" style="shape=image;html=1;aspect=fixed;imageAspect=0;image=data:image/svg+xml,%s;'
+                'kitExempt=1;" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" y="%d" width="40" height="40" as="geometry"/></mxCell>'
+                % (base64.b64encode(hub_svg.encode("utf-8")).decode("ascii"), LEGEND_L, LEGEND_ICONS_Y + 30))
+    body.append('<mxCell id="L-HUB-TEXT" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" y="%d" width="%d" '
+                'height="40" as="geometry"/></mxCell>'
+                % (gen_text.X(_esc(LEGEND_HUB_TEXT)), ROW, LEGEND_L + 50, LEGEND_ICONS_Y + 30, LEGEND_COL - 50))
     for i, (text, (yy, hh)) in enumerate(zip(LEGEND_LINES, LEGEND_NOTES)):
         body.append('<mxCell id="L-LINE-%d" value="%s" style="%s" vertex="1" parent="C-LEGEND"><mxGeometry x="%d" '
                     'y="%d" width="%d" height="%d" as="geometry"/></mxCell>'
@@ -842,6 +866,16 @@ def _verify(xml, abbr):
     assert len(icons) == len(NODES), "every content icon carries mfeClass (%d of %d)" % (len(icons), len(NODES))
     pivots = [c for c in icons if "mfeClass=pivot;" in c.get("style")]
     assert len(pivots) == 1, "exactly one mfeClass=pivot"
+    hubs = sorted(c.get("id") for c in icons if "mfeHub=1;" in c.get("style"))
+    assert hubs == sorted(HIGHLIGHT), "the highlighted icons are exactly %s, got %s" % (sorted(HIGHLIGHT), hubs)
+    for c in icons:                                    # every crafted icon is the one its role gets: highlight or default
+        m = re.search(r"image=data:image/svg\+xml,([^;]*);", c.get("style"))
+        if not m:
+            continue
+        cid = c.get("id")
+        want = craft_svg(NODES[cid][1].partition(":")[2], "i%s_" % re.sub(r"\W", "", cid), cid in HIGHLIGHT)
+        assert base64.b64decode(m.group(1)).decode("utf-8") == want, \
+            "%s: the crafted icon is not the %s one" % (cid, "highlight" if cid in HIGHLIGHT else "default")
     for c in icons:
         st = c.get("style")
         assert "verticalLabelPosition=bottom;" in st, "%s: an icon with its caption under it" % c.get("id")

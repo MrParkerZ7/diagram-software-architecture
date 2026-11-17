@@ -1,5 +1,10 @@
 # History — 1-producer/analysis
 
+## 2026-11-17 19:53 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** The frame contract for L as the default icon style and G as the highlight of the crafted hubs, on the owner's word: the header note, § Nodes (the Highlight bullet and the style of every crafted icon), § Legend (the Icons section, 520 high), § Frame API, the new `KIT_FINGERPRINT` and a seventh `## Frame proof`. T-001.
+- micro-frontend-frame.md
+
 ## 2026-11-17 15:01 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** The frame contract for S as the default icon style, on the owner's word: the header note, § Nodes (every crafted icon in S), the new `KIT_FINGERPRINT` and a sixth `## Frame proof`. T-001.

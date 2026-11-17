@@ -28,6 +28,11 @@
 > S, F and G; I and P are gone and every category maps to S. All 19 crafted icons are redrawn in S (a die-cut sticker, no
 > tile, in the kit's own colour for the subject). Positions, routes, labels, areas and arrows are unchanged;
 > `KIT_FINGERPRINT` is new.
+> **Highlight (2026-11-17, the owner's word: *"I like L more than G, let mark L as default"*, then *"I think there's fine we could use L/S by default and F/G sytle for only specific parente or hub or something important as hightlit let update diagram about this"*):** the craft kit's default is now L, Gel, and a
+> framed style (G, or F) is for a highlight only. The 15 ordinary crafted icons are drawn in L; the four crafted hubs (the
+> browser tab, the CDN, the BFF, the registry) are drawn in G, the kit's highlight style, on all seven pages; the legend
+> gains an Icons section (a sample and a line) and grows from 460 to 520 high. Positions, routes, labels, areas and arrows
+> are unchanged; `KIT_FINGERPRINT` is new.
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -130,7 +135,7 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
 | G-APIS | Team APIs | C-BACKEND | 2760,500,300,460 | 3 | #FFFFFF / #D6B656 |
 | C-BUILD | Build time (before any request) | page | 1240,1180,1300,460 | 4 | #FFFFFF / #999999 (dashed) |
 | G-CI | Team pipelines | C-BUILD | 2080,1220,440,160 | 3 | #FFFFFF / #999999 |
-| C-LEGEND | Legend | page | 40,1180,920,460 | 3 | #F5F5F5 / #666666 |
+| C-LEGEND | Legend | page | 40,1180,920,520 | 3 | #F5F5F5 / #666666 |
 
 ## Nodes
 
@@ -144,8 +149,10 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
      `shape:web_server` (Page composer, the three team servers), `shape:cache` (Page cache, `cylinder3`).
   2. **A crafted icon** of the prompt master's craft kit (`icons/craft/`, set `web-frontend` and `delivery`): an image
      cell (`shape=image;image=data:image/svg+xml,…`), drawn by `gen_craft.icon_svg` in the style its category maps to
-     (every category maps to S, Sticker, the kit's default since 2026-11-17; the kit keeps three styles, S, F and G.
-     Before that: `web`, `documents` and anything without a category: F; `integrations` and `releases`: P; `tools`: G).
+     (every category maps to L, Gel, the kit's default since 2026-11-17; the kit keeps four styles, L, S, F and G), or in the
+     kit's **highlight style**, G, for a hub (`gen_craft.style_for(subject, highlight=True)`, the Highlight bullet below).
+     Before that: S for every category (earlier the same day); before that `web`, `documents` and anything without a
+     category: F; `integrations` and `releases`: P; `tools`: G).
   3. The P3 clay glyph (`CLAY_DEMO`) is **not** used: it is for text-kit cards, and an icon-and-arrow page crafts a gap.
 - **Caption:** below.
 - **Caption:** the node's NAME, under the icon: `verticalLabelPosition=bottom;verticalAlign=top;align=center;
@@ -153,6 +160,15 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
   subtitle. The frame estimates a caption at 7.4 px a character plus 10, 20 high, 2 px under the icon.
 - **Size:** 80, or a hub: 160 for the Browser tab, the edge router, the CDN, the page composer and the BFF, 120 for the
   registry. A hub's size lets a cable leave its bottom face beside the caption.
+- **Highlight** (2026-11-17, the owner's word, header note): the **crafted hubs**, `B-PAGE`, `E-CDN`, `O-BFF` and `D-REGISTRY`
+  (every crafted icon of size 120 or 160: `mfe_frame.HIGHLIGHT`, asserted when the module loads), are drawn in the craft
+  kit's highlight style, G, a navy tile with a gold rim; every other crafted icon is L. The set is the same on all seven
+  pages, so two pages differ only in their pivot and their muted parts. The generic hubs (the edge router and the page
+  composer) are shapes of `PROMPT_ICON.md`, not crafted icons, and keep their own look. The pivot keeps its amber caption
+  and is not framed: it moves from page to page, and on four of the seven it is a generic shape. A muted hub is faded like
+  any muted icon. The icon's style carries `mfeHub=1`; the frame checks that the framed icons are exactly `HIGHLIGHT` and
+  that every crafted icon's image is the one its role gets (§ Frame API). The legend's Icons section says what a framed
+  icon is (§ Legend). **About one icon in five at most** is the kit's rule for a highlight; here four of 25.
 - **Marker:** each icon's style also carries `mfeClass=<class>` (draw.io ignores the unknown key; the checks read it).
 - **The headless viewer draws all three kinds** (2026-11-17, a probe through `render_png.render`): an
   `mxgraph.networks.*` shape, an `mxgraph.aws4.*` shape and an image cell with an SVG data URI. The earlier note here,
@@ -163,31 +179,31 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
 
 | id | NAME (the caption) | art (`craft:` subject or `shape:` key) | style | in | x,y (absolute) | size | class when active |
 |---|---|---|---|---|---|---|---|
-| B-PAGE | Browser tab | craft:browser-tab | S | C-BROWSER | 780,640 | 160 | platform |
-| B-SHELL | Runtime loader | craft:runtime-loader | S | G-SHELL | 500,400 | 80 | platform |
-| B-ROUTER | Client router | craft:client-router | S | G-SHELL | 500,520 | 80 | platform |
-| B-UI-A | Team A · Catalog UI | craft:ui-component | S | G-REMOTES | 140,400 | 80 | team-a |
-| B-UI-B | Team B · Cart UI | craft:ui-component | S | G-REMOTES | 140,540 | 80 | team-b |
-| B-UI-C | Team C · Account UI | craft:ui-component | S | G-REMOTES | 140,680 | 80 | team-c |
-| B-BUS | Event bus | craft:event-bus | S | C-BROWSER | 140,920 | 80 | platform |
-| B-SHARED | Shared libraries | craft:shared-library | S | C-BROWSER | 500,920 | 80 | platform |
+| B-PAGE | Browser tab | craft:browser-tab | G (highlight) | C-BROWSER | 780,640 | 160 | platform |
+| B-SHELL | Runtime loader | craft:runtime-loader | L | G-SHELL | 500,400 | 80 | platform |
+| B-ROUTER | Client router | craft:client-router | L | G-SHELL | 500,520 | 80 | platform |
+| B-UI-A | Team A · Catalog UI | craft:ui-component | L | G-REMOTES | 140,400 | 80 | team-a |
+| B-UI-B | Team B · Cart UI | craft:ui-component | L | G-REMOTES | 140,540 | 80 | team-b |
+| B-UI-C | Team C · Account UI | craft:ui-component | L | G-REMOTES | 140,680 | 80 | team-c |
+| B-BUS | Event bus | craft:event-bus | L | C-BROWSER | 140,920 | 80 | platform |
+| B-SHARED | Shared libraries | craft:shared-library | L | C-BROWSER | 500,920 | 80 | platform |
 | E-ROUTER | Edge router | shape:router (`mxgraph.networks.router`) | generic | C-EDGE | 1360,560 | 160 | platform |
 | E-CACHE | Page cache | shape:cache (`cylinder3`, the generic cache) | generic | C-EDGE | 1460,860 | 80 | platform |
-| E-CDN | CDN | craft:cdn | S | C-EDGE | 1260,900 | 160 | platform |
+| E-CDN | CDN | craft:cdn | G (highlight) | C-EDGE | 1260,900 | 160 | platform |
 | O-COMPOSER | Page composer | shape:web_server (`mxgraph.networks.web_server`) | generic | C-ORIGIN | 1920,520 | 160 | platform |
-| O-BFF | BFF | craft:bff | S | C-ORIGIN | 2260,600 | 160 | platform |
+| O-BFF | BFF | craft:bff | G (highlight) | C-ORIGIN | 2260,600 | 160 | platform |
 | O-SRV-A | Team A server | shape:web_server | generic | G-SERVERS | 1940,940 | 80 | team-a |
 | O-SRV-B | Team B server | shape:web_server | generic | G-SERVERS | 2160,940 | 80 | team-b |
 | O-SRV-C | Team C server | shape:web_server | generic | G-SERVERS | 2380,940 | 80 | team-c |
-| K-API-A | Catalog API (team A) | craft:api-service | S | G-APIS | 2880,540 | 80 | team-a |
-| K-API-B | Order API (team B) | craft:api-service | S | G-APIS | 2880,680 | 80 | team-b |
-| K-API-C | Account API (team C) | craft:api-service | S | G-APIS | 2880,820 | 80 | team-c |
-| K-CMS | Headless CMS | craft:headless-cms | S | C-BACKEND | 2880,980 | 80 | platform |
-| D-REGISTRY | Registry | craft:manifest-registry | S | C-BUILD | 2000,1480 | 120 | platform |
-| D-INTEGRATION | Integration build | craft:ci-pipeline | S | C-BUILD | 1660,1500 | 80 | platform |
-| D-CI-A | Team A pipeline | craft:ci-pipeline | S | G-CI | 2120,1260 | 80 | team-a |
-| D-CI-B | Team B pipeline | craft:ci-pipeline | S | G-CI | 2260,1260 | 80 | team-b |
-| D-CI-C | Team C pipeline | craft:ci-pipeline | S | G-CI | 2400,1260 | 80 | team-c |
+| K-API-A | Catalog API (team A) | craft:api-service | L | G-APIS | 2880,540 | 80 | team-a |
+| K-API-B | Order API (team B) | craft:api-service | L | G-APIS | 2880,680 | 80 | team-b |
+| K-API-C | Account API (team C) | craft:api-service | L | G-APIS | 2880,820 | 80 | team-c |
+| K-CMS | Headless CMS | craft:headless-cms | L | C-BACKEND | 2880,980 | 80 | platform |
+| D-REGISTRY | Registry | craft:manifest-registry | G (highlight) | C-BUILD | 2000,1480 | 120 | platform |
+| D-INTEGRATION | Integration build | craft:ci-pipeline | L | C-BUILD | 1660,1500 | 80 | platform |
+| D-CI-A | Team A pipeline | craft:ci-pipeline | L | G-CI | 2120,1260 | 80 | team-a |
+| D-CI-B | Team B pipeline | craft:ci-pipeline | L | G-CI | 2260,1260 | 80 | team-b |
+| D-CI-C | Team C pipeline | craft:ci-pipeline | L | G-CI | 2400,1260 | 80 | team-c |
 
 ## Page furniture
 
@@ -431,7 +447,7 @@ caption or a title.
 
 ## Legend
 
-C-LEGEND, titled `Legend`, at 40,1180,920,460 (the standard's gray box, `#F5F5F5` / `#666666`); every row is its child and
+C-LEGEND, titled `Legend`, at 40,1180,920,520 (the standard's gray box, `#F5F5F5` / `#666666`); every row is its child and
 carries `kitExempt=1`. It holds the **Component Legend** (the areas, and the caption colours) and the **Arrow Legend**
 that `PROMPT_ARROW_STYLE.md` requires of an architecture page, in two columns. Its rows sit on a 10-px grid (the rest of
 the page keeps 20): they are small rows of text.
@@ -444,6 +460,11 @@ the page keeps 20): they are small rows of text.
     target points (so the gate excludes them as UNVERIFIABLE, and they are the only excluded edges), captioned `Network
     request at run time: the arrow is the request, the label says what comes back`, `Call inside the page (no network)`,
     `Build or deploy, before any request`.
+  - a heading `Icons: a framed icon is a highlight` (y 410), then **one sample** (y 440): the CDN icon in the highlight style,
+    40 x 40 (an image cell with `kitExempt=1`, so no gate counts it as a part), and its line `Navy tile with a gold rim: a
+    hub, where several arrows meet (the generic router and the servers keep their own shape)`. The legend grew from 460 to
+    520 high for it; it ends at y 1700, clear of the companions card (y 1760) and of every cable (the nearest, the street
+    below the band, starts at x 1200).
 - **Right column (x 480, 420 wide):**
   - a heading `Captions: a caption's colour says who owns the part`, then one **flat** T4 badge per colour class (30
     high, 40 apart), its class's caption fill (the muted badge carries the muted keys too), labelled `Team A ·
@@ -470,6 +491,7 @@ everything here is sourced once, in this table (`frame-static` in a slot's table
 | `Where the HTML is produced`, `Where and when the micro-frontends are composed`, `Trade-off for micro-frontends` | statement headings | no claim |
 | `Team A · Catalog`, `Team B · Cart and orders`, `Team C · Account`, `Shared or platform-owned`, `Where the micro-frontends are composed (the pivot)`, `Not used in this approach` | legend badge labels | no claim |
 | `Areas: a frame's colour says its tier`, `Arrows`, `Captions: a caption's colour says who owns the part`, `Client: the browser, outside the system`, `Public: the internet-facing edge`, `Compute / app: the origin servers`, `Integration: the APIs and the content`, `Outside the request path: build and deploy` | legend headings and area swatches | no claim (the frame's own conventions; the tier colours are the prompt master's `PROMPT_ARROW_STYLE.md`) |
+| `Icons: a framed icon is a highlight`, `Navy tile with a gold rim: a hub, where several arrows meet (the generic router and the servers keep their own shape)` | legend, the Icons section | no claim (the frame's own convention) |
 | `Network request at run time: the arrow is the request, the label says what comes back`, `Call inside the page (no network)`, `Build or deploy, before any request` | legend sample-cable captions | no claim (the frame's own conventions) |
 | `Each part is an icon; … a standing link, or a separate trigger).` | legend line 1 | no claim (the frame's own conventions) |
 | `BFF and page cache are separate choices from the rendering approach (ISR alone is built on its page cache), drawn where this example uses them; the headless CMS is a data source, not a BFF.` | legend line 2 | "Frontend architecture patterns" (the owner's chat with Claude; private, no link; read 2026-11-15): rendering, the BFF and caching are three independent concerns, and a CMS is a data source, not a BFF · nextjs.org/docs/app/guides/incremental-static-regeneration (read 2026-11-15 by the plan): ISR serves cached pages and regenerates them |
@@ -492,7 +514,7 @@ build_page(abbr, full_name, statements[3], states{node_id: "active"|"muted"|"piv
   a label that is not clear, a cable through a title or a caption, a caption outside its container, two cables sharing
   a port, a statement over capacity, and a kit whose output no longer matches `KIT_FINGERPRINT`.
 - **The kit fingerprint.** The frame calls the prompt master's kit live. `KIT_FINGERPRINT` is the sha256 of the kit's
-  output for fixed probes (each crafted icon the frame uses, drawn by `gen_craft.icon_svg` in its category's style; each
+  output for fixed probes (each crafted icon the frame uses, drawn by `gen_craft.icon_svg` in the style its role gets, its category's or the highlight style for a hub; each
   generic shape's style string; and one `gen_text` cell per pattern it uses: T4, T3, T1), taken when the frame was proved. If the kit draws differently, `build_page` refuses to write and
   says how to prove the frame again: the dry run on all seven pages, both gates, every render looked at, then
   `KIT_FINGERPRINT = mfe_frame.kit_fingerprint()` and a new line in § Frame proof.
@@ -500,7 +522,8 @@ build_page(abbr, full_name, statements[3], states{node_id: "active"|"muted"|"piv
   fixed order, LF line ends, UTF-8, no timestamp, so a rebuild is byte-identical. The repo's `.gitattributes` keeps
   `*.drawio` as stored (`-text`), so a manifest's sha256 (of the LF bytes) matches on every checkout.
 - **Checks on the written text** (asserted): one `<diagram>`, unique ids, every vertex and every point on the 20-px grid,
-  every content icon carries `mfeClass`, exactly one `mfeClass=pivot`, every icon's caption under it
+  every content icon carries `mfeClass`, exactly one `mfeClass=pivot`, the framed icons are exactly `HIGHLIGHT` (`mfeHub=1`) and every
+  crafted icon's image is the one its role gets (the highlight style or the default, decoded and compared), every icon's caption under it
   (`verticalLabelPosition=bottom`), no wrapped card label and no subtitle, and `opacity=40;textOpacity=40;opacityGroup=1;`
   on every muted icon.
 
@@ -569,23 +592,35 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-17 (T-001's sixth dry run, for S as the default icon style: a throwaway, git-ignored dry-run script in
-  this workspace's script unit). Earlier proofs, superseded: the fifth, the same day, for the four kept icon styles; the
+- **Date:** 2026-11-17 (T-001's seventh dry run, for L as the default icon style and G as the highlight of the crafted hubs: a
+  throwaway, git-ignored dry-run script in this workspace's script unit). Earlier proofs, superseded: the sixth, the same
+  day, for S as the default; the fifth, the same day, for the four kept icon styles; the
   fourth, the same day, for the areas and the arrow format; the third, for the icon source (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
   first one for the card form.
 - **Prompt master at the dry run:** the 3-diagram kit as of commit `2a65231f`, the last commit that changed it, **plus
   the craft kit `icons/craft/` and its rule, which were not committed in the master at the dry run** (the master's
   `git status` for the kit folder was not empty, so the clean-tree condition of the first proof was not met: the proof is
   tied to the kit's output by the fingerprint, and is re-run when the master commits the craft kit).
-  **The kit changed again on the same day**, twice: six styles removed and six categories reassigned (the fifth proof), then
-  S, Sticker, added and made the default, I and P removed, every category mapped to S, and twenty-one subjects, a colour
-  and a tone added (the sixth). It is still uncommitted. `KIT_FINGERPRINT` = `e3442f07430aa39b8146ca56ae8e4d6bd09da1213789204ac0a79caebcadf1b2`
-  (the fifth proof's was `31a9b78a…`, the fourth's `c2c37eac…`).
+  **The kit changed again on the same day**, three times: six styles removed and six categories reassigned (the fifth proof),
+  then S, Sticker, added and made the default, I and P removed, every category mapped to S, and twenty-one subjects, a colour
+  and a tone added (the sixth), then L, Gel, added and made the default and a highlight style (G, or F) added for a hub or a
+  parent, as `style_for(subject, highlight=True)` (the seventh). It is still uncommitted. `KIT_FINGERPRINT` = `2279de857c79b6222678b6d13b36110a19f296e3f86f7b2d229375bce594e68d`
+  (the sixth proof's was `e3442f07…`, the fifth's `31a9b78a…`, the fourth's `c2c37eac…`).
 - **What ran, per page:** the full page data of T-001 to T-007 (title, S1 to S3, every state, every cable with its full
   label, forced breaks included, the companions) through `build_page`; `kit_coverage_check.py --architecture` and
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
   (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
   full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
+- **Changes of the seventh dry run (L as the default, G as the highlight):** none to any node's position, route, label slide
+  or wrap, and none to the areas or the arrows. The 15 ordinary crafted icons are drawn in L and the four crafted hubs in G
+  (§ Nodes, the Highlight bullet); the six generic shapes are unchanged. The legend gained its Icons section and grew from 460 to
+  520 high (§ Legend). The guard refused the first build (the kit's output differed from the frozen digest), the digest was
+  set after the renders were looked at. The frame gained `HIGHLIGHT`, `craft_svg`'s `highlight` argument, the `mfeHub=1`
+  marker and two checks on the written text. Looked at: CSR whole and in full-resolution crops of the Browser column, the
+  Edge and Origin columns, the build band and the legend; the other six in one contact sheet (a muted hub reads as a faded
+  framed tile on MPA, SSR and ISR). Both gates passed on all seven pages with the counts below. Seen and left: the
+  pipeline icon (a flat row of three circles) is small beside the others, in L as it was in S; the generic edge router, a
+  solid blue shape, is as strong as a framed hub.
 - **Changes of the sixth dry run (S as the default):** none to any node's position, route, label slide or wrap, and none to
   the areas or the arrows. All 19 crafted icons are drawn in S (§ Nodes); the six generic shapes are unchanged. The guard
   refused the first build (the kit's output differed from the frozen digest), the digest was set after the renders were
@@ -609,7 +644,8 @@ words it searches for.
 - **Kit gain:** the craft kit gained eleven subjects for this page (set `web-frontend`: browser tab, runtime loader,
   client router, UI component, shared library, CDN, event bus, BFF, API service, headless CMS, manifest registry), drawn
   by the same engine and checked by its selftest. On 2026-11-17 the kit was cut to four styles, then to three with S the
-  default: its selftest reads 3 styles x 42 subjects, 12 colours.
+  default, then four again with L the default and F and G the highlight styles: its selftest reads 4 styles x 42 subjects,
+  12 colours.
 
 | page | pivot | kit_coverage_check.py --architecture | check_layout.py | CROSS | COLLINEAR | STRADDLE | OFF-PAGE | DEPTH-STROKE | excluded edges | other soft findings kept |
 |---|---|---|---|---|---|---|---|---|---|---|
