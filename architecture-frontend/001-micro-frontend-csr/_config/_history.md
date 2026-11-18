@@ -1,5 +1,10 @@
 # History — 001-micro-frontend-csr
 
+## 2026-11-18 10:26 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** Revision 10, regenerated in place by the slot's builder: the three statements under the title are drawn with the prompt master's statement kit (style 6, the curled tab card) instead of T1 sticky-note cards, and the title and the companions line are plain text, on the owner's word; no node, cable or label moved. T-001.
+- micro-frontend-csr-architecture.drawio
+
 ## 2026-11-17 20:36 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** Revision 9, regenerated in place by the slot's builder: the build band is re-placed on the owner's repeated open word; its block (the Team pipelines group, the registry, the integration build) is 380 px further west under the CDN, so the build cables to the CDN are half as long; no other node, cable or label moved. T-001.

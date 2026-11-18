@@ -44,6 +44,12 @@
 > along the band street instead of 760, the integration build's rise to the CDN is one straight vertical, and the band's empty left half
 > is used. The nodes, the pipelines group, ten routes and their label slides change (§ Containers, § Nodes, § Routes, § Label slides);
 > the other routes, the areas, the arrows and `KIT_FINGERPRINT` are unchanged.
+> **Page statements redrawn (2026-11-18, the owner's word: *"I hate those statement card style, need to redesing it now, let do 10 style on claude artifact"*, then *"Yeah, use those instead and remove the old one. let update skill"*):** the three statements under the title are no longer T1
+> sticky-note cards (a white note with a dark folded corner, 120 px high, 12-px text) but blocks of the prompt master's new statement kit
+> (`text/gen_statement.py`, standard `text/STATEMENT.md`), style 6, the curled tab card: 1000 x 160, a coloured arrow tab with the numeral
+> on a white card, in the sample's own gold, sky blue and green. The title and the companions line are plain text, no longer a T3 banner and a
+> T1 card. The statements move up 20 px (y 80) so the top street keeps its clearance. No node, route, label, area or arrow moves;
+> `KIT_FINGERPRINT` is new (it now probes the statement kit and no longer the T1 and T3 patterns).
 
 **Implemented by** `../script/_lib/mfe_frame.py` (`build_page`, every coordinate, style, port, waypoint, wrap and slide
 below) and `../script/_lib/render_png.py` (`render`). The tables of this contract are generated from `mfe_frame.py`'s
@@ -58,9 +64,9 @@ helper).
 ## Page and spacing
 
 - **Page:** 3240 x 1840. All geometry (cells, ports, waypoints) is in multiples of 20 (`PROMPT_OBJECT.md` mod-10 rule,
-  kept stricter here). The kit's own chrome (a flat T1's fold, a T3's notches) keeps the kit's offsets.
+  kept stricter here). The statement kit's cells (ids `F-S1` to `F-S3`) and the legend's rows are on the 10-px grid.
 - **Streets** (horizontal free space between bands):
-  - the **top street**, between the statement cards and the columns: y 220 to 320 (its cables run at y 260);
+  - the **top street**, between the statements (the title ends at y 60, the statement blocks at y 240) and the columns: y 240 to 320 (its cables run at y 260);
   - the **band street**, between the columns and the build band: y 1100 to 1180 (its cables run at y 1140 and 1160);
   - the **street below the band**: y 1640 to 1740 (its cables run at y 1680 and 1700).
 - **Gutters** (vertical free space between columns):
@@ -223,20 +229,28 @@ with `fillColor` = `swimlaneFillColor`, `fontSize=14;fontStyle=1;shadow=1`, the 
 
 ## Page furniture
 
-Every furniture cell carries `kitExempt=1`, appended to each cell the kit returns (a title, a statement and a legend row
+Every furniture cell carries `kitExempt=1`: the statement kit bakes it into its cells and the frame adds it to the rest (a title, a statement and a legend row
 are not content nodes, and it keeps them out of `check_layout.py`'s centrality box).
-- **Title:** a T3 flat banner (kind `neutral`) at 40,20,3160,60: `Micro-frontends with <ABBR>: <full name>`.
-- **Statement cards:** three T1 flat cards (kind `neutral`, `color=#FFFFFF`), 1000 x 120 at y 100: S1 at x 40, S2 at
-  x 1120, S3 at x 2200 (80 px apart, so S3 ends on the title's right edge). Label `<b>heading</b><br>statement`, font 12.
-  Headings: S1 `Where the HTML is produced`, S2 `Where and when the micro-frontends are composed`, S3 `Trade-off for
-  micro-frontends`.
-  **Capacity: the heading plus 5 lines, counted at 150 characters a line.** Measured on the renders: a 1000-px card at
-  font 12 holds about 160 characters a line, so the count is a little short of what is drawn, never over it. The
-  longest statement, ISR S3 (513 characters), counts 4 lines and is drawn in 3. The frame refuses a statement that
-  needs more.
-- **Companions:** a T1 flat card (kind `neutral`, `color=#FFFFFF`) at 40,1760,3160,60:
+- **Title:** plain bold text, 24 px, `#212121`, at 40,20,3160,40: `Micro-frontends with <ABBR>: <full name>` (no banner).
+- **Statements:** three blocks of the prompt master's statement kit (`text/gen_statement.py`, standard `text/STATEMENT.md`), style 6
+  (the curled tab card), 1000 x 160 at y 80: S1 at x 40, S2 at x 1120, S3 at x 2200 (80 px apart, so S3 ends on the title's right
+  edge). A block is a white card (shadow, no stroke) with a coloured arrow tab that holds the `»` mark and the numeral `01`, `02`
+  or `03`, then the heading (bold, 17 px, the tab's colour deepened so it reads on white) and the statement (13 px, `#424242`) on the
+  card. The tab colours are the sample's own, one for each statement: gold (`#E6A100` to `#FFC20E`), sky blue (`#139BE5` to
+  `#35C0FF`), green (`#23913E` to `#3DB35B`). The cells are `F-S<k>_c` (card), `_a` (tab), `_q` (the mark), `_n` (the numeral), `_h`
+  and `_b`: every geometry is on the 10-px grid, and two cells of a block are apart or one lies inside the other, so the layout gate
+  counts no STRADDLE; the card and the tab carry no stroke, so DEPTH-STROKE has nothing to weigh. The frame pins style 6 (it does
+  not follow the kit's default). Headings: S1 `Where the HTML is produced`, S2 `Where and when the micro-frontends are composed`,
+  S3 `Trade-off for micro-frontends`.
+  **Capacity: one line of heading and 5 lines of body, as the kit's `fits(6, 1000, heading, body, 160)` estimates** (a character is
+  counted 0.50 em wide, so a body line is 123 characters at 800 px and 13 px; it is drawn a little narrower). The longest statement,
+  ISR S3 (513 characters), counts 5 lines and is drawn in 4. The frame refuses a statement that `fits` reports. A block 120 high held
+  3 lines and was too small for ISR, SSG and RSC; the block is 160 high on all seven pages.
+- **Companions:** plain text, 13 px, `#616161`, at 40,1760,3160,20:
   `<b>Companions (same frame):</b>` followed by the other six file names, each
   `00N-micro-frontend-<x>/micro-frontend-<x>-architecture.drawio`, joined by ` · `.
+- **Left for the owner to say:** the numerals `01 02 03` sit beside arrows numbered 1 to 6, and three vivid colours can be read as
+  teams or tiers, which the page already colours. The kit takes one `pair` for all three, or `I II III`.
 - **Legend:** § Legend.
 
 ## Colour classes
@@ -508,6 +522,7 @@ everything here is sourced once, in this table (`frame-static` in a slot's table
 | `Registry`, `Integration build`, `Team A pipeline`, `Team B pipeline`, `Team C pipeline` | captions, build band | no claim |
 | `Browser (one page at run time)`, `Team UIs (micro-frontends)`, `App shell`, `Edge (CDN and proxy)`, `Origin (servers)`, `Team servers`, `Backend (APIs and content)`, `Team APIs`, `Build time (before any request)`, `Team pipelines`, `Legend` | container titles | no claim |
 | `Where the HTML is produced`, `Where and when the micro-frontends are composed`, `Trade-off for micro-frontends` | statement headings | no claim |
+| `01`, `02`, `03`, `»` | the statements' numerals and mark | no claim (the frame's own numbering of the statements) |
 | `Team A · Catalog`, `Team B · Cart and orders`, `Team C · Account`, `Shared or platform-owned`, `Where the micro-frontends are composed (the pivot)`, `Not used in this approach` | legend badge labels | no claim |
 | `Areas: a frame's colour says its tier`, `Arrows`, `Captions: a caption's colour says who owns the part`, `Client: the browser, outside the system`, `Public: the internet-facing edge`, `Compute / app: the origin servers`, `Integration: the APIs and the content`, `Outside the request path: build and deploy` | legend headings and area swatches | no claim (the frame's own conventions; the tier colours are the prompt master's `PROMPT_ARROW_STYLE.md`) |
 | `Icons: a framed icon is a highlight`, `Navy tile with a gold rim: a hub, where several arrows meet (the generic router and the servers keep their own shape)` | legend, the Icons section | no claim (the frame's own convention) |
@@ -534,13 +549,14 @@ build_page(abbr, full_name, statements[3], states{node_id: "active"|"muted"|"piv
   a port, a statement over capacity, and a kit whose output no longer matches `KIT_FINGERPRINT`.
 - **The kit fingerprint.** The frame calls the prompt master's kit live. `KIT_FINGERPRINT` is the sha256 of the kit's
   output for fixed probes (each crafted icon the frame uses, drawn by `gen_craft.icon_svg` in the style its role gets, its category's or the highlight style for a hub; each
-  generic shape's style string; and one `gen_text` cell per pattern it uses: T4, T3, T1), taken when the frame was proved. If the kit draws differently, `build_page` refuses to write and
+  generic shape's style string; one `gen_text` cell of the one pattern it still uses, T4 (the legend's pills); and the statement kit's cells of
+  style 6 in its three colours), taken when the frame was proved. If the kit draws differently, `build_page` refuses to write and
   says how to prove the frame again: the dry run on all seven pages, both gates, every render looked at, then
   `KIT_FINGERPRINT = mfe_frame.kit_fingerprint()` and a new line in § Frame proof.
 - **Deterministic output:** `<mxfile host="mfe-frame">`, diagram id `mfe-<abbr lowercase>`, one `<diagram>`, cells in a
   fixed order, LF line ends, UTF-8, no timestamp, so a rebuild is byte-identical. The repo's `.gitattributes` keeps
   `*.drawio` as stored (`-text`), so a manifest's sha256 (of the LF bytes) matches on every checkout.
-- **Checks on the written text** (asserted): one `<diagram>`, unique ids, every vertex and every point on the 20-px grid,
+- **Checks on the written text** (asserted): one `<diagram>`, unique ids, every vertex on the 20-px grid (the legend's rows and the statement kit's cells, ids `L-` and `F-S`, on the 10-px grid) and every point on the 20-px grid,
   every content icon carries `mfeClass`, exactly one `mfeClass=pivot`, the framed icons are exactly `HIGHLIGHT` (`mfeHub=1`) and every
   crafted icon's image is the one its role gets (the highlight style or the default, decoded and compared), every icon's caption under it
   (`verticalLabelPosition=bottom`), no wrapped card label and no subtitle, and `opacity=40;textOpacity=40;opacityGroup=1;`
@@ -611,8 +627,8 @@ words it searches for.
 
 ## Frame proof
 
-- **Date:** 2026-11-17 (T-001's ninth dry run, for the re-placed build band: a throwaway, git-ignored dry-run script in this
-  workspace's script unit). Earlier proofs, superseded: the eighth, the same day, for the shared libraries' arrow and the
+- **Date:** 2026-11-18 (T-001's tenth dry run, for the statements redrawn with the statement kit: a throwaway, git-ignored dry-run script in this
+  workspace's script unit). Earlier proofs, superseded: the ninth, 2026-11-17, for the re-placed build band; the eighth, the same day, for the shared libraries' arrow and the
   pipeline glyph's redraw; the seventh, the same day, for L as the default icon style and G as the highlight of the crafted hubs; the sixth, the same
   day, for S as the default; the fifth, the same day, for the four kept icon styles; the
   fourth, the same day, for the areas and the arrow format; the third, for the icon source (crafted icons and generic shapes); 2026-11-16 for the icon form (`KIT_FINGERPRINT` `babc75c0…`, clay glyphs) and the
@@ -625,13 +641,29 @@ words it searches for.
   then S, Sticker, added and made the default, I and P removed, every category mapped to S, and twenty-one subjects, a colour
   and a tone added (the sixth), then L, Gel, added and made the default and a highlight style (G, or F) added for a hub or a
   parent, as `style_for(subject, highlight=True)` (the seventh), then the `ci-pipeline` subject redrawn as a staircase (the
-  eighth). It is still uncommitted. `KIT_FINGERPRINT` = `c25be24ee48fa96378e5e77ac71fda54acb33482804e8acce2c1f67ef3214349`
-  (the ninth proof's is the eighth's, the kit's output did not change; the seventh proof's was `2279de85…`, the sixth's `e3442f07…`, the fifth's `31a9b78a…`, the fourth's `c2c37eac…`).
+  eighth). **On 2026-11-18 the statement kit was added** to the same folder (`text/gen_statement.py`, its standard `text/STATEMENT.md` and its
+  showcase `text/sets/statements.drawio`; its selftest reads `ok (13 styles x 3 colours x 4 widths x 3 heights, layout gate clean)`), and the
+  frame now calls it (the tenth). All of it is still uncommitted. `KIT_FINGERPRINT` = `14134019bf18014cfdb09e332c793b01162218bbdb1585ec2775cdf78da475e2`
+  (the ninth proof's was the eighth's, `c25be24e…`, the kit's output did not change; the seventh proof's was `2279de85…`, the sixth's `e3442f07…`, the fifth's `31a9b78a…`, the fourth's `c2c37eac…`).
 - **What ran, per page:** the full page data of T-001 to T-007 (title, S1 to S3, every state, every cable with its full
   label, forced breaks included, the companions) through `build_page`; `kit_coverage_check.py --architecture` and
   `check_layout.py` (report profile, ROAD, no `--centre`), every finding read; a render through `render_png.render`
   (headless Chrome with the draw.io viewer of the VS Code extension 1.19.0). **Looked at:** CSR whole and in two
   full-resolution crops; the other six in one contact sheet (pivot, muted icons and cable layout), not one by one.
+- **Changes of the tenth dry run (the statements redrawn):** none to any node, route, label slide, wrap, area or arrow. The three
+  statements are the statement kit's style 6 at y 80, 1000 x 160 (§ Page furniture), where they were three T1 cards 1000 x 120 at
+  y 100; the title is plain bold text and the companions line plain text, where they were a T3 banner and a T1 card; the T1 fold
+  and T3 notch exemption of the written-text check is gone and the statement cells are checked on the 10-px grid. `KIT_FINGERPRINT`
+  changes: it probes T4 and the statement kit. The first run found two things. The kit's blocks of 120 px held 3 body lines, too
+  few for ISR S2 and S3 and for the longer statements of SSG and RSC, so the kit gained a block height `h` (120 to 240 in steps of 20)
+  and the frame uses 160. The layout gate found STRADDLE and DEPTH-STROKE inside the first drawing of every style that overlaps its
+  parts (a tab over a card edge) or strokes a leaf thinner than 2 px, so all thirteen styles were redrawn with parts that are apart or
+  nested and strokes of 2 px (white strokes are halos); the kit's selftest now runs the gate on its showcase. The statements
+  moved from y 100 to y 80 after a first look showed the top-street cable at y 260 only 10 px under the third card on ISR and RSC.
+  Looked at: CSR whole and in a full-resolution crop of the first two statements, ISR in a crop of the third, and the top band of all
+  seven pages in one contact sheet. Both gates passed on all seven pages with the counts below. **Seen and left, for the owner to say:**
+  the numerals sit beside arrows numbered 1 to 6, the three vivid colours can be read as teams or tiers, and the generic edge
+  router, a solid blue shape, is as strong as a framed hub.
 - **Changes of the ninth dry run (the build band re-placed):** none to the kit, the areas, the arrows, any run-time route or any
   label outside the build cables. The build block (the Team pipelines group with its three pipelines, the registry and the
   integration build) is 380 px further west, so the registry's and the pipelines' cables to the CDN run 380 px along the band

@@ -25,12 +25,13 @@ except Exception:  # noqa: BLE001
     pass
 
 KIT = os.environ.get("DIAGRAM_KIT", "")
-if not KIT or not os.path.isfile(os.path.join(KIT, "text", "gen_text.py")):
+if not KIT or not os.path.isfile(os.path.join(KIT, "text", "gen_statement.py")):
     raise SystemExit("DIAGRAM_KIT must point to the prompt master's shared/prompts/3-diagram")
 sys.path.insert(0, os.path.join(KIT, "text"))
 sys.path.insert(0, os.path.join(KIT, "icons"))
 sys.path.insert(0, os.path.join(KIT, "icons", "craft"))
 import gen_text  # noqa: E402
+import gen_statement  # noqa: E402
 import gen_craft  # noqa: E402
 
 GRID = 20
@@ -282,12 +283,14 @@ LABELS = {
 TITLE_PREFIX = "Micro-frontends with"
 STATEMENT_HEADINGS = ("Where the HTML is produced", "Where and when the micro-frontends are composed",
                       "Trade-off for micro-frontends")
-STATEMENT_BOXES = ((40, 100, 1000, 120), (1120, 100, 1000, 120), (2200, 100, 1000, 120))
-# Capacity of a statement card, measured on the renders: about 160 characters a line at font 12 in a 1000-px card
-# (counted at 150, so a line never overflows), the heading plus 5 lines.
-STATEMENT_CHARS, STATEMENT_LINES = 150, 5
-TITLE_BOX = (40, 20, 3160, 60)
-COMPANIONS_BOX = (40, 1760, 3160, 60)
+STATEMENT_BOXES = ((40, 80, 1000, 160), (1120, 80, 1000, 160), (2200, 80, 1000, 160))
+# The statements are the prompt master's statement kit (text/gen_statement.py), style 6 (the curled tab card): a coloured
+# arrow tab holding the numeral on a white card, in the sample's own colours (gold, sky blue, green). Pinned here, not
+# read from the kit's default, so a change of the kit's default cannot change a page. What fits is the kit's `fits`.
+STATEMENT_STYLE = 6
+STATEMENT_NUMBERS = ("01", "02", "03")
+TITLE_BOX = (40, 20, 3160, 40)          # plain bold text, 24 px
+COMPANIONS_BOX = (40, 1760, 3160, 20)   # plain text, 13 px
 COMPANIONS_HEADING = "Companions (same frame):"
 LEGEND_BADGES = (("team-a", "Team A · Catalog"), ("team-b", "Team B · Cart and orders"), ("team-c", "Team C · Account"),
                  ("platform", "Shared or platform-owned"), ("pivot", "Where the micro-frontends are composed (the pivot)"),
@@ -317,7 +320,7 @@ ROW = ("text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=mid
 # the frame uses, and one text-kit cell per pattern it uses), taken when the frame was last proved. If the kit changes
 # what it draws, build_page refuses to write until the frame is proved again: re-run the dry run on all seven pages,
 # both gates, look at every render, then set KIT_FINGERPRINT to the new digest (the contract's Frame proof says how).
-KIT_FINGERPRINT = "c25be24ee48fa96378e5e77ac71fda54acb33482804e8acce2c1f67ef3214349"
+KIT_FINGERPRINT = "14134019bf18014cfdb09e332c793b01162218bbdb1585ec2775cdf78da475e2"
 
 
 def craft_svg(subject, uid, highlight=False):
@@ -332,8 +335,11 @@ def kit_fingerprint():
         kind, _, ref = art.partition(":")
         body = craft_svg(ref, "probe_", hl) if kind == "craft" else SHAPES[ref]
         h.update(("%s|%s|%s\n" % (art, "highlight" if hl else "default", body)).encode("utf-8"))
-    for pat, kind in (("t4", "info"), ("t3", "neutral"), ("t1", "neutral")):
+    for pat, kind in (("t4", "info"),):                  # the legend's caption pills: the one text-kit pattern still used
         for cell in gen_text.text("probe", pat, kind, "probe", 0, 0, 240, 60, color="#FFFFFF"):
+            h.update(cell.encode("utf-8"))
+    for k in range(3):                                   # the statement kit: the style the page uses, in its three colours
+        for cell in gen_statement.statement(STATEMENT_STYLE, "probe", 0, 0, 1000, STATEMENT_NUMBERS[k], "probe", "probe", index=k, h=160):
             h.update(cell.encode("utf-8"))
     return h.hexdigest()
 
@@ -607,8 +613,19 @@ def _check_ports(cables):
     return bad
 
 
-def _statement_lines(text):
-    return len(wrap_label(text, STATEMENT_CHARS))
+def _statement_problems(k, text):
+    """What does not fit statement k in the kit's style (the kit's own estimate, a little wider than drawn)."""
+    return ["statement S%d: %s" % (k + 1, why)
+            for why in gen_statement.fits(STATEMENT_STYLE, STATEMENT_BOXES[k][2], STATEMENT_HEADINGS[k], text, STATEMENT_BOXES[k][3])]
+
+
+def _plain(cid, value_html, box, size, color, bold=False):
+    """One plain text cell (page text, not a kit part): the title and the companions line."""
+    x, y, w, h = box
+    st = ("text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;align=left;verticalAlign=top;fontSize=%d;"
+          "fontColor=%s;fontStyle=%d;spacing=0;kitExempt=1;" % (size, color, 1 if bold else 0))
+    return ('<mxCell id="%s" value="%s" style="%s" vertex="1" parent="1"><mxGeometry x="%d" y="%d" width="%d" '
+            'height="%d" as="geometry"/></mxCell>' % (cid, gen_text.X(value_html), st, x, y, w, h))
 
 
 # =================================================================================================== the page
@@ -679,9 +696,7 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
         placed.append(label_box(lines, *centre))
         label_cells[(a, b)] = (lines, centre)
     for k, s in enumerate(statements):
-        if _statement_lines(s) > STATEMENT_LINES:
-            problems.append("statement S%d needs more than %d lines of %d characters"
-                            % (k + 1, STATEMENT_LINES, STATEMENT_CHARS))
+        problems += _statement_problems(k, s)
     if problems:
         raise ValueError("mfe_frame.build_page(%s) refused to write:\n  " % abbr + "\n  ".join(problems))
 
@@ -819,15 +834,12 @@ def build_page(abbr, full_name, statements, states, cables, companions, out_path
     # page furniture (top level, front)
     front = []
     title = "%s %s: %s" % (TITLE_PREFIX, abbr, full_name)
-    for s in gen_text.text("F-TITLE", "t3", "neutral", _esc(title), *TITLE_BOX):
-        front.append(_style_add(s, "kitExempt=1;"))
+    front.append(_plain("F-TITLE", _esc(title), TITLE_BOX, 24, "#212121", bold=True))
     for k, (head, text) in enumerate(zip(STATEMENT_HEADINGS, statements)):
-        label = "<b>%s</b><br>%s" % (_esc(head), _esc(text))
-        for s in gen_text.text("F-S%d" % (k + 1), "t1", "neutral", label, *STATEMENT_BOXES[k], color="#FFFFFF"):
-            front.append(_style_add(s, "kitExempt=1;"))
+        x, y, w, h = STATEMENT_BOXES[k]
+        front += gen_statement.statement(STATEMENT_STYLE, "F-S%d" % (k + 1), x, y, w, STATEMENT_NUMBERS[k], head, text, index=k, h=h)
     comp = "<b>%s</b> %s" % (_esc(COMPANIONS_HEADING), " · ".join(_esc(c) for c in companions))
-    for s in gen_text.text("F-COMPANIONS", "t1", "neutral", comp, *COMPANIONS_BOX, color="#FFFFFF"):
-        front.append(_style_add(s, "kitExempt=1;"))
+    front.append(_plain("F-COMPANIONS", comp, COMPANIONS_BOX, 13, "#616161"))
 
     cells = body + edges + front
     xml = ('<mxfile host="mfe-frame">\n<diagram name="%s" id="mfe-%s">\n<mxGraphModel dx="1600" dy="900" grid="1" '
@@ -854,13 +866,11 @@ def _verify(xml, abbr):
         g = c.find("mxGeometry")
         if g is None:
             continue
-        if c.get("vertex") == "1" and c.get("style", "").find("shape=stencil") >= 0 and c.get("id", "").endswith(
-                ("_fold", "_nl", "_nr")):
-            continue                                   # the kit's own chrome (fold, notches) sits at its own offsets
         for k in ("x", "y", "width", "height"):
             v = g.get(k)
             if v is not None and c.get("vertex") == "1":
-                grid = 10 if str(c.get("id", "")).startswith("L-") else GRID      # the legend's rows: the 10-px grid
+                # the legend's rows and the statement kit's cells (F-S1 .. F-S3) sit on the 10-px grid
+                grid = 10 if str(c.get("id", "")).startswith(("L-", "F-S")) else GRID
                 assert float(v) % grid == 0, "%s %s=%s off the %d-px grid" % (c.get("id"), k, v, grid)
         for p in g.iter("mxPoint"):
             for k in ("x", "y"):

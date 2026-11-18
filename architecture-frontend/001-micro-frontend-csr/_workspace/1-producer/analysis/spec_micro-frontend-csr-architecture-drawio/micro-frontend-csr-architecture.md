@@ -20,6 +20,7 @@
 > **Revision 7 (2026-11-17):** the craft kit made L, Gel, its default on the owner's word (*"I like L more than G, let mark L as default"*), and said a framed style is for a highlight only (*"I think there's fine we could use L/S by default and F/G sytle for only specific parente or hub or something important as hightlit let update diagram about this"*); the 15 ordinary crafted icons are redrawn in L, the four crafted hubs in G, and the legend gains an Icons section (§ 5). No node, route, label, area or arrow moved.
 > **Revision 8 (2026-11-17):** an improvement pass on the owner's open word (*"now let try to improve …/micro-frontend-csr-architecture.drawio"*): the shared libraries, the one active part with no arrow, get a standing link from the App shell group (§ 3, § 4, § 8), and the craft kit draws the pipeline icons as a staircase (§ 5). No node moved and no other cable changed.
 > **Revision 9 (2026-11-17):** the owner repeated the open word (*"let improve this one …/micro-frontend-csr-architecture.drawio"*): the build band is re-placed, its block 380 px further west under the CDN, so the build cables to the CDN are half as long (§ 5). No node outside the band moved and no cable was added.
+> **Revision 10 (2026-11-18):** the owner rejected the statement cards (*"I hate those statement card style, need to redesing it now, let do 10 style on claude artifact"*) and chose, from thirteen styles drawn from the sample images he pasted, to use them and drop the old card (*"Yeah, use those instead and remove the old one. let update skill"*): the three statements are the statement kit's numbered banners, style 6, and the title and the companions line are plain text (§ 5). No node, cable, label or area moved.
 
 ## 1. Purpose
 
@@ -38,8 +39,8 @@ frame, so a reader can compare it part for part with the other six and see the c
 ## 3. Structure
 
 The page is the frame's (`../../_workspace/1-producer/analysis/micro-frontend-frame.md`), in this order: the title
-banner; the three statement cards; the four columns (Browser, Edge, Origin, Backend) with their groups; the build band;
-the arrows; the legend; the companions card. Every part is an icon whose caption is its frame-static NAME. This slot
+text; the three statements (the statement kit's numbered banners); the four columns (Browser, Edge, Origin, Backend) with their groups; the build band;
+the arrows; the legend; the companions line. Every part is an icon whose caption is its frame-static NAME. This slot
 gives the frame data only:
 
 - **Title:** `Micro-frontends with CSR: client-side rendering (first load)`.
@@ -144,6 +145,15 @@ weakest part of the page, because the registry's and the pipelines' cables to th
 and the band's west half was empty. The band's block (the Team pipelines group, the registry and the integration build) is 380 px further west, under the CDN,
 so those cables run 380 px and the page's own build cables are shorter; the registry still sits under the pipelines. Nothing else moved: no run-time cable,
 no label outside the build cables, no area, no icon outside the band; the cables, the labels and the text are the same.
+
+**Statements redrawn (revision 10).** The three statements under the title were T1 sticky-note cards (a white note with a dark folded corner, 120 px
+high, 12-px text, mostly empty); the title was a T3 banner and the companions line a T1 card. The owner rejected the cards and, after ten styles, eight
+and thirteen, said to use the thirteen and remove the old one. The prompt master gained the statement kit for them (`text/gen_statement.py`); this page
+uses its style 6, the curled tab card, chosen by Claude for the owner to change (he named no default): a white card with a coloured arrow tab holding
+the numeral, the heading in the tab's colour and the statement in grey, one tab colour for each statement (gold, sky blue, green, the sample's own). The
+blocks are 1000 x 160 at y 80 so that the longest statements of the other pages fit (5 body lines); the title and the companions line are plain text.
+The words of the three statements, the title and the companions are the same, and so is every part below the band. Left for the owner to say: the
+numerals `01 02 03` sit beside arrows numbered 1 to 6, and three vivid colours can be read as teams or tiers.
 
 **Areas and arrows (revision 4).** Each column is drawn in the colour of its tier, from `PROMPT_ARROW_STYLE.md` § Component
 Color Standards → Subnet Types: the Browser is *Client / Outside* (gray), the Edge *Public* (green), the Origin

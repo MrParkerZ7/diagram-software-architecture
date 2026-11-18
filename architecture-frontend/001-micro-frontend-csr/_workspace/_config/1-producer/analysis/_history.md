@@ -1,5 +1,11 @@
 # History — 1-producer/analysis
 
+## 2026-11-18 10:26 — diagram-architecture-io
+**Action:** Updated (2 files)
+**Notes:** The unit spec for revision 10 (the header note, the structure line and the statements paragraph of § 5) and two rows in the origins log. T-001.
+- spec_micro-frontend-csr-architecture-drawio/micro-frontend-csr-architecture.md
+- spec_micro-frontend-csr-architecture-drawio/_origins.md
+
 ## 2026-11-17 20:36 — diagram-architecture-io
 **Action:** Updated (2 files)
 **Notes:** The unit spec for revision 9 (the header note and the build-band paragraph of § 5) and two rows in the origins log. T-001.

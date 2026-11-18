@@ -1,5 +1,10 @@
 # History — 1-producer/script
 
+## 2026-11-18 10:26 — diagram-architecture-io
+**Action:** Updated (1 file)
+**Notes:** `mfe_frame.py`: the statements are the statement kit's style 6 (1000 x 160 at y 80), the title and the companions line are plain text cells, the grid check lets the statement cells sit on the 10-px grid, the statement capacity is the kit's `fits`, and `KIT_FINGERPRINT` is new. T-001.
+- _lib/mfe_frame.py
+
 ## 2026-11-17 20:36 — diagram-architecture-io
 **Action:** Updated (1 file)
 **Notes:** `mfe_frame.py`: the build block's coordinates (the Team pipelines group, the registry, the integration build), ten build routes and the label slides of the build cables; `KIT_FINGERPRINT` unchanged. T-001.
